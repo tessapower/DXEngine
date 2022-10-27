@@ -72,7 +72,6 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
 }
 
 LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  OutputDebugStringA("Henlo\n");
   // switch (uMsg) {
   // case WM_SIZE: {
   //     int width = LOWORD(lParam);
