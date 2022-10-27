@@ -60,7 +60,15 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
 
   ShowWindow(hWnd, nCmdShow);
 
-  return 0;
+  // Listen for messages
+  bool res;
+  MSG msg;
+  while ((res = GetMessage(&msg, nullptr, 0, 0)) > 0) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+
+  return EXIT_SUCCESS;
 }
 
 LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
