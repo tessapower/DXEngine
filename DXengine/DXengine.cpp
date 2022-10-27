@@ -6,25 +6,30 @@
 LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void onResize(HWND hWnd, WPARAM wParam, const int width, const int height);
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
                       _In_ int nCmdShow) {
+  const auto pClassName = L"WindowMcWindowFace";
+
+  // Create a new instance of an extended window class
   WNDCLASSEX wc = {
       sizeof(WNDCLASSEX),  // Size of structure in bytes
-      CS_HREDRAW |
-          CS_VREDRAW,  // Class styles, repaint on vertical & horizontal resize
-      &wndProc,        // Pointer to window procedure
-      0,               // # extra bytes following window-class structure
-      0,               // # extra bytes following window instance
-      hInstance,       // Handle to instance that contains window proc for class
-      NULL,            // Handle to class icon
-      LoadCursor(NULL, IDC_ARROW),     // Handle to class cursor, standard arrow
+      CS_HREDRAW | CS_VREDRAW |
+          CS_OWNDC,  // Class styles, repaint on vertical & horizontal resize
+      &wndProc,      // Pointer to window procedure
+      0,             // # extra bytes following window-class structure
+      0,             // # extra bytes following window instance
+      hInstance,     // Handle to instance that contains window proc for class
+      nullptr,       // Handle to class icon
+      LoadCursor(hInstance,
+                 IDC_ARROW),           // Handle to class cursor, standard arrow
       (HBRUSH)(COLOR_BACKGROUND + 1),  // Handle to class background brush
-      NULL,                            // Pointer to resource name of class menu
-      L"MyWindow",                     // Window class name
-      NULL                             // Handle to small icon
+      nullptr,                         // Pointer to resource name of class menu
+      pClassName,                      // Window class name
+      nullptr                          // Handle to small icon
   };
 
+  // Register the window class
   ATOM atom = RegisterClassEx(&wc);
   assert(atom != 0);
 
@@ -36,19 +41,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      WS_EX_OVERLAPPEDWINDOW  // Extended window style
   );
 
-  HWND hWnd = CreateWindowExA(
-      WS_EX_OVERLAPPEDWINDOW,      // Extended window style
-      (LPCSTR)MAKEINTATOM(atom),   // Window class name
-      "Win Win Chick Din",         // Window name
-      WS_OVERLAPPED,               // Window style
+  // Create an extended window
+  HWND hWnd = CreateWindowEx(
+      WS_EX_OVERLAPPEDWINDOW,  // Extended window style
+      pClassName,              // Window class name
+      L"Win Win Chick Din",    // Window name
+      WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU |
+          WS_OVERLAPPEDWINDOW,     // Window style
       CW_USEDEFAULT,               // X position of window
       CW_USEDEFAULT,               // Y position of window
       client.right - client.left,  // Window width
       client.bottom - client.top,  // Window height
-      NULL,                        // Handle to parent window
-      NULL,                        // Handle to menu
+      nullptr,                     // Handle to parent window
+      nullptr,                     // Handle to menu
       hInstance,  // Handle to instance of module to be associated with window
-      NULL        // Pointer to lpParam
+      nullptr     // Pointer to lpParam
   );
 
   ShowWindow(hWnd, nCmdShow);
