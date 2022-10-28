@@ -4,6 +4,8 @@
 #include <cassert>
 #include <iostream>
 
+static MessageMap messages;
+
 LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void onResize(HWND hWnd, WPARAM wParam, const int width, const int height);
 
@@ -79,7 +81,6 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
 
 // Called every time we dispatch a message from the queue
 LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  static MessageMap messages;
   OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
 
   switch (uMsg) {

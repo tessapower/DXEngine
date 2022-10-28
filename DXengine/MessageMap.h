@@ -7,11 +7,12 @@
 
 class MessageMap {
  public:
-  MessageMap();
+  MessageMap() = default;
+  ~MessageMap() = default;
   std::string operator()(DWORD uMsg, WPARAM wParam, LPARAM lPARAM) const;
 
  private:
-  std::unordered_map<DWORD, std::string> messages;
+  static std::unordered_map<DWORD, std::string> messages;
 };
 
 #endif  // MESSAGEMAP_H
