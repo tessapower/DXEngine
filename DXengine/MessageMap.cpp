@@ -13,6 +13,8 @@
 #define REGISTER_MSG(msg) \
   { msg, #msg }
 
+// TODO: Convert this to a mapping of UINT to std::string so we don't have to
+//   include all of the headers and can include all messages
 std::unordered_map<DWORD, std::string> MessageMap::messages = {
     REGISTER_MSG(WM_ACTIVATE),
     REGISTER_MSG(WM_ACTIVATEAPP),
