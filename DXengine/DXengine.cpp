@@ -1,4 +1,5 @@
 #include "DXengine.h"
+#include "MessageMap.h"
 
 #include <cassert>
 #include <iostream>
@@ -15,9 +16,9 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
   WNDCLASSEX wc = {
       sizeof(WNDCLASSEX),  // Size of structure in bytes
       CS_HREDRAW | CS_VREDRAW |
-          CS_OWNDC,  // Class styles, repaint on vertical & horizontal resize
-      &wndProc,      // Pointer to window procedure
-      0,             // # extra bytes following window-class structure
+          CS_OWNDC,  // Class style(s), repaint on vertical & horizontal resize
+      &wndProc,      // Pointer to window proc
+      0,             // # extra bytes following window class structure
       0,             // # extra bytes following window instance
       hInstance,     // Handle to instance that contains window proc for class
       nullptr,       // Handle to class icon
@@ -41,29 +42,34 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
                      WS_EX_OVERLAPPEDWINDOW  // Extended window style
   );
 
-  // Create an extended window
+  // Create an extended window with all the bells and whistles
   HWND hWnd = CreateWindowEx(
       WS_EX_OVERLAPPEDWINDOW,  // Extended window style
       pClassName,              // Window class name
-      L"Win Win Chick Din",    // Window name
+      L"Win Win Chick Din",    // Window name in title bar
       WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU |
-          WS_OVERLAPPEDWINDOW,     // Window style
-      CW_USEDEFAULT,               // X position of window
-      CW_USEDEFAULT,               // Y position of window
-      client.right - client.left,  // Window width
-      client.bottom - client.top,  // Window height
+          WS_OVERLAPPEDWINDOW,     // Window style(s)
+      CW_USEDEFAULT,               // x position of window
+      CW_USEDEFAULT,               // y position of window
+      client.right - client.left,  // Client width
+      client.bottom - client.top,  // Client height
       nullptr,                     // Handle to parent window
       nullptr,                     // Handle to menu
       hInstance,  // Handle to instance of module to be associated with window
       nullptr     // Pointer to lpParam
   );
 
+  // Do the thing!
   ShowWindow(hWnd, nCmdShow);
 
   // Listen for messages
   bool res;
   MSG msg;
   while ((res = GetMessage(&msg, nullptr, 0, 0)) > 0) {
+    // Useful for when we want to process WM_CHAR messages!
+    // We can always skip translating the message if we will
+    // not bother processing WM_CHAR messages, e.g. if we are
+    // only interested key down or up messages
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
@@ -71,14 +77,17 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
   return EXIT_SUCCESS;
 }
 
+// Called every time we dispatch a message from the queue
 LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  // switch (uMsg) {
-  // case WM_SIZE: {
-  //     int width = LOWORD(lParam);
-  //     int height = HIWORD(lParam);
-  //     onResize(hWnd, wParam, width, height);
-  // }
-  //}
+  static MessageMap messages;
+  OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
+
+  switch (uMsg) {
+    case WM_CLOSE: {
+      PostQuitMessage(0);
+      break;
+    }
+  }
 
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }

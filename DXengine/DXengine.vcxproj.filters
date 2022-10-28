@@ -18,9 +18,15 @@
     <ClInclude Include="DXengine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MessageMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXengine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

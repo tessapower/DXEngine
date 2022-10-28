@@ -168,9 +168,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DXengine.h" />
+    <ClInclude Include="MessageMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXengine.cpp" />
+    <ClCompile Include="MessageMap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
