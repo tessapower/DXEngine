@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGEMAP_H
+#define MESSAGEMAP_H
 
 #include <unordered_map>
 #include <string>
@@ -12,3 +13,5 @@ class MessageMap {
  private:
   std::unordered_map<DWORD, std::string> messages;
 };
+
+#endif  // MESSAGEMAP_H
