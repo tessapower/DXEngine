@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DXengine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MessageMap.h">
+    <ClInclude Include="ChiliWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

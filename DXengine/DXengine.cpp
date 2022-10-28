@@ -1,4 +1,4 @@
-#include "DXengine.h"
+#include "ChiliWin.h"
 #include "MessageMap.h"
 
 #include <cassert>
@@ -26,7 +26,7 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
       nullptr,       // Handle to class icon
       LoadCursor(hInstance,
                  IDC_ARROW),           // Handle to class cursor, standard arrow
-      (HBRUSH)(COLOR_BACKGROUND + 1),  // Handle to class background brush
+      (HBRUSH)(2),                     // Handle to class background brush
       nullptr,                         // Pointer to resource name of class menu
       pClassName,                      // Window class name
       nullptr                          // Handle to small icon
