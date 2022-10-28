@@ -18,7 +18,7 @@ class Window {
                                          LPARAM lParam);
 
  private:
-  LRESULT handleMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);
+  LRESULT handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   HINSTANCE hInstance;
   int width;
   int height;

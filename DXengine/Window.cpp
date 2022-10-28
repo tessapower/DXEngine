@@ -55,7 +55,7 @@ Window::Window(int width, int height, LPCWSTR name)
   );
 
   // Do the thing!
-  ShowWindow(hWnd, SW_SHOW);
+  ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
 
 Window::~Window() { DestroyWindow(hWnd); }
@@ -74,6 +74,8 @@ LRESULT CALLBACK Window::handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
 
     // Now set the WNDPROC to point to handleMsgThunk
     SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)handleMsgThunk);
+
+    return pWindow->handleMsg(hWnd, uMsg, wParam, lParam);
   }
 
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -85,16 +87,16 @@ LRESULT CALLBACK Window::handleMsgThunk(HWND hWnd, UINT uMsg, WPARAM wParam,
   Window *pWindow = reinterpret_cast<Window *>(GetWindowLongPtrA(hWnd, GWLP_USERDATA));
 
   // Forward on the message to the Window instance
-  return pWindow->handleMsg(uMsg, wParam, lParam);
+  return pWindow->handleMsg(hWnd, uMsg, wParam, lParam);
 }
 
 // Called every time we dispatch a message from the queue
-LRESULT Window::handleMsg(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
 
   switch (uMsg) {
     case WM_CLOSE: {
-      PostQuitMessage(wParam);
+      PostQuitMessage(0);
 
       return 0;
     }
