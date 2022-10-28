@@ -33,17 +33,17 @@ Window::Window(int width, int height, LPCWSTR name)
   // Create a rectangle to specify the client area dimension
   RECT client{0, 0, width, height};
   AdjustWindowRectEx(&client,                // Rect to use
-                     WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,  // Window style
+                     WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,  // Window style(s)
                      false,                  // If window has a menu
-                     WS_EX_OVERLAPPEDWINDOW  // Extended window style
+                     WS_EX_OVERLAPPEDWINDOW  // Extended window style(s)
   );
 
   // Create an extended window with all the bells and whistles
   hWnd = CreateWindowEx(
-      0,                       // Extended window style(s)
+      WS_EX_OVERLAPPEDWINDOW,  // Extended window style(s)
       name,                    // Window class name
       L"DX2D Engine",          // Window name in title bar
-      WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,     // Window style(s)
+      WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,     // Window style(s)
       CW_USEDEFAULT,               // x position of window
       CW_USEDEFAULT,               // y position of window
       client.right - client.left,  // Client width
@@ -62,6 +62,8 @@ Window::~Window() { DestroyWindow(hWnd); }
 
 LRESULT CALLBACK Window::handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
     LPARAM lParam) {
+  OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
+
   if (uMsg == WM_NCCREATE) {
     // Retrieve the lpParam we passed in when creating the hWnd
     CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT *>(lParam);
