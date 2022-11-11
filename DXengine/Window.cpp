@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "MessageMap.h"
+#include "resource.h"
 
 #include <cassert>
 
@@ -16,13 +17,29 @@ Window::WindowClass::WindowClass() noexcept
       &handleMsgSetup,      // Pointer to initial setup window proc
       0,                    // # extra bytes following window class structure
       0,                    // # extra bytes following window instance
-      hInstance,            // Handle to instance that contains window proc for class
-      nullptr,              // Handle to class icon
-      LoadCursor(hInstance, IDC_ARROW),  // Handle to class cursor, standard arrow
+      _hInstance,           // Handle to instance with window proc for class
+      static_cast<HICON>(   // Handle to window icon
+        LoadImageW(
+          _hInstance,
+          MAKEINTRESOURCE(IDI_ICON1),
+          IMAGE_ICON,
+          32, 32,
+          LR_DEFAULTCOLOR
+        )
+      ),
+      LoadCursor(_hInstance, IDC_ARROW),  // Handle to class cursor, standard
       (HBRUSH)(2),            // Handle to class background brush
       nullptr,                // Pointer to resource name of class menu
-      name,                   // Window class name
-      nullptr                 // Handle to small icon
+      _name,                  // Window class name
+      static_cast<HICON> (    // Handle to small icon
+        LoadImageW(
+          _hInstance,
+          MAKEINTRESOURCE(IDI_ICON1),
+          IMAGE_ICON,
+          16, 16,
+          LR_DEFAULTCOLOR
+        )
+      )
   };
 
   // Register WindowClass
