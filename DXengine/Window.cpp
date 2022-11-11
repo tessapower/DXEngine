@@ -4,16 +4,15 @@
 #include <cassert>
 
 static MessageMap messages;
+Window::WindowClass *Window::WindowClass::_windowClass;
 
-Window::Window(int width, int height, LPCWSTR name)
-    : hInstance(GetModuleHandle(nullptr)) {
-  this->width = width;
-  this->height = height;
-
+Window::WindowClass::WindowClass() noexcept
+    : _hInstance(GetModuleHandle(nullptr)) {
   // Create a new instance of an extended window class
   WNDCLASSEX wc = {
       sizeof(WNDCLASSEX),  // Size of structure in bytes
-      CS_HREDRAW | CS_VREDRAW | CS_OWNDC,  // Class style(s), repaint on vertical & horizontal resize
+      // Class style(s), repaint on vertical & horizontal resize
+      CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
       &handleMsgSetup,      // Pointer to initial setup window proc
       0,                    // # extra bytes following window class structure
       0,                    // # extra bytes following window instance
@@ -26,39 +25,69 @@ Window::Window(int width, int height, LPCWSTR name)
       nullptr                 // Handle to small icon
   };
 
-  // Register the window class
+  // Register WindowClass
   ATOM atom = RegisterClassEx(&wc);
   assert(atom != 0);
+}
+
+Window::WindowClass::~WindowClass() {
+  // Deregister WindowClass
+  if (_windowClass) {
+    UnregisterClass(_name, hInstance());
+  }
+}
+
+Window::WindowClass *Window::WindowClass::instance() {
+  if (!_windowClass) {
+    _windowClass = new WindowClass();
+  }
+
+  return _windowClass;
+}
+
+HINSTANCE Window::WindowClass::hInstance() { return _windowClass->_hInstance; }
+
+LPCWSTR Window::WindowClass::name() { return _name; }
+
+Window::Window(int width, int height, LPCWSTR name) {
+  _width = width;
+  _height = height;
 
   // Create a rectangle to specify the client area dimension
-  RECT client{0, 0, width, height};
+  RECT client{0, 0, _width, _height};
   AdjustWindowRectEx(&client,                // Rect to use
-                     WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,  // Window style(s)
+                     // Window style(s)
+                     WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
                      false,                  // If window has a menu
                      WS_EX_OVERLAPPEDWINDOW  // Extended window style(s)
   );
 
   // Create an extended window with all the bells and whistles
-  hWnd = CreateWindowEx(
-      WS_EX_OVERLAPPEDWINDOW,  // Extended window style(s)
-      name,                    // Window class name
-      L"DX2D Engine",          // Window name in title bar
-      WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,     // Window style(s)
+  _hWnd = CreateWindowEx(
+      WS_EX_OVERLAPPEDWINDOW,           // Extended window style(s)
+      WindowClass::instance()->name(),  // Window class name
+      name,                             // Window name in title bar
+      WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX |
+          WS_SYSMENU,              // Window style(s)
       CW_USEDEFAULT,               // x position of window
       CW_USEDEFAULT,               // y position of window
       client.right - client.left,  // Client width
       client.bottom - client.top,  // Client height
       nullptr,                     // Handle to parent window
       nullptr,                     // Handle to menu
-      hInstance,  // Handle to instance of module to be associated with window
-      this        // Pass a pointer to this instance of Window and be able to access it from the created hWnd
+      WindowClass::instance()
+          ->hInstance(),  // Handle to instance of to be associated with window
+      this  // Pass a pointer to this instance of Window and be able to access
+            // it from the created hWnd
   );
 
   // Do the thing!
-  ShowWindow(hWnd, SW_SHOWDEFAULT);
+  ShowWindow(_hWnd, SW_SHOWDEFAULT);
 }
 
-Window::~Window() { DestroyWindow(hWnd); }
+Window::~Window() {
+  DestroyWindow(_hWnd);
+}
 
 LRESULT CALLBACK Window::handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
     LPARAM lParam) {
