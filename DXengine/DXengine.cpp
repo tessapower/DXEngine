@@ -3,9 +3,9 @@
 
 #include <iostream> // EXIT_SUCCESS macro
 
-int CALLBACK WinMain(_In_ HINSTANCE hInstance,
+int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPSTR lpCmdLine,
+                     _In_ LPWSTR lpCmdLine,
                      _In_ int nCmdShow) {
   try {
     Window wnd;
@@ -24,10 +24,10 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,
 
     return msg.wParam;
   } catch (EngineException &e) {
-    MessageBoxA(
+    MessageBoxW(
       nullptr,
-      e.what(),
-      "Engine exception!",
+      e.msg(),
+      e.type(),
       MB_ICONEXCLAMATION | MB_OK
     );
   } catch (std::exception &e) {
@@ -38,10 +38,10 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,
       MB_ICONEXCLAMATION | MB_OK
     );
   } catch (...) {
-    MessageBoxA(
+    MessageBoxW(
       nullptr,
-      "An unknown error occurred!\nNo details available :(",
-      "Wtf?",
+      L"An unknown error occurred!\nNo details available :(",
+      L"Wtf?",
       MB_ICONEXCLAMATION | MB_OK
     );
   }

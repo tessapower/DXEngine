@@ -30,6 +30,9 @@
     <ClInclude Include="EngineException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowExceptionMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXengine.cpp">

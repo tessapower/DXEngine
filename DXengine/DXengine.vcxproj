@@ -172,6 +172,7 @@
     <ClInclude Include="MessageMap.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowExceptionMacros.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXengine.cpp" />

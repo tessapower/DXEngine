@@ -1,5 +1,6 @@
-#include "Window.h"
 #include "MessageMap.h"
+#include "Window.h"
+#include "WindowExceptionMacros.h"
 #include "resource.h"
 
 #include <cassert>
@@ -12,7 +13,7 @@ Window::WindowClass *Window::WindowClass::_windowClass;
 Window::WindowClass::WindowClass() noexcept
     : _hInstance(GetModuleHandle(nullptr)) {
   // Create a new instance of an extended window class
-  WNDCLASSEXA wc = {
+  WNDCLASSEXW wc = {
       sizeof(WNDCLASSEX),  // Size of structure in bytes
       // Class style(s), repaint on vertical & horizontal resize
       CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
@@ -45,14 +46,14 @@ Window::WindowClass::WindowClass() noexcept
   };
 
   // Register WindowClass
-  ATOM atom = RegisterClassExA(&wc);
+  ATOM atom = RegisterClassExW(&wc);
   assert(atom != 0);
 }
 
 Window::WindowClass::~WindowClass() {
   // Deregister WindowClass
   if (_windowClass) {
-    UnregisterClassA(name(), hInstance());
+    UnregisterClassW(name(), hInstance());
   }
 }
 
@@ -68,10 +69,10 @@ HINSTANCE Window::WindowClass::hInstance() noexcept {
   return _windowClass->_hInstance;
 }
 
-LPCSTR Window::WindowClass::name() noexcept { return _name; }
+LPCWSTR Window::WindowClass::name() noexcept { return _name; }
 
 //----------------------------------------------------------------- Window --//
-Window::Window(int width, int height, LPCSTR windowTitle) {
+Window::Window(int width, int height, LPCWSTR windowTitle) {
   _width = width;
   _height = height;
 
@@ -80,18 +81,18 @@ Window::Window(int width, int height, LPCSTR windowTitle) {
   HRESULT hr = AdjustWindowRectEx(
       &client,  // Rect to use
       // Window style(s)
-      WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+      WS_OVERLAPPED,
       false,                  // If window has a menu
       WS_EX_OVERLAPPEDWINDOW  // Extended window style(s)
   );
 
   if (!SUCCEEDED(hr)) {
-    throw Window::Exception(__FILE__, __LINE__, hr);
+    throw HR_ERROR(hr);
   }
 
   // Create an extended window with all the bells and whistles
-  _hWnd = CreateWindowExA(
-      WS_EX_OVERLAPPEDWINDOW,          // Extended window style(s
+  _hWnd = CreateWindowExW(
+      WS_EX_OVERLAPPEDWINDOW,          // Extended window style(s)
       WindowClass::instance()->name(), // Window class name
       windowTitle,                     // Window name in title bar
       WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, // Window style
@@ -108,7 +109,7 @@ Window::Window(int width, int height, LPCSTR windowTitle) {
   );
 
   if (_hWnd == nullptr) {
-    throw Window::Exception(__FILE__, __LINE__, GetLastError());
+    throw LAST_ERROR;
   }
 
   // Do the thing!
@@ -121,7 +122,7 @@ Window::~Window() {
 
 LRESULT CALLBACK Window::handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
                                         LPARAM lParam) noexcept {
-  OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
+  OutputDebugStringW(messages(uMsg, wParam, lParam).c_str());
 
   if (uMsg == WM_NCCREATE) {
     // Retrieve the lpParam we passed in when creating the hWnd
@@ -137,7 +138,7 @@ LRESULT CALLBACK Window::handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
     return pWindow->handleMsg(hWnd, uMsg, wParam, lParam);
   }
 
-  return DefWindowProc(hWnd, uMsg, wParam, lParam);
+  return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 LRESULT CALLBACK Window::handleMsgThunk(HWND hWnd, UINT uMsg, WPARAM wParam,
@@ -152,7 +153,7 @@ LRESULT CALLBACK Window::handleMsgThunk(HWND hWnd, UINT uMsg, WPARAM wParam,
 // Called every time we dispatch a message from the queue
 LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam,
                           LPARAM lParam) noexcept {
-  OutputDebugStringA(messages(uMsg, wParam, lParam).c_str());
+  OutputDebugStringW(messages(uMsg, wParam, lParam).c_str());
 
   switch (uMsg) {
     case WM_CLOSE: {
@@ -162,12 +163,12 @@ LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam,
     }
   }
 
-  return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+  return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-//-------------------------------------------------------------- Exception --//
-const char *Window::Exception::what() const noexcept {
-  std::ostringstream oss;
+//------------------------------------------------------- Window Exception --//
+LPCWSTR Window::Exception::msg() const noexcept {
+  std::wostringstream oss;
   oss << type()
       << std::endl
       << "HR Code: 0x" << std::hex << _hr
@@ -181,27 +182,27 @@ const char *Window::Exception::what() const noexcept {
   return _whatBuffer.c_str();
 }
 
-std::string Window::Exception::translateError(HRESULT hr) noexcept {
-  LPSTR pMsg = nullptr;
+std::wstring Window::Exception::translateError(HRESULT hr) noexcept {
+  LPWSTR pMsg = nullptr;
 
-  auto msgLen = FormatMessageA(
+  auto msgLen = FormatMessageW(
       FORMAT_MESSAGE_FROM_SYSTEM  // use system message tables to translate
           | FORMAT_MESSAGE_ALLOCATE_BUFFER  // allocate buffer on local heap
           | FORMAT_MESSAGE_IGNORE_INSERTS,
       nullptr,  // unused when FORMAT_MESSAGE_FROM_SYSTEM is present
       hr,       // the error code
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),  // language defaults
-      (LPSTR)&pMsg,  // where to put the error message
+      (LPWSTR)&pMsg,  // where to put the error message
       0,             // minimum size for output buffer
       nullptr);      // unused arguments
 
   if (msgLen != 0) {
-    std::string msg = pMsg;
+    std::wstring msg = pMsg;
     LocalFree(pMsg);
     pMsg = nullptr;
 
     return msg;
   }
 
-  return "Unknown error!";
+  return L"Unknown error!";
 }

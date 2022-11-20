@@ -8,43 +8,46 @@
 
 class EngineException : public std::exception {
  public:
-  EngineException(const LPCSTR file, int line) noexcept
-      :  _file(file), _line(line) {}
+  EngineException(const LPCWSTR file, int line) noexcept
+      : _file(file), _line(line) {}
   ~EngineException() = default;
 
   const char* what() const noexcept override {
-    std::ostringstream oss;
-    oss << type()
-        << std::endl
-        << source();
+    return "Engine Exception";
+  }
+
+  virtual LPCWSTR msg() const noexcept {
+    std::wostringstream oss;
+
+    oss << type() << std::endl << source();
 
     _whatBuffer = oss.str();
 
     return _whatBuffer.c_str();
   }
 
-  virtual const char *type() const noexcept { return _type; }
+  LPCWSTR type() const noexcept { return _type; }
 
   int line() const noexcept { return _line; }
 
-  std::string const& file() const noexcept { return _file; }
+  std::wstring file() const noexcept { return _file; }
 
-  std::string source() const noexcept {
-    std::ostringstream oss;
-    oss << "File: " << _file
+  std::wstring source() const noexcept {
+    std::wostringstream oss;
+    oss << L"File: " << file()
         << std::endl
-        << "Line: " << _line;
+        << L"Line: " << _line;
 
     return oss.str();
   }
 
  private:
-  const char *_type{"Engine Exception"};
-  std::string _file;
+  LPCWSTR _file;
   int _line;
 
  protected:
-  mutable std::string _whatBuffer;
+  LPCWSTR _type{L"Engine Exception"};
+  mutable std::wstring _whatBuffer;
 };
 
 #endif  // ENGINE_EXCEPTION_H

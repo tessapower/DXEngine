@@ -1,4 +1,4 @@
-#ifndef WINDOW_H
+﻿#ifndef WINDOW_H
 #define WINDOW_H
 
 #include "ChiliWin.h"
@@ -6,7 +6,7 @@
 
 class Window {
  public:
-  Window(int width = 800, int height = 600, LPCSTR windowTitle = "");
+  Window(int width = 800, int height = 600, LPCWSTR windowTitle = L"");
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
   ~Window();
@@ -19,15 +19,16 @@ class Window {
                                          LPARAM lParam) noexcept;
 
  private:
+ //----------------------------------------------------------- WindowClass --//
   class WindowClass {
    public:
     static WindowClass* instance() noexcept;
     static HINSTANCE hInstance() noexcept;
-    static LPCSTR name() noexcept;
+    static LPCWSTR name() noexcept;
 
    private:
     static WindowClass* _windowClass;
-    static constexpr LPCSTR _name = "DXengine Window";
+    static constexpr LPCWSTR _name = L"DXengine Window";
     HINSTANCE _hInstance;
 
    private:
@@ -39,13 +40,15 @@ class Window {
 
   class Exception : public EngineException {
    public:
-    Exception(const LPCSTR file, int line, HRESULT hr)
-        : EngineException(file, line), _hr(hr){};
+    Exception(const LPCWSTR file, int line, HRESULT hr)
+        : EngineException(file, line), _hr(hr) {
+      _type = L"Engine Window Exception";
+    };
 
-    static std::string translateError(HRESULT hr) noexcept;
-    const char *what() const noexcept override;
+    static std::wstring translateError(HRESULT hr) noexcept;
+    virtual LPCWSTR msg() const noexcept override;
 
-    virtual const char* type() const noexcept override {
+    const char* what() const noexcept override {
       return "Engine Window Exception";
     }
 

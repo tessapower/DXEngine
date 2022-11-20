@@ -11,11 +11,11 @@
 
 // Adds a new message and string descriptor to the MessageMap
 #define REGISTER_MSG(msg) \
-  { msg, #msg }
+  { msg, L#msg }
 
 // TODO: Convert this to a mapping of UINT to std::string so we don't have to
 //   include all of the headers and can include all messages
-std::unordered_map<DWORD, std::string> MessageMap::messages = {
+std::unordered_map<DWORD, std::wstring> MessageMap::messages = {
     REGISTER_MSG(WM_ACTIVATE),
     REGISTER_MSG(WM_ACTIVATEAPP),
     REGISTER_MSG(WM_AFXFIRST),
@@ -258,8 +258,8 @@ std::unordered_map<DWORD, std::string> MessageMap::messages = {
 
 // Returns a string describing the message name and corresponding wParam and lParam values.
 // If the message doesn't exist in the MessageMap, the name will be "Unknown Message".
-std::string MessageMap::operator()(DWORD uMsg, WPARAM wParam, LPARAM lParam) const {
-  std::ostringstream out;
+std::wstring MessageMap::operator()(DWORD uMsg, WPARAM wParam, LPARAM lParam) const {
+  std::wostringstream out;
 
   constexpr uint8_t kMsgWidth = 25;
   out << std::left << std::setw(kMsgWidth);
@@ -267,17 +267,17 @@ std::string MessageMap::operator()(DWORD uMsg, WPARAM wParam, LPARAM lParam) con
   if (messages.contains(uMsg)) {
     out << messages.at(uMsg);
   } else {
-    out << "!! Unknown Message";
+    out << L"!! Unknown Message";
   }
 
   // Format message params nicely
   constexpr uint8_t kParamWidth = 16;
   out << std::right
-      << "wParam: 0x"
-      << std::setw(kParamWidth) << std::setfill('0') << std::hex << wParam
+      << L"wParam: 0x"
+      << std::setw(kParamWidth) << std::setfill(L'0') << std::hex << wParam
       
-      << "  lParam: 0x"
-      << std::setw(kParamWidth) << std::setfill('0') << std::hex << lParam
+      << L"  lParam: 0x"
+      << std::setw(kParamWidth) << std::setfill(L'0') << std::hex << lParam
       
       << std::endl;
 
