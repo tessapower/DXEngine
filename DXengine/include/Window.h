@@ -3,13 +3,18 @@
 
 #include "ChiliWin.h"
 #include "EngineException.h"
+#include "Keyboard.h"
 
 class Window {
  public:
-  Window(int width = 800, int height = 600, LPCWSTR windowTitle = L"");
+  Window(int width = 800, int height = 600, LPCWSTR windowTitle = L"DXengine");
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
   ~Window();
+
+  void setTitle(LPCWSTR title) noexcept {
+    SetWindowTextW(_hWnd, title);
+  };
 
   // static callback setup messages
   static LRESULT CALLBACK handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
@@ -17,6 +22,9 @@ class Window {
   // static callback handle messages
   static LRESULT CALLBACK handleMsgThunk(HWND hWnd, UINT uMsg, WPARAM wParam,
                                          LPARAM lParam) noexcept;
+
+ public:
+  Keyboard kbd;
 
  private:
  //----------------------------------------------------------- WindowClass --//

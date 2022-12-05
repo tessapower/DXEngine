@@ -158,12 +158,40 @@ LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam,
   switch (uMsg) {
     case WM_CLOSE: {
       PostQuitMessage(0);
+      break;
+    }
+    case WM_KILLFOCUS: {
+      kbd.clearKeyStates();
+      break;
+    }
+    case WM_KEYDOWN: {
+      kbd.onKeyPress(static_cast<unsigned char>(wParam));
+      break;
+    }
+    case WM_KEYUP: {
+      kbd.onKeyRelease(static_cast<unsigned char>(wParam));
+      break;
+    }
+    case WM_CHAR: {
+      kbd.onChar(wParam);
 
-      return 0;
+      // TODO: Delete all below
+      auto c = kbd.nextChar();
+      if (c.has_value()) {
+        wchar_t ch = c.value();
+        std::wostringstream str;
+        str << L"You pressed: " << ch;
+        SetWindowTextW(_hWnd, str.str().c_str());
+      }
+
+      break;
+    }
+    default: {
+      return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
   }
 
-  return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+  return 0;
 }
 
 //------------------------------------------------------- Window Exception --//

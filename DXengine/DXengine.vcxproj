@@ -72,15 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -167,23 +175,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ChiliWin.h" />
-    <ClInclude Include="EngineException.h" />
-    <ClInclude Include="MessageMap.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="WindowExceptionMacros.h" />
+    <ClInclude Include="include\ChiliWin.h" />
+    <ClInclude Include="include\EngineException.h" />
+    <ClInclude Include="include\Keyboard.h" />
+    <ClInclude Include="include\MessageMap.h" />
+    <ClInclude Include="include\resource.h" />
+    <ClInclude Include="include\Window.h" />
+    <ClInclude Include="include\WindowExceptionMacros.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DXengine.cpp" />
-    <ClCompile Include="MessageMap.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="src\DXengine.cpp" />
+    <ClCompile Include="src\MessageMap.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DXengine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="sparkles.ico" />
+    <Image Include="resources\sparkles.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

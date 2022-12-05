@@ -15,33 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MessageMap.h">
+    <ClInclude Include="include\ChiliWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="include\EngineException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChiliWin.h">
+    <ClInclude Include="include\Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="include\MessageMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineException.h">
+    <ClInclude Include="include\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WindowExceptionMacros.h">
+    <ClInclude Include="include\WindowExceptionMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DXengine.cpp">
+    <ClCompile Include="src\DXengine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageMap.cpp">
+    <ClCompile Include="src\MessageMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,7 +54,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="sparkles.ico">
+    <Image Include="resources\sparkles.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

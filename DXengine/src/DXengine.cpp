@@ -41,7 +41,7 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
     MessageBoxW(
       nullptr,
       L"An unknown error occurred!\nNo details available :(",
-      L"Wtf?",
+      L"wtf?",
       MB_ICONEXCLAMATION | MB_OK
     );
   }
