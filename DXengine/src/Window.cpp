@@ -164,16 +164,19 @@ LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam,
       kbd.clearKeyStates();
       break;
     }
-    case WM_KEYDOWN: {
-      kbd.onKeyPress(static_cast<unsigned char>(wParam));
+    case WM_KEYDOWN: case WM_SYSKEYDOWN: {
+      unsigned char keyCode = (unsigned char)wParam;
+      kbd.onKeyPress(keyCode);
       break;
     }
-    case WM_KEYUP: {
-      kbd.onKeyRelease(static_cast<unsigned char>(wParam));
+    case WM_KEYUP: case WM_SYSKEYUP: {
+      unsigned char keyCode = (unsigned char)wParam;
+      kbd.onKeyRelease(keyCode);
       break;
     }
     case WM_CHAR: {
-      kbd.onChar(wParam);
+      unsigned char keyCode = (unsigned char)wParam;
+      kbd.onChar(keyCode);
 
       // TODO: Delete all below
       auto c = kbd.nextChar();
