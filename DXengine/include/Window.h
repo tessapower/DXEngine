@@ -67,6 +67,12 @@ class Window {
  private:
   LRESULT handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept;
 
+  friend class Graphics;
+
+  HWND const& hWnd() const noexcept {
+    return _hWnd;
+  }
+
  private:
   int _width;
   int _height;

@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Game\include;$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\..\Game\src;$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Game\include;$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\..\Game\src;$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Game\include;$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\..\Game\src;$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <IncludePath>$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Game\include;$(MSBuildProjectDirectory)\include;$(IncludePath)</IncludePath>
+    <SourcePath>$(MSBuildProjectDirectory)\..\Game\src;$(MSBuildProjectDirectory)\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -175,8 +175,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Game\include\Game.h" />
     <ClInclude Include="include\ChiliWin.h" />
     <ClInclude Include="include\EngineException.h" />
+    <ClInclude Include="include\Graphics.h" />
     <ClInclude Include="include\Keyboard.h" />
     <ClInclude Include="include\MessageMap.h" />
     <ClInclude Include="include\resource.h" />
@@ -184,6 +186,8 @@
     <ClInclude Include="include\WindowExceptionMacros.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Game\src\Game.cpp" />
+    <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MessageMap.cpp" />
     <ClCompile Include="src\Window.cpp" />
