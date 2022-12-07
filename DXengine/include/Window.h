@@ -46,6 +46,7 @@ class Window {
     void operator=(const WindowClass&) = delete;
   };
 
+  //------------------------------------------------------------ Exception --//
   class Exception : public EngineException {
    public:
     Exception(const LPCWSTR file, int line, HRESULT hr)

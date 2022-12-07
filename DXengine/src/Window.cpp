@@ -182,9 +182,9 @@ LRESULT Window::handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam,
       auto c = kbd.nextChar();
       if (c.has_value()) {
         wchar_t ch = c.value();
-        std::wostringstream str;
-        str << L"You pressed: " << ch;
-        SetWindowTextW(_hWnd, str.str().c_str());
+        static std::wostringstream stream;
+        stream << ch;
+        SetWindowTextW(_hWnd, stream.str().c_str());
       }
 
       break;
