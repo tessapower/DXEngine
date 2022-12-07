@@ -184,7 +184,7 @@
     <ClInclude Include="include\WindowExceptionMacros.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DXengine.cpp" />
+    <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MessageMap.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>

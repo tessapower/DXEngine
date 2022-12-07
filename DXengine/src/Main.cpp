@@ -1,4 +1,5 @@
 #include "ChiliWin.h"
+#include "Game.h"
 #include "Window.h"
 
 #include <iostream> // EXIT_SUCCESS macro
@@ -9,6 +10,7 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
                      _In_ int nCmdShow) {
   try {
     Window wnd;
+    Game game(wnd);
 
     // Listen for messages
     bool res;
@@ -17,9 +19,11 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
       // Useful for when we want to process WM_CHAR messages!
       // We can always skip translating the message if we will
       // not bother processing WM_CHAR messages, e.g. if we are
-      // only interested key down or up messages
+      // only interested in key down or up messages
       TranslateMessage(&msg);
       DispatchMessage(&msg);
+
+      game.tick();
     }
 
     return msg.wParam;
