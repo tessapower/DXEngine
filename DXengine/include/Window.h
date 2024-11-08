@@ -2,19 +2,19 @@
 #define WINDOW_H
 
 #include "ChiliWin.h"
-#include "EngineException.h"
-#include "Keyboard.h"
 
 class Window {
  public:
-  Window(int width = 800, int height = 600, LPCWSTR windowTitle = L"DXengine");
+  explicit Window(int width = 800, int height = 600, LPCWSTR windowTitle = L"");
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
+  Window(const Window&&) = delete;
+  Window& operator=(const Window&&) = delete;
   ~Window();
 
-  void setTitle(LPCWSTR title) noexcept {
+  void setTitle(LPCWSTR title) const noexcept {
     SetWindowTextW(_hWnd, title);
-  };
+  }
 
   // static callback setup messages
   static LRESULT CALLBACK handleMsgSetup(HWND hWnd, UINT uMsg, WPARAM wParam,
@@ -22,9 +22,6 @@ class Window {
   // static callback handle messages
   static LRESULT CALLBACK handleMsgThunk(HWND hWnd, UINT uMsg, WPARAM wParam,
                                          LPARAM lParam) noexcept;
-
- public:
-  Keyboard kbd;
 
  private:
  //----------------------------------------------------------- WindowClass --//
@@ -36,36 +33,19 @@ class Window {
 
    private:
     static WindowClass* _windowClass;
-    static constexpr LPCWSTR _name = L"DXengine Window";
+    static constexpr LPCWSTR _name = L"DXEngine Window";
     HINSTANCE _hInstance;
 
    private:
     WindowClass() noexcept;
     ~WindowClass();
+  public:
     WindowClass(WindowClass& other) = delete;
     void operator=(const WindowClass&) = delete;
+    WindowClass(WindowClass&& other) = delete;
+    void operator=(const WindowClass&&) = delete;
   };
 
-  //------------------------------------------------------------ Exception --//
-  class Exception : public EngineException {
-   public:
-    Exception(const LPCWSTR file, int line, HRESULT hr)
-        : EngineException(file, line), _hr(hr) {
-      _type = L"Engine Window Exception";
-    };
-
-    static std::wstring translateError(HRESULT hr) noexcept;
-    virtual LPCWSTR msg() const noexcept override;
-
-    const char* what() const noexcept override {
-      return "Engine Window Exception";
-    }
-
-   private:
-    HRESULT _hr;
-  };
-
- private:
   LRESULT handleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept;
 
   friend class Graphics;
@@ -74,7 +54,6 @@ class Window {
     return _hWnd;
   }
 
- private:
   int _width;
   int _height;
   HWND _hWnd;
