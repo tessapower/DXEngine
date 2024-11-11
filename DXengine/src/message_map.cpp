@@ -1,4 +1,4 @@
-#include "MessageMap.h"
+#include "message_map.h"
 #include <iomanip>
 #include <sstream>
 
@@ -9,13 +9,13 @@
 #include <Vfw.h>
 #include <WinUser.h>
 
-// Adds a new message and string descriptor to the MessageMap
+// Adds a new message and string descriptor to the message_map
 #define REGISTER_MSG(msg) \
   { msg, L#msg }
 
-// TODO: Convert this to a mapping of UINT to std::string so we don't have to
-//   include all of the headers and can include all messages
-std::unordered_map<DWORD, std::wstring> MessageMap::messages = {
+// TODO: Convert this to a mapping of UINT to std::string, so we don't have to
+//   include all the headers and can include all messages
+std::unordered_map<DWORD, std::wstring> message_map::messages_ = {
     REGISTER_MSG(WM_ACTIVATE),
     REGISTER_MSG(WM_ACTIVATEAPP),
     REGISTER_MSG(WM_AFXFIRST),
@@ -258,28 +258,28 @@ std::unordered_map<DWORD, std::wstring> MessageMap::messages = {
 
 // Returns a string describing the message name and corresponding wParam and lParam values.
 // If the message doesn't exist in the MessageMap, the name will be "Unknown Message".
-std::wstring MessageMap::operator()(DWORD uMsg, WPARAM wParam, LPARAM lParam) const {
+std::wstring message_map::operator()(const DWORD u_msg, const WPARAM w_param, const LPARAM l_param) const {
   std::wostringstream out;
 
-  constexpr uint8_t kMsgWidth = 25;
-  out << std::left << std::setw(kMsgWidth);
+  constexpr uint8_t msg_width = 25;
+  out << std::left << std::setw(msg_width);
 
-  if (messages.contains(uMsg)) {
-    out << messages.at(uMsg);
+  if (messages_.contains(u_msg)) {
+    out << messages_.at(u_msg);
   } else {
     out << L"!! Unknown Message";
   }
 
   // Format message params nicely
-  constexpr uint8_t kParamWidth = 16;
+  constexpr uint8_t param_width = 16;
   out << std::right
       << L"wParam: 0x"
-      << std::setw(kParamWidth) << std::setfill(L'0') << std::hex << wParam
+      << std::setw(param_width) << std::setfill(L'0') << std::hex << w_param
       
       << L"  lParam: 0x"
-      << std::setw(kParamWidth) << std::setfill(L'0') << std::hex << lParam
+      << std::setw(param_width) << std::setfill(L'0') << std::hex << l_param
       
-      << std::endl;
+      << '\n';
 
   return out.str();
 }

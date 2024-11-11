@@ -180,7 +180,7 @@
     <ClInclude Include="include\EngineException.h" />
     <ClInclude Include="include\Graphics.h" />
     <ClInclude Include="include\Keyboard.h" />
-    <ClInclude Include="include\MessageMap.h" />
+    <ClInclude Include="include\message_map.h" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\Window.h" />
     <ClInclude Include="include\WindowExceptionMacros.h" />
