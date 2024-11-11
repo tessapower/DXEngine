@@ -1,6 +1,4 @@
-#include "ChiliWin.h"
-#include "Game.h"
-#include "Window.h"
+#include "stdafx.h"
 
 #include <iostream> // EXIT_SUCCESS macro
 
