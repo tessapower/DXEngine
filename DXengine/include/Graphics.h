@@ -4,8 +4,8 @@
 #pragma comment(lib, "d2d1.lib")
 
 #include <d2d1.h>
-#include "ChiliWin.h"
 #include "Window.h"
+#include "stdafx.h"
 
 class Graphics {
 public:

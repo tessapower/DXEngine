@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ChiliWin.h"
+#include "stdafx.h"
 #include "Graphics.h"
 #include "Window.h"
 

@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Game\include\Game.h" />
-    <ClInclude Include="include\ChiliWin.h" />
+    <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\EngineException.h" />
     <ClInclude Include="include\Graphics.h" />
     <ClInclude Include="include\Keyboard.h" />
