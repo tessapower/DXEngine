@@ -4,12 +4,12 @@
 #pragma comment(lib, "d2d1.lib")
 
 #include <d2d1.h>
-#include "Window.h"
 #include "stdafx.h"
+#include "app.h"
 
 class Graphics {
 public:
-  Graphics(Window& wnd);
+  Graphics(app& app);
   Graphics(Graphics const&) = delete;
   Graphics& operator=(Graphics const&) = delete;
   ~Graphics();

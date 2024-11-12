@@ -27,7 +27,7 @@
     <ClInclude Include="include\message_map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Window.h">
+    <ClInclude Include="include\app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\WindowExceptionMacros.h">
@@ -50,7 +50,7 @@
     <ClCompile Include="src\message_map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window.cpp">
+    <ClCompile Include="src\app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics.cpp">
