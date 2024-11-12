@@ -7,7 +7,7 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR lpCmdLine,
                      _In_ int nCmdShow) {
   try {
-    Window wnd;
+    app app;
     Game game(wnd);
 
     // Listen for messages

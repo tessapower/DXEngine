@@ -70,7 +70,7 @@ class Keyboard {
   }
 
  protected:
-  friend class Window;
+  friend class app;
   // These functions are intended to be used
   // by the Window in response to key events
   void onKeyPress(const unsigned char keyCode) noexcept {

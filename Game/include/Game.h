@@ -3,24 +3,24 @@
 
 #include "stdafx.h"
 #include "Graphics.h"
-#include "Window.h"
+#include "app.h"
 
 class Game {
-public:
-  Game(Window& wnd) : _wnd(wnd), _gfx(wnd) {};
+ public:
+  Game(app& wnd) : _wnd(wnd), _gfx(wnd) {}
 
   Game(Game const&) = delete;
   Game& operator=(Game const&) = delete;
 
   void tick();
 
-private:
+ private:
   void composeFrame();
   void updateModel();
 
-private:
-  Window& _wnd;
+ private:
+  app& _wnd;
   Graphics _gfx;
 };
 
-#endif // GAME_H
+#endif  // GAME_H
