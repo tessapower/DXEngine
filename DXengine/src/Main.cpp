@@ -1,14 +1,15 @@
 #include "stdafx.h"
 
-#include <iostream> // EXIT_SUCCESS macro
+#include <iostream>
 
-int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR lpCmdLine,
-                     _In_ int nCmdShow) {
+#include "app.h"
+
+int CALLBACK wWinMain(_In_ HINSTANCE,
+                      _In_opt_ HINSTANCE,
+                      _In_ LPWSTR,
+                      _In_ int) {
   try {
     app app;
-    Game game(wnd);
 
     // Listen for messages
     bool res;
@@ -20,18 +21,9 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
       // only interested in key down or up messages
       TranslateMessage(&msg);
       DispatchMessage(&msg);
-
-      game.tick();
     }
 
-    return msg.wParam;
-  } catch (EngineException &e) {
-    MessageBoxW(
-      nullptr,
-      e.msg(),
-      e.type(),
-      MB_ICONEXCLAMATION | MB_OK
-    );
+    return static_cast<int>(msg.wParam);
   } catch (std::exception &e) {
     MessageBoxA(
       nullptr,
@@ -43,7 +35,7 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance,
     MessageBoxW(
       nullptr,
       L"An unknown error occurred!\nNo details available :(",
-      L"wtf?",
+      L"Error!",
       MB_ICONEXCLAMATION | MB_OK
     );
   }
