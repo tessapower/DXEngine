@@ -62,11 +62,11 @@ LPCWSTR app::window_class::class_name() noexcept { return name; }
 
 //----------------------------------------------------------------- Window --//
 app::app(const int width, const int height, const LPCWSTR window_title) {
-  _width = width;
-  _height = height;
+  width_ = width;
+  height_ = height;
 
   // Create a rectangle to specify the client area dimension
-  RECT viewport{0, 0, _width, _height};
+  RECT viewport{0, 0, width_, height_};
   HRESULT hr =
       AdjustWindowRectEx(&viewport,  // Rect to use
                          // Window style(s)
@@ -78,7 +78,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   // TODO: handle unsuccessful window creation
 
   // Create an extended window with all the bells and whistles
-  _hWnd = CreateWindowExW(
+  h_wnd_ = CreateWindowExW(
       WS_EX_OVERLAPPEDWINDOW,                  // Extended window style(s)
       window_class::instance()->class_name(),  // Window class name
       window_title,                            // Window name in title bar
@@ -96,10 +96,10 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   );
 
   // Do the thing!
-  ShowWindow(_hWnd, SW_SHOWDEFAULT);
+  ShowWindow(h_wnd_, SW_SHOWDEFAULT);
 }
 
-app::~app() { DestroyWindow(_hWnd); }
+app::~app() { DestroyWindow(h_wnd_); }
 
 LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
                                        const WPARAM w_param,
@@ -117,7 +117,7 @@ LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
 
     // Now set the WNDPROC to point to handleMsgThunk
     SetWindowLongPtr(h_wnd, GWLP_WNDPROC,
-                     reinterpret_cast<LONG_PTR>(handle_msg_thunk));
+                     reinterpret_cast<LONG_PTR>(&app::handle_msg_thunk));
 
     return p_window->handle_msg(h_wnd, u_msg, w_param, l_param);
   }

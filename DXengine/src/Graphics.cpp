@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-Graphics::Graphics(app& app) : _hWnd(app.hWnd()) {
+Graphics::Graphics(app& app) : _hWnd(app.h_wnd()) {
   // First create a factory, this lets us create Direct2D resources
   HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory);
 
@@ -10,13 +10,13 @@ Graphics::Graphics(app& app) : _hWnd(app.hWnd()) {
 
   // Create Render Target
   // First we need the size of the drawing area
-  GetClientRect(app.hWnd(), &_clientRect);
+  GetClientRect(app.h_wnd(), &_clientRect);
 
   // Then we create a render target
   hr = _d2dFactory->CreateHwndRenderTarget(
     D2D1::RenderTargetProperties(), // Rendering options, px format, DPI info, etc
     D2D1::HwndRenderTargetProperties(
-      app.hWnd(),
+      app.h_wnd(),
       D2D1::SizeU(
         _clientRect.right - _clientRect.left,
         _clientRect.bottom - _clientRect.top
