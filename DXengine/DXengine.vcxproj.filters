@@ -18,7 +18,7 @@
     <ClInclude Include="include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\EngineException.h">
+    <ClInclude Include="include\engine_exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Keyboard.h">
