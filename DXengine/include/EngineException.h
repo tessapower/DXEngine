@@ -6,48 +6,46 @@
 #include <sstream>
 #include <string>
 
-class EngineException : public std::exception {
+class engine_exception : public std::exception {
  public:
-  EngineException(const LPCWSTR file, int line) noexcept
-      : _file(file), _line(line) {}
-  ~EngineException() = default;
+  engine_exception(const LPCWSTR file, const int line) noexcept
+      : file_(file), line_(line) {}
+  ~engine_exception() = default;
 
-  const char* what() const noexcept override {
-    return "Engine Exception";
-  }
+  const char* what() const noexcept override { return "Engine Exception"; }
 
   virtual LPCWSTR msg() const noexcept {
     std::wostringstream oss;
 
-    oss << type() << std::endl << source();
+    oss << type() << "\n" << source();
 
-    _whatBuffer = oss.str();
+    what_buffer_ = oss.str();
 
-    return _whatBuffer.c_str();
+    return what_buffer_.c_str();
   }
 
-  LPCWSTR type() const noexcept { return _type; }
+  LPCWSTR type() const noexcept { return type_; }
 
-  int line() const noexcept { return _line; }
+  int line() const noexcept { return line_; }
 
-  std::wstring file() const noexcept { return _file; }
+  std::wstring file() const noexcept { return file_; }
 
   std::wstring source() const noexcept {
     std::wostringstream oss;
     oss << L"File: " << file()
-        << std::endl
-        << L"Line: " << _line;
+        << L"\n"
+        << L"Line: " << line_;
 
     return oss.str();
   }
 
  private:
-  LPCWSTR _file;
-  int _line;
+  LPCWSTR file_;
+  int line_;
 
  protected:
-  LPCWSTR _type{L"Engine Exception"};
-  mutable std::wstring _whatBuffer;
+  LPCWSTR type_{L"Engine Exception"};
+  mutable std::wstring what_buffer_;
 };
 
 #endif  // ENGINE_EXCEPTION_H
