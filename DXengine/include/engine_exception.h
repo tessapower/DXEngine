@@ -10,31 +10,37 @@ class engine_exception : public std::exception {
  public:
   engine_exception(const LPCWSTR file, const int line) noexcept
       : file_(file), line_(line) {}
-  ~engine_exception() = default;
 
-  const char* what() const noexcept override { return "Engine Exception"; }
+  auto what() const noexcept -> const char* override {
+    return "Engine Exception";
+  }
 
-  virtual LPCWSTR msg() const noexcept {
+  /**
+   * Returns the message associated with this exception. Intended use:
+   * <example>
+   * try {
+   *   // ...
+   * } * catch (const& engine_exception e) {
+   *   // "Engine Exception: Lorem ipsum sit dolor amet." 
+   *   std::cerr << e.what() << ": " << e.msg() << "\n";
+   * }
+   * </example>
+   */
+  virtual auto msg() const noexcept -> LPCWSTR {
     std::wostringstream oss;
-
-    oss << type() << "\n" << source();
-
+    oss << source() << "\n";
     what_buffer_ = oss.str();
 
     return what_buffer_.c_str();
   }
 
-  LPCWSTR type() const noexcept { return type_; }
+  auto type() const noexcept -> LPCWSTR { return type_; }
 
-  int line() const noexcept { return line_; }
-
-  std::wstring file() const noexcept { return file_; }
-
-  std::wstring source() const noexcept {
+  auto source() const noexcept -> std::wstring {
     std::wostringstream oss;
-    oss << L"File: " << file()
+    oss << L"[File] " << file_
         << L"\n"
-        << L"Line: " << line_;
+        << L"[Line #] " << line_;
 
     return oss.str();
   }
