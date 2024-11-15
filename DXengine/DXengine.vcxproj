@@ -185,7 +185,7 @@
     <ClInclude Include="include\message_map.h" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\app.h" />
-    <ClInclude Include="include\WindowExceptionMacros.h" />
+    <ClInclude Include="include\exception_macros.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Game\src\Game.cpp" />
