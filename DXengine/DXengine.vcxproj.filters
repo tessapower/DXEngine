@@ -30,7 +30,7 @@
     <ClInclude Include="include\app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\WindowExceptionMacros.h">
+    <ClInclude Include="include\exception_macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\resource.h">
