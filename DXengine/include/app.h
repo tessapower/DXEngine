@@ -46,7 +46,10 @@ class app {
   };
 
  private:
- //----------------------------------------------------------- WindowClass --//
+  //-------------------------------------------------------- Window Class --//
+
+  // Corresponds to the class of window that is created and can be referenced
+  // later by the Win32 API.
   class window_class {
    public:
     static window_class* instance() noexcept;
@@ -55,7 +58,7 @@ class app {
 
    private:
     static window_class* window_class_;
-    static constexpr LPCWSTR name = L"DXEngine Window";
+    static constexpr auto name = L"DXEngine Window";
     HINSTANCE h_instance_;
 
    private:
