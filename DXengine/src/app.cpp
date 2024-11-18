@@ -1,66 +1,14 @@
 #include "app.h"
 
 #include <cassert>
+#include <sstream>
 
 #include "message_map.h"
 #include "resource.h"
 
 static message_map messages;
 
-//------------------------------------------------------------ WindowClass --//
-app::window_class *app::window_class::window_class_;
-
-app::window_class::window_class() noexcept
-    : h_instance_(GetModuleHandle(nullptr)) {
-  // Create a new instance of an extended window class
-  const WNDCLASSEXW win_class = {
-      sizeof(WNDCLASSEX),  // Size of structure in bytes
-      // Class styles, repaint on vertical & horizontal resize,
-      // each window has its own device context
-      CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
-      &handle_msg_setup,   // Pointer to initial setup window proc
-      0,                   // # extra bytes following window class structure
-      0,                   // # extra bytes following window instance
-      h_instance_,         // Handle to instance with window proc for class
-      static_cast<HICON>(  // Handle to window icon
-          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON,
-                     // TODO: replace hardcoded icon sizes
-                     32, 32, LR_DEFAULTCOLOR)),
-      LoadCursor(h_instance_, IDC_ARROW),  // Handle to class cursor, standard
-      reinterpret_cast<HBRUSH>(2),         // Handle to class background brush
-      nullptr,             // Pointer to resource name of class menu
-      name,                // Window class name
-      static_cast<HICON>(  // Handle to small icon
-          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON, 16,
-                     16, LR_DEFAULTCOLOR))};
-
-  // Register WindowClass
-  const ATOM atom = RegisterClassExW(&win_class);
-  assert(atom != 0);
-}
-
-app::window_class::~window_class() {
-  // Deregister WindowClass
-  if (window_class_) {
-    UnregisterClassW(class_name(), h_instance());
-  }
-}
-
-app::window_class *app::window_class::instance() noexcept {
-  if (!window_class_) {
-    window_class_ = new window_class();
-  }
-
-  return window_class_;
-}
-
-HINSTANCE app::window_class::h_instance() noexcept {
-  return window_class_->h_instance_;
-}
-
-LPCWSTR app::window_class::class_name() noexcept { return name; }
-
-//----------------------------------------------------------------- Window --//
+//-------------------------------------------------------------------- App --//
 app::app(const int width, const int height, const LPCWSTR window_title) {
   width_ = width;
   height_ = height;
@@ -69,7 +17,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   RECT viewport{0, 0, width_, height_};
   HRESULT hr =
       AdjustWindowRectEx(&viewport,  // Rect to use
-                         // Window style(s)
+                                     // Window style(s)
                          WS_OVERLAPPED,
                          false,                  // If window has a menu
                          WS_EX_OVERLAPPEDWINDOW  // Extended window style(s)
@@ -158,6 +106,59 @@ LRESULT app::handle_msg(const HWND h_wnd, const UINT u_msg,
 
   return 0;
 }
+
+//----------------------------------------------------------- Window Class --//
+app::window_class *app::window_class::window_class_;
+
+app::window_class::window_class() noexcept
+    : h_instance_(GetModuleHandle(nullptr)) {
+  // Create a new instance of an extended window class
+  const WNDCLASSEXW win_class = {
+      sizeof(WNDCLASSEX),  // Size of structure in bytes
+      // Class styles, repaint on vertical & horizontal resize,
+      // each window has its own device context
+      CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
+      &handle_msg_setup,   // Pointer to initial setup window proc
+      0,                   // # extra bytes following window class structure
+      0,                   // # extra bytes following window instance
+      h_instance_,         // Handle to instance with window proc for class
+      static_cast<HICON>(  // Handle to window icon
+          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON,
+                     // TODO: replace hardcoded icon sizes
+                     32, 32, LR_DEFAULTCOLOR)),
+      LoadCursor(h_instance_, IDC_ARROW),  // Handle to class cursor, standard
+      reinterpret_cast<HBRUSH>(2),         // Handle to class background brush
+      nullptr,             // Pointer to resource name of class menu
+      name,                // Window class name
+      static_cast<HICON>(  // Handle to small icon
+          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON, 16,
+                     16, LR_DEFAULTCOLOR))};
+
+  // Register WindowClass
+  const ATOM atom = RegisterClassExW(&win_class);
+  assert(atom != 0);
+}
+
+app::window_class::~window_class() {
+  // Deregister WindowClass
+  if (window_class_) {
+    UnregisterClassW(class_name(), h_instance());
+  }
+}
+
+app::window_class *app::window_class::instance() noexcept {
+  if (!window_class_) {
+    window_class_ = new window_class();
+  }
+
+  return window_class_;
+}
+
+HINSTANCE app::window_class::h_instance() noexcept {
+  return window_class_->h_instance_;
+}
+
+LPCWSTR app::window_class::class_name() noexcept { return name; }
 
 //-------------------------------------------------------------- Exception --//
 
