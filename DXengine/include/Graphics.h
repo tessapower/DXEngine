@@ -9,8 +9,6 @@
 
 class renderer {
 public:
-  void startFrame();
-  void endFrame();
   explicit renderer(const app& app);
   renderer(renderer const&) = delete;
   renderer& operator=(renderer const&) = delete;
@@ -18,6 +16,8 @@ public:
   renderer& operator=(renderer const&&) = delete;
   ~renderer();
 
+  auto start_frame() const -> void;
+  auto end_frame() const -> void;
 
   // clear(color);
   // pixel(x, y, color);
@@ -28,24 +28,24 @@ public:
 private:
   // We use this to recreate the render target and Direct2D resources if an
   // error occurs
-  HWND _hWnd;
-  RECT _clientRect;
+  HWND h_wnd_;
+  RECT client_rect_;
 
   // Used to create Direct2D resources
-  ID2D1Factory* _d2dFactory = nullptr;
+  ID2D1Factory* d2d_factory_ = nullptr;
   // Where we draw everything
-  ID2D1HwndRenderTarget* _renderTarget = nullptr;
+  ID2D1HwndRenderTarget* render_target_ = nullptr;
   // A brush we can draw things with
-  ID2D1SolidColorBrush* _redBrush = nullptr;
-  // ???
+  ID2D1SolidColorBrush* red_brush_ = nullptr;
 
   /**
    * @brief Safely releases COM interface pointers.
   */
-  template <class T> void SafeRelease(T** ppT) {
-    if (*ppT) {
-      (*ppT)->Release();
-      *ppT = nullptr;
+  template <class T>
+  static void safe_release(T** pp_t) {
+    if (*pp_t) {
+      (*pp_t)->Release();
+      *pp_t = nullptr;
     }
   }
 };
