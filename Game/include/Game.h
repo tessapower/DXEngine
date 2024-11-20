@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include "stdafx.h"
-#include "Graphics.h"
+#include "renderer.h"
 #include "app.h"
 
 class Game {
