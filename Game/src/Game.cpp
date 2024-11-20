@@ -2,10 +2,10 @@
 #include "Game.h"
 
 void Game::tick() {
-  _gfx.startFrame();
+  renderer_.start_frame();
   updateModel();
   composeFrame();
-  _gfx.endFrame();
+  renderer_.end_frame();
 }
 
 void Game::composeFrame() {
