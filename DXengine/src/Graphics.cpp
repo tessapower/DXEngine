@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-Graphics::Graphics(app& app) : _hWnd(app.h_wnd()) {
+renderer::renderer(const app& app) : _hWnd(app.h_wnd()) {
   // First create a factory, this lets us create Direct2D resources
   HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory);
 
@@ -35,15 +35,15 @@ Graphics::Graphics(app& app) : _hWnd(app.h_wnd()) {
   );
 }
 
-Graphics::~Graphics() {
-  SafeRelease(&_redBrush);
-  SafeRelease(&_renderTarget);
-  SafeRelease(&_d2dFactory);
+renderer::~renderer() {
+  safe_release(&red_brush_);
+  safe_release(&render_target_);
+  safe_release(&d2d_factory_);
 }
 
-void Graphics::startFrame() {
-  _renderTarget->BeginDraw();
-  _renderTarget->DrawRectangle(
+void renderer::start_frame() const {
+  _renderTarget_->BeginDraw();
+  _renderTarget_->DrawRectangle(
     D2D1::RectF(
       _clientRect.left + 100.0f,
       _clientRect.top + 100.0f,
