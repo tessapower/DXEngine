@@ -20,7 +20,7 @@ class Game {
 
  private:
   app& _wnd;
-  Graphics _gfx;
+  renderer _gfx;
 };
 
 #endif  // GAME_H

@@ -73,7 +73,7 @@ class app {
 
   static LRESULT handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param, LPARAM l_param) noexcept;
 
-  friend class Graphics;
+  friend class renderer;
 
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 

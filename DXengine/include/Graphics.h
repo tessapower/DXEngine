@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #pragma comment(lib, "d2d1.lib")
 
@@ -7,15 +7,16 @@
 #include "stdafx.h"
 #include "app.h"
 
-class Graphics {
+class renderer {
 public:
-  Graphics(app& app);
-  Graphics(Graphics const&) = delete;
-  Graphics& operator=(Graphics const&) = delete;
-  ~Graphics();
-
   void startFrame();
   void endFrame();
+  explicit renderer(const app& app);
+  renderer(renderer const&) = delete;
+  renderer& operator=(renderer const&) = delete;
+  renderer(renderer const&&) = delete;
+  renderer& operator=(renderer const&&) = delete;
+  ~renderer();
 
 
   // clear(color);
@@ -49,4 +50,4 @@ private:
   }
 };
 
-#endif // GRAPHICS_H
+#endif // RENDERER_H
