@@ -180,7 +180,7 @@
     <ClInclude Include="..\Game\include\Game.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\engine_exception.h" />
-    <ClInclude Include="include\Graphics.h" />
+    <ClInclude Include="include\renderer.h" />
     <ClInclude Include="include\Keyboard.h" />
     <ClInclude Include="include\message_map.h" />
     <ClInclude Include="include\resource.h" />
@@ -189,7 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Game\src\Game.cpp" />
-    <ClCompile Include="src\Graphics.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\message_map.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

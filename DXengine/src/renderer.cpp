@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Graphics.h"
+#include "renderer.h"
 
 renderer::renderer(const app& app) : h_wnd_(app.h_wnd()) {
   // First create a factory, this lets us create Direct2D resources
