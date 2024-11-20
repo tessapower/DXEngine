@@ -7,7 +7,7 @@
 
 class Game {
  public:
-  Game(app& wnd) : _wnd(wnd), _gfx(wnd) {}
+  Game(app& wnd) : _wnd(wnd), renderer_(wnd) {}
 
   Game(Game const&) = delete;
   Game& operator=(Game const&) = delete;
@@ -20,7 +20,7 @@ class Game {
 
  private:
   app& _wnd;
-  renderer _gfx;
+  renderer renderer_;
 };
 
 #endif  // GAME_H
