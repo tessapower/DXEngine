@@ -28,7 +28,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   // Create an extended window with all the bells and whistles
   h_wnd_ = CreateWindowExW(
       WS_EX_OVERLAPPEDWINDOW,                  // Extended window style(s)
-      window_class::instance()->class_name(),  // Window class name
+      window_class::class_name(),              // Window class name
       window_title,                            // Window name in title bar
       WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,  // Window style
       CW_USEDEFAULT,                           // x position of window
@@ -37,7 +37,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
       viewport.bottom - viewport.top,          // Client height
       nullptr,                                 // Handle to parent window
       nullptr,                                 // Handle to menu
-      window_class::instance()->h_instance(),  // Handle to instance to
+      window_class::h_instance(),              // Handle to instance to
                                                // be associated with window
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created hWnd
@@ -162,14 +162,14 @@ LPCWSTR app::window_class::class_name() noexcept { return name; }
 
 //-------------------------------------------------------------- Exception --//
 
-auto app::exception::what() const noexcept -> const char * override {
+auto app::exception::what() const noexcept -> const char * {
   return "App Exception";
 }
 
-auto app::exception::msg() const noexcept -> LPCWSTR override {
+auto app::exception::msg() const noexcept -> LPCWSTR {
   std::wostringstream oss;
-  oss << "[Error Code] " << error_code << "\n"
-      << "[Description] " << error_string << "\n"
+  oss << "[Error Code] " << error_code() << "\n"
+      << "[Description] " << error_string() << "\n"
       << source() << "\n";
   what_buffer_ = oss.str();
 
