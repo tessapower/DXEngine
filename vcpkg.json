@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "dx-engine",
+  "version": "0.0.1",
+  "maintainers": "Tessa Power <hello@tessapower.xyz>",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "imgui",
+      "version>=": "1.91.0"
+    }
+  ]
+}
