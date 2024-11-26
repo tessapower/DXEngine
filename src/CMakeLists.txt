@@ -18,13 +18,7 @@ set(HEADERS
     "${PROJECT_SOURCE_DIR}/include/stdafx.h"
 )
 
-add_library(engine STATIC
-    ${SOURCES}
-    ${HEADERS}
-)
+add_executable(DXEngine ${SOURCES} ${HEADERS})
 
-
-# Support <my_lib/my_lib.h> imports in public headers
-target_include_directories(engine PUBLIC ../include)
-# Support "my_lib.h" imports in private headers and source files
-target_include_directories(engine PRIVATE ../include/)
+target_link_libraries(DXEngine PRIVATE imgui::imgui)
+target_link_libraries(DXEngine PRIVATE d3d11)
