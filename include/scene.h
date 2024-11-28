@@ -5,12 +5,12 @@
 #include "renderer.h"
 #include "app.h"
 
-class Game {
+class scene {
  public:
-  Game(app& wnd) : _wnd(wnd), renderer_(wnd) {}
+  scene(app& wnd) : _wnd(wnd) {}
 
-  Game(Game const&) = delete;
-  Game& operator=(Game const&) = delete;
+  scene(scene const&) = delete;
+  scene& operator=(scene const&) = delete;
 
   void tick();
 
@@ -20,7 +20,6 @@ class Game {
 
  private:
   app& _wnd;
-  renderer renderer_;
 };
 
 #endif  // GAME_H
