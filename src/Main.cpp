@@ -39,7 +39,8 @@ auto main(int, char**) -> int {
   if (!create_device_d3d(h_wnd)) {
     cleanup_device_d3d();
     UnregisterClassW(wc.lpszClassName, wc.hInstance);
-    return 1;
+
+    return EXIT_FAILURE;
   }
 
   // Show the window
@@ -148,7 +149,7 @@ auto main(int, char**) -> int {
   DestroyWindow(h_wnd);
   UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 // Helper functions
