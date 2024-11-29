@@ -42,9 +42,6 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created hWnd
   );
-
-  // Do the thing!
-  ShowWindow(h_wnd_, SW_SHOWDEFAULT);
 }
 
 app::~app() { DestroyWindow(h_wnd_); }
