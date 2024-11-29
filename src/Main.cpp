@@ -24,20 +24,12 @@ auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
                      LPARAM l_param) -> LRESULT;
 
 auto main(int, char**) -> int {
+  const HINSTANCE h_instance = GetModuleHandle(nullptr);
   // Create application window
   ImGui_ImplWin32_EnableDpiAwareness();
-  const WNDCLASSEXW wc = {sizeof(wc),
-                          CS_CLASSDC,
-                          wnd_proc,
-                          0L,
-                          0L,
-                          GetModuleHandle(nullptr),
-                          nullptr,
-                          nullptr,
-                          nullptr,
-                          nullptr,
-                          L"ImGui Example",
-                          nullptr};
+  const WNDCLASSEXW wc = {sizeof(wc), CS_CLASSDC, wnd_proc,    0L,
+                          0L,         h_instance, nullptr,     nullptr,
+                          nullptr,    nullptr,    L"DXEngine", nullptr};
   RegisterClassExW(&wc);
   const HWND h_wnd = ::CreateWindowW(
       wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW,
