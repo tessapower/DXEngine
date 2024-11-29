@@ -16,8 +16,8 @@ ID3D11RenderTargetView* g_main_render_target_view = nullptr;
 }  // namespace
 
 // Forward declarations of helper functions
-auto create_device_d_3d(HWND h_wnd) -> bool;
-auto cleanup_device_d_3d() -> void;
+auto create_device_d3d(HWND h_wnd) -> bool;
+auto cleanup_device_d3d() -> void;
 auto create_render_target() -> void;
 auto cleanup_render_target() -> void;
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
@@ -44,8 +44,8 @@ auto main(int, char**) -> int {
       100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
   // Initialize Direct3D
-  if (!create_device_d_3d(h_wnd)) {
-    cleanup_device_d_3d();
+  if (!create_device_d3d(h_wnd)) {
+    cleanup_device_d3d();
     UnregisterClassW(wc.lpszClassName, wc.hInstance);
     return 1;
   }
@@ -152,7 +152,7 @@ auto main(int, char**) -> int {
   ImGui_ImplWin32_Shutdown();
   ImGui::DestroyContext();
 
-  cleanup_device_d_3d();
+  cleanup_device_d3d();
   DestroyWindow(h_wnd);
   UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
@@ -160,7 +160,7 @@ auto main(int, char**) -> int {
 }
 
 // Helper functions
-auto create_device_d_3d(const HWND h_wnd) -> bool {
+auto create_device_d3d(const HWND h_wnd) -> bool {
   // Setup swap chain
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
@@ -201,7 +201,7 @@ auto create_device_d_3d(const HWND h_wnd) -> bool {
   return true;
 }
 
-auto cleanup_device_d_3d() -> void {
+auto cleanup_device_d3d() -> void {
   cleanup_render_target();
   if (g_p_swap_chain) {
     g_p_swap_chain->Release();
