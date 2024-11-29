@@ -31,9 +31,9 @@ auto main(int, char**) -> int {
                           0L,         h_instance, nullptr,     nullptr,
                           nullptr,    nullptr,    L"DXEngine", nullptr};
   RegisterClassExW(&wc);
-  const HWND h_wnd = ::CreateWindowW(
-      wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW,
-      100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+  const HWND h_wnd =
+      CreateWindowW(wc.lpszClassName, L"DX Engine", WS_OVERLAPPEDWINDOW, 10, 10,
+                    1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
   // Initialize Direct3D
   if (!create_device_d3d(h_wnd)) {
