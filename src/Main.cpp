@@ -146,7 +146,7 @@ auto WINAPI wnd_proc(const HWND h_wnd, const UINT msg, const WPARAM w_param,
       g_resize_height = static_cast<UINT>(HIWORD(l_param));
       return 0;
     case WM_SYSCOMMAND:
-      if ((w_param & 0xfff0) == SC_KEYMENU)  // Disable ALT application menu
+      //if ((w_param & 0xfff0) == SC_KEYMENU)  // Disable ALT application menu
         return 0;
       break;
     case WM_DESTROY:
