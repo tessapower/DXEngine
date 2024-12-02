@@ -1,37 +1,23 @@
+#include "stdafx.h"
 #include <d3d11.h>
 #include <tchar.h>
 
+#include "app.h"
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
+#include "renderer.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
                      LPARAM l_param) -> LRESULT;
 
 auto main(int, char**) -> int {
-  const HINSTANCE h_instance = GetModuleHandle(nullptr);
-  // Create application window
-  ImGui_ImplWin32_EnableDpiAwareness();
-  const WNDCLASSEXW wc = {sizeof(wc), CS_CLASSDC, wnd_proc,    0L,
-                          0L,         h_instance, nullptr,     nullptr,
-                          nullptr,    nullptr,    L"DXEngine", nullptr};
-  RegisterClassExW(&wc);
-  const HWND h_wnd =
-      CreateWindowW(wc.lpszClassName, L"DX Engine", WS_OVERLAPPEDWINDOW, 10, 10,
-                    1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
-
-  // Initialize Direct3D
-  if (!create_device_d3d(h_wnd)) {
-    cleanup_device_d3d();
-    UnregisterClassW(wc.lpszClassName, wc.hInstance);
-
-    return EXIT_FAILURE;
-  }
+  // Create a window
+  const app app(1280, 800, L"DX Engine");
 
   // Show the window
-  ShowWindow(h_wnd, SW_SHOWDEFAULT);
-  UpdateWindow(h_wnd);
+  app.show();
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
@@ -47,7 +33,7 @@ auto main(int, char**) -> int {
   ImGui::StyleColorsDark();
 
   // Setup Platform/Renderer backends
-  ImGui_ImplWin32_Init(h_wnd);
+  ImGui_ImplWin32_Init(app.h_wnd());
   ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
 
   // Our state
@@ -130,10 +116,6 @@ auto main(int, char**) -> int {
   ImGui_ImplDX11_Shutdown();
   ImGui_ImplWin32_Shutdown();
   ImGui::DestroyContext();
-
-  cleanup_device_d3d();
-  DestroyWindow(h_wnd);
-  UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
   return EXIT_SUCCESS;
 }

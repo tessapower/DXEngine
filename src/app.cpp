@@ -1,10 +1,12 @@
+#include "stdafx.h"
 #include "app.h"
 
 #include <cassert>
+#include <imgui_impl_win32.h>
 #include <sstream>
 
 #include "message_map.h"
-#include "resource.h"
+#include "renderer.h"
 
 static message_map messages;
 app::window_class app::window_class::wc_;
@@ -75,9 +77,22 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created hWnd
   );
+
+  // Initialize Direct3D
+  if (!create_device_d3d(h_wnd_)) {
+    cleanup_device_d3d();
+    UnregisterClassW(reinterpret_cast<LPCWSTR>(window_class::class_name()),
+                     window_class::h_instance());
+
+    // TODO: throw some exception
+  }
 }
 
-app::~app() { DestroyWindow(h_wnd_); }
+app::~app() {
+  cleanup_device_d3d();
+  DestroyWindow(h_wnd_);
+  UnregisterClassW(window_class::class_name(), window_class::h_instance());
+}
 
 LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
                                        const WPARAM w_param,

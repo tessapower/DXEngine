@@ -1,6 +1,8 @@
 ﻿#ifndef APP_H
 #define APP_H
 
+#include <d3d11.h>
+
 #include "stdafx.h"
 
 #include "engine_exception.h"
