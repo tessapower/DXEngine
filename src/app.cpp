@@ -121,7 +121,7 @@ LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
 LRESULT CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
                                        const WPARAM w_param,
                                        const LPARAM l_param) noexcept {
-  // Get a pointer to the Window associated with the given hWnd
+  // Get a pointer to the window associated with the given h_wnd
   const auto p_window =
       reinterpret_cast<app *>(GetWindowLongPtrA(h_wnd, GWLP_USERDATA));
 
