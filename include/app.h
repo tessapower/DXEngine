@@ -23,12 +23,15 @@ class app {
     SetWindowTextW(h_wnd_, title);
   }
 
+  [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
+
   // static callback setup messages
   static LRESULT CALLBACK handle_msg_setup(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                         LPARAM l_param) noexcept;
   // static callback handle messages
   static LRESULT CALLBACK handle_msg_thunk(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                          LPARAM l_param) noexcept;
+
   class exception : public engine_exception {
   public:
     exception(const LPCWSTR file, const int line, const HRESULT hr)
@@ -74,8 +77,6 @@ class app {
   static LRESULT handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param, LPARAM l_param) noexcept;
 
   friend class renderer;
-
-  [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
   int width_;
   int height_;
