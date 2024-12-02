@@ -7,6 +7,39 @@
 #include "resource.h"
 
 static message_map messages;
+app::window_class app::window_class::wc_;
+
+//----------------------------------------------------------- Window Class --//
+
+app::window_class::window_class() noexcept
+    : h_instance_(GetModuleHandle(nullptr)) {
+  // Create application window
+
+  // TODO: figure out if this can be done elsewhere?
+  ImGui_ImplWin32_EnableDpiAwareness();
+
+  WNDCLASSEXW wc = {};
+  wc.cbSize = sizeof(wc);
+  wc.style = CS_CLASSDC;
+  wc.lpfnWndProc = &handle_msg_setup;
+  wc.hInstance = h_instance();
+  wc.lpszClassName = class_name();
+
+  // Register WindowClass
+  const ATOM atom = RegisterClassExW(&wc);
+  assert(atom != 0);
+}
+
+app::window_class::~window_class() {
+  // Deregister WindowClass
+  UnregisterClassW(class_name(), h_instance());
+}
+
+HINSTANCE app::window_class::h_instance() noexcept {
+  return wc_.h_instance_;
+}
+
+LPCWSTR app::window_class::class_name() noexcept { return name; }
 
 //-------------------------------------------------------------------- App --//
 app::app(const int width, const int height, const LPCWSTR window_title) {
@@ -37,8 +70,8 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
       viewport.bottom - viewport.top,          // Client height
       nullptr,                                 // Handle to parent window
       nullptr,                                 // Handle to menu
-      window_class::h_instance(),              // Handle to instance to
-                                               // be associated with window
+      window_class::h_instance(),              // Handle to instance to be
+                                               // associated with window
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created hWnd
   );
@@ -103,59 +136,6 @@ LRESULT app::handle_msg(const HWND h_wnd, const UINT u_msg,
 
   return 0;
 }
-
-//----------------------------------------------------------- Window Class --//
-app::window_class *app::window_class::window_class_;
-
-app::window_class::window_class() noexcept
-    : h_instance_(GetModuleHandle(nullptr)) {
-  // Create a new instance of an extended window class
-  const WNDCLASSEXW win_class = {
-      sizeof(WNDCLASSEX),  // Size of structure in bytes
-      // Class styles, repaint on vertical & horizontal resize,
-      // each window has its own device context
-      CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
-      &handle_msg_setup,   // Pointer to initial setup window proc
-      0,                   // # extra bytes following window class structure
-      0,                   // # extra bytes following window instance
-      h_instance_,         // Handle to instance with window proc for class
-      static_cast<HICON>(  // Handle to window icon
-          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON,
-                     // TODO: replace hardcoded icon sizes
-                     32, 32, LR_DEFAULTCOLOR)),
-      LoadCursor(h_instance_, IDC_ARROW),  // Handle to class cursor, standard
-      reinterpret_cast<HBRUSH>(2),         // Handle to class background brush
-      nullptr,             // Pointer to resource name of class menu
-      name,                // Window class name
-      static_cast<HICON>(  // Handle to small icon
-          LoadImageA(h_instance_, MAKEINTRESOURCEA(IDI_ICON1), IMAGE_ICON, 16,
-                     16, LR_DEFAULTCOLOR))};
-
-  // Register WindowClass
-  const ATOM atom = RegisterClassExW(&win_class);
-  assert(atom != 0);
-}
-
-app::window_class::~window_class() {
-  // Deregister WindowClass
-  if (window_class_) {
-    UnregisterClassW(class_name(), h_instance());
-  }
-}
-
-app::window_class *app::window_class::instance() noexcept {
-  if (!window_class_) {
-    window_class_ = new window_class();
-  }
-
-  return window_class_;
-}
-
-HINSTANCE app::window_class::h_instance() noexcept {
-  return window_class_->h_instance_;
-}
-
-LPCWSTR app::window_class::class_name() noexcept { return name; }
 
 //-------------------------------------------------------------- Exception --//
 

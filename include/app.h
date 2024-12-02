@@ -57,23 +57,18 @@ class app {
   // later by the Win32 API.
   class window_class {
    public:
-    static window_class* instance() noexcept;
+    static const wchar_t* class_name() noexcept;
     static HINSTANCE h_instance() noexcept;
-    static LPCWSTR class_name() noexcept;
 
-   private:
-    static window_class* window_class_;
-    static constexpr auto name = L"DXEngine Window";
-    HINSTANCE h_instance_;
+    window_class(const window_class&) = delete;
+    window_class& operator=(const window_class&) = delete;
 
    private:
     window_class() noexcept;
     ~window_class();
-  public:
-    window_class(window_class& other) = delete;
-    void operator=(const window_class&) = delete;
-    window_class(window_class&& other) = delete;
-    void operator=(const window_class&&) = delete;
+    static constexpr auto name = L"DXEngine Window";
+    static window_class wc_;
+    HINSTANCE h_instance_;
   };
 
   static LRESULT handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param, LPARAM l_param) noexcept;
