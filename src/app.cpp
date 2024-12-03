@@ -1,12 +1,13 @@
-#include "stdafx.h"
 #include "app.h"
 
-#include <cassert>
 #include <imgui_impl_win32.h>
+
+#include <cassert>
 #include <sstream>
 
 #include "message_map.h"
 #include "renderer.h"
+#include "stdafx.h"
 
 static message_map messages;
 app::window_class app::window_class::wc_;
@@ -37,9 +38,7 @@ app::window_class::~window_class() {
   UnregisterClassW(class_name(), h_instance());
 }
 
-HINSTANCE app::window_class::h_instance() noexcept {
-  return wc_.h_instance_;
-}
+HINSTANCE app::window_class::h_instance() noexcept { return wc_.h_instance_; }
 
 LPCWSTR app::window_class::class_name() noexcept { return name; }
 
@@ -62,18 +61,18 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 
   // Create an extended window with all the bells and whistles
   h_wnd_ = CreateWindowExW(
-      WS_EX_OVERLAPPEDWINDOW,                  // Extended window style(s)
-      window_class::class_name(),              // Window class name
-      window_title,                            // Window name in title bar
+      WS_EX_OVERLAPPEDWINDOW,      // Extended window style(s)
+      window_class::class_name(),  // Window class name
+      window_title,                // Window name in title bar
       WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,  // Window style
-      CW_USEDEFAULT,                           // x position of window
-      CW_USEDEFAULT,                           // y position of window
-      viewport.right - viewport.left,          // Client width
-      viewport.bottom - viewport.top,          // Client height
-      nullptr,                                 // Handle to parent window
-      nullptr,                                 // Handle to menu
-      window_class::h_instance(),              // Handle to instance to be
-                                               // associated with window
+      CW_USEDEFAULT,                   // x position of window
+      CW_USEDEFAULT,                   // y position of window
+      viewport.right - viewport.left,  // Client width
+      viewport.bottom - viewport.top,  // Client height
+      nullptr,                         // Handle to parent window
+      nullptr,                         // Handle to menu
+      window_class::h_instance(),      // Handle to instance to be
+                                       // associated with window
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created hWnd
   );
@@ -179,7 +178,8 @@ auto app::exception::error_string() const noexcept -> std::wstring {
   return translate_error_code(hr_);
 }
 
-auto app::exception::translate_error_code(const HRESULT hr) noexcept -> std::wstring {
+auto app::exception::translate_error_code(const HRESULT hr) noexcept
+    -> std::wstring {
   wchar_t *msg_buf = nullptr;
   DWORD msg_len = FormatMessageW(
       FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
