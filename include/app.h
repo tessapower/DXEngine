@@ -8,6 +8,12 @@
 #include "engine_exception.h"
 
 class app {
+  int width_;
+  int height_;
+  HWND h_wnd_;
+
+  friend class renderer;
+
  public:
   explicit app(int width = 800, int height = 600, LPCWSTR window_title = L"");
   app(const app&) = delete;
@@ -77,12 +83,6 @@ class app {
   };
 
   static LRESULT handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param, LPARAM l_param) noexcept;
-
-  friend class renderer;
-
-  int width_;
-  int height_;
-  HWND h_wnd_;
 };
 
 #endif  // APP_H
