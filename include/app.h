@@ -2,10 +2,18 @@
 #define APP_H
 
 #include <d3d11.h>
+#include <imgui_impl_win32.h>
 
 #include "stdafx.h"
-
 #include "engine_exception.h"
+
+// Forward declarations of helper functions
+auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
+                     LPARAM l_param) -> LRESULT;
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern auto ImGui_ImplWin32_WndProcHandler(HWND h_wnd, UINT msg, WPARAM w_param,
+                                           LPARAM l_param) -> LRESULT;
 
 class app {
   int width_;

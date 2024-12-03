@@ -8,10 +8,6 @@
 #include "imgui_impl_win32.h"
 #include "renderer.h"
 
-// Forward declarations of helper functions
-auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
-                     LPARAM l_param) -> LRESULT;
-
 auto main(int, char**) -> int {
   // Create a window
   const app app(1280, 800, L"DX Engine");
@@ -118,43 +114,4 @@ auto main(int, char**) -> int {
   ImGui::DestroyContext();
 
   return EXIT_SUCCESS;
-}
-
-// Helper functions
-
-// Forward declare message handler from imgui_impl_win32.cpp
-extern auto ImGui_ImplWin32_WndProcHandler(HWND h_wnd, UINT msg, WPARAM w_param,
-                                           LPARAM l_param) -> LRESULT;
-
-// Win32 message handler
-// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if
-// dear imgui wants to use your inputs.
-// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your
-// main application, or clear/overwrite your copy of the mouse data.
-// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to
-// your main application, or clear/overwrite your copy of the keyboard data.
-// Generally you may always pass all inputs to dear imgui, and hide them from
-// your application based on those two flags.
-auto WINAPI wnd_proc(const HWND h_wnd, const UINT msg, const WPARAM w_param,
-                     const LPARAM l_param) -> LRESULT {
-  if (ImGui_ImplWin32_WndProcHandler(h_wnd, msg, w_param, l_param)) return true;
-
-  switch (msg) {
-    case WM_SIZE:
-      if (w_param == SIZE_MINIMIZED) return 0;
-      g_resize_width = static_cast<UINT>(LOWORD(l_param));  // Queue resize
-      g_resize_height = static_cast<UINT>(HIWORD(l_param));
-      return 0;
-    case WM_SYSCOMMAND:
-      //if ((w_param & 0xfff0) == SC_KEYMENU)  // Disable ALT application menu
-        return 0;
-      break;
-    case WM_DESTROY:
-      PostQuitMessage(0);
-      return 0;
-    default:
-      break;
-  }
-
-  return DefWindowProcW(h_wnd, msg, w_param, l_param);
 }
