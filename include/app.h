@@ -47,7 +47,11 @@ class app {
   // static callback handle messages
   static LRESULT CALLBACK handle_msg_thunk(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                          LPARAM l_param) noexcept;
+private:
+  static auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
+                           LPARAM l_param) noexcept -> LRESULT;
 
+public:
   class exception : public engine_exception {
   public:
     exception(const LPCWSTR file, const int line, const HRESULT hr)
@@ -89,8 +93,6 @@ class app {
     static window_class wc_;
     HINSTANCE h_instance_;
   };
-
-  static LRESULT handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param, LPARAM l_param) noexcept;
 };
 
 #endif  // APP_H
