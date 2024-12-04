@@ -47,7 +47,7 @@ private:
                            LPARAM l_param) noexcept -> LRESULT;
 
 public:
-  class exception : public engine_exception {
+  class exception final : public engine_exception {
   public:
     exception(const LPCWSTR file, const int line, const HRESULT hr)
         : engine_exception(file, line), hr_(hr) {
