@@ -80,6 +80,8 @@ public:
 
     window_class(const window_class&) = delete;
     window_class& operator=(const window_class&) = delete;
+    window_class(const window_class&&) = delete;
+    window_class& operator=(const window_class&&) = delete;
 
    private:
     window_class() noexcept;
