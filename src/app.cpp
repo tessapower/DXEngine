@@ -156,6 +156,15 @@ LRESULT app::handle_msg(const HWND h_wnd, const UINT u_msg,
   return 0;
 }
 
+auto app::show() const noexcept -> void {
+  ShowWindow(h_wnd_, SW_SHOWDEFAULT);
+  UpdateWindow(h_wnd_);
+}
+
+auto app::set_title(const LPCWSTR title) const noexcept -> void {
+  SetWindowTextW(h_wnd_, title);
+}
+
 //-------------------------------------------------------------- Exception --//
 
 auto app::exception::what() const noexcept -> const char * {

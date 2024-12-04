@@ -30,14 +30,9 @@ class app {
   app& operator=(const app&&) = delete;
   ~app();
 
-  auto show() const noexcept -> void {
-    ShowWindow(h_wnd_, SW_SHOWDEFAULT);
-    UpdateWindow(h_wnd_);
-  }
+  auto show() const noexcept -> void;
 
-  void set_title(const LPCWSTR title) const noexcept {
-    SetWindowTextW(h_wnd_, title);
-  }
+  auto set_title(const LPCWSTR title) const noexcept -> void;
 
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
