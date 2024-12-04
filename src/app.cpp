@@ -143,11 +143,13 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
       if (w_param == SIZE_MINIMIZED) return 0;
       g_resize_width = static_cast<UINT>(LOWORD(l_param));  // Queue resize
       g_resize_height = static_cast<UINT>(HIWORD(l_param));
+
       return 0;
     case WM_DESTROY:
     case WM_CLOSE:
     case WM_QUIT:
       PostQuitMessage(0);
+
       return 0;
     case WM_KILLFOCUS:
       break;
