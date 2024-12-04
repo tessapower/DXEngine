@@ -37,11 +37,11 @@ class app {
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
   // static callback setup messages
-  static LRESULT CALLBACK handle_msg_setup(HWND h_wnd, UINT u_msg, WPARAM w_param,
-                                        LPARAM l_param) noexcept;
+  static auto CALLBACK handle_msg_setup(HWND h_wnd, UINT u_msg, WPARAM w_param,
+                                        LPARAM l_param) noexcept -> LRESULT;
   // static callback handle messages
-  static LRESULT CALLBACK handle_msg_thunk(HWND h_wnd, UINT u_msg, WPARAM w_param,
-                                         LPARAM l_param) noexcept;
+  static auto CALLBACK handle_msg_thunk(HWND h_wnd, UINT u_msg, WPARAM w_param,
+                                        LPARAM l_param) noexcept -> LRESULT;
 private:
   static auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
                            LPARAM l_param) noexcept -> LRESULT;
@@ -75,8 +75,8 @@ public:
   // later by the Win32 API.
   class window_class {
    public:
-    static const wchar_t* class_name() noexcept;
-    static HINSTANCE h_instance() noexcept;
+    static auto class_name() noexcept -> const wchar_t*;
+    static auto h_instance() noexcept -> HINSTANCE;
 
     window_class(const window_class&) = delete;
     window_class& operator=(const window_class&) = delete;

@@ -38,9 +38,11 @@ app::window_class::~window_class() {
   UnregisterClassW(class_name(), h_instance());
 }
 
-HINSTANCE app::window_class::h_instance() noexcept { return wc_.h_instance_; }
+auto app::window_class::h_instance() noexcept -> HINSTANCE {
+  return wc_.h_instance_;
+}
 
-LPCWSTR app::window_class::class_name() noexcept { return name; }
+auto app::window_class::class_name() noexcept -> LPCWSTR { return name; }
 
 //-------------------------------------------------------------------- App --//
 app::app(const int width, const int height, const LPCWSTR window_title) {
@@ -93,9 +95,9 @@ app::~app() {
   UnregisterClassW(window_class::class_name(), window_class::h_instance());
 }
 
-LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
-                                       const WPARAM w_param,
-                                       const LPARAM l_param) noexcept {
+auto CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
+                                    const WPARAM w_param,
+                                    const LPARAM l_param) noexcept -> LRESULT {
   OutputDebugStringW(messages(u_msg, w_param, l_param).c_str());
 
   if (u_msg == WM_NCCREATE) {
@@ -117,9 +119,9 @@ LRESULT CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
   return DefWindowProcW(h_wnd, u_msg, w_param, l_param);
 }
 
-LRESULT CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
-                                       const WPARAM w_param,
-                                       const LPARAM l_param) noexcept {
+auto CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
+                                    const WPARAM w_param,
+                                    const LPARAM l_param) noexcept -> LRESULT {
   // Get a pointer to the window associated with the given h_wnd
   const auto p_window =
       reinterpret_cast<app *>(GetWindowLongPtrA(h_wnd, GWLP_USERDATA));
@@ -129,8 +131,8 @@ LRESULT CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
 }
 
 // Called every time we dispatch a message from the queue
-LRESULT app::handle_msg(const HWND h_wnd, const UINT u_msg,
-                        const WPARAM w_param, const LPARAM l_param) noexcept {
+auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
+                     const LPARAM l_param) noexcept -> LRESULT {
   OutputDebugStringW(messages(u_msg, w_param, l_param).c_str());
 
   if (ImGui_ImplWin32_WndProcHandler(h_wnd, u_msg, w_param, l_param))
