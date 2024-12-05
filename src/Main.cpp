@@ -1,12 +1,8 @@
 #include "stdafx.h"
-#include <d3d11.h>
-#include <tchar.h>
-
 #include "app.h"
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
-#include "renderer.h"
 
 auto main(int, char**) -> int {
   // Create a window

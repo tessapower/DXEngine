@@ -2,10 +2,10 @@
 #define APP_H
 
 #include <d3d11.h>
-#include <imgui_impl_win32.h>
+#include <imgui.h>
 
-#include "stdafx.h"
 #include "engine_exception.h"
+#include "stdafx.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
@@ -47,13 +47,14 @@ class app {
   // static callback handle messages
   static auto CALLBACK handle_msg_thunk(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                         LPARAM l_param) noexcept -> LRESULT;
-private:
-  static auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
-                           LPARAM l_param) noexcept -> LRESULT;
 
-public:
+ private:
+  static auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
+                                LPARAM l_param) noexcept -> LRESULT;
+
+ public:
   class exception final : public engine_exception {
-  public:
+   public:
     exception(const LPCWSTR file, const int line, const HRESULT hr)
         : engine_exception(file, line), hr_(hr) {
       type_ = L"App Exception";
@@ -70,7 +71,7 @@ public:
     static auto translate_error_code(HRESULT hr) noexcept -> std::wstring;
 
    private:
-   HRESULT hr_;
+    HRESULT hr_;
   };
 
  private:
