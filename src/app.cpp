@@ -9,7 +9,9 @@
 #include "renderer.h"
 #include "stdafx.h"
 
-static message_map messages;
+namespace {
+message_map messages;
+}  // namespace
 app::window_class app::window_class::wc_;
 
 //----------------------------------------------------------- Window Class --//
