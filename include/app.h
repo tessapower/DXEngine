@@ -34,6 +34,8 @@ class app {
 
   auto set_title(const LPCWSTR title) const noexcept -> void;
 
+  auto update(bool& done) const noexcept -> void;
+
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
   // static callback setup messages
