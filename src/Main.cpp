@@ -12,28 +12,8 @@ auto main(int, char**) -> int {
   // Create a window
   const app app(1280, 800, L"DX Engine");
 
-  // Show the window
-  app.show();
-
-  // Setup Dear ImGui context
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
-  (void)io;
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-  // Setup Dear ImGui style
-  ImGui::StyleColorsDark();
-
-  // Setup Platform/Renderer backends
-  ImGui_ImplWin32_Init(app.h_wnd());
-  ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
-
-  // Our state
-  auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  // Initialize the GUI/Window
+  app.init_gui();
 
   // Main loop
   bool done = false;
