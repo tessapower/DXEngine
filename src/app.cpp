@@ -79,7 +79,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
       window_class::h_instance(),      // Handle to instance to be
                                        // associated with window
       this  // Pass a pointer to this instance of Window and
-            // be able to access it from the created hWnd
+            // be able to access it from the created h_wnd
   );
 
   // Initialize Direct3D
