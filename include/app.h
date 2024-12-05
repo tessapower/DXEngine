@@ -30,7 +30,7 @@ class app {
   app& operator=(const app&&) = delete;
   ~app();
 
-  auto show() const noexcept -> void;
+  auto init_gui() const noexcept -> void;
 
   auto set_title(const LPCWSTR title) const noexcept -> void;
 

@@ -1,5 +1,6 @@
 #include "app.h"
 
+#include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
 #include <cassert>
@@ -162,9 +163,26 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
   return 0;
 }
 
-auto app::show() const noexcept -> void {
+auto app::init_gui() const noexcept -> void {
   ShowWindow(h_wnd_, SW_SHOWDEFAULT);
   UpdateWindow(h_wnd_);
+
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO &io = ImGui::GetIO();
+  (void)io;
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplWin32_Init(h_wnd_);  // Must be called after ImGui context created!
+  ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
 }
 
 auto app::set_title(const LPCWSTR title) const noexcept -> void {
