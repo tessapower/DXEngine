@@ -53,7 +53,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 
   // Create a rectangle to specify the client area dimension
   RECT viewport{0, 0, width_, height_};
-  HRESULT hr =
+  [[maybe_unused]] HRESULT hr =
       AdjustWindowRectEx(&viewport,  // Rect to use
                                      // Window style(s)
                          WS_OVERLAPPED,
