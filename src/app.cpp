@@ -244,6 +244,24 @@ auto app::update(bool &done) const noexcept -> void {
   }
 }
 
+auto app::render() const noexcept -> void {
+  // Rendering
+  ImGui::Render();
+  const float clear_color_with_alpha[4] = {
+      clear_color_.x * clear_color_.w, clear_color_.y * clear_color_.w,
+      clear_color_.z * clear_color_.w, clear_color_.w};
+  g_pd3d_device_context->OMSetRenderTargets(1, &g_main_render_target_view,
+                                            nullptr);
+  g_pd3d_device_context->ClearRenderTargetView(g_main_render_target_view,
+                                               clear_color_with_alpha);
+  ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+  // Present
+  const HRESULT hr = g_p_swap_chain->Present(1, 0);  // Present with vsync
+  // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+  g_swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
+}
+
 //-------------------------------------------------------------- Exception --//
 
 auto app::exception::what() const noexcept -> const char * {

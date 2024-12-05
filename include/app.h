@@ -19,6 +19,7 @@ class app {
   int width_;
   int height_;
   HWND h_wnd_;
+  ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   friend class renderer;
 
@@ -35,6 +36,8 @@ class app {
   auto set_title(const LPCWSTR title) const noexcept -> void;
 
   auto update(bool& done) const noexcept -> void;
+
+  auto render() const noexcept -> void;
 
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 

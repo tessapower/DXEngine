@@ -19,20 +19,7 @@ auto main(int, char**) -> int {
   bool done = false;
   while (!done) {
     app.update(done);
-    ImGui::Render();
-    const float clear_color_with_alpha[4] = {
-        clear_color.x * clear_color.w, clear_color.y * clear_color.w,
-        clear_color.z * clear_color.w, clear_color.w};
-    g_pd3d_device_context->OMSetRenderTargets(1, &g_main_render_target_view,
-                                              nullptr);
-    g_pd3d_device_context->ClearRenderTargetView(g_main_render_target_view,
-                                                 clear_color_with_alpha);
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-    // Present
-    const HRESULT hr = g_p_swap_chain->Present(1, 0);  // Present with vsync
-    // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-    g_swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
+    app.render();
   }
 
   // Cleanup
