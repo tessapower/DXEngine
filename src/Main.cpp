@@ -18,60 +18,7 @@ auto main(int, char**) -> int {
   // Main loop
   bool done = false;
   while (!done) {
-    // Poll and handle messages (inputs, window resize, etc.)
-    // See the WndProc() function below for our to dispatch events to the Win32
-    // backend.
-    MSG msg;
-    while (PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-      if (msg.message == WM_QUIT) done = true;
-    }
-    if (done) break;
-
-    // Handle window being minimized or screen locked
-    if (g_swap_chain_occluded &&
-        g_p_swap_chain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
-      Sleep(10);
-      continue;
-    }
-    g_swap_chain_occluded = false;
-
-    // Handle window resize (we don't resize directly in the WM_SIZE handler)
-    if (g_resize_width != 0 && g_resize_height != 0) {
-      cleanup_render_target();
-      g_p_swap_chain->ResizeBuffers(0, g_resize_width, g_resize_height,
-                                    DXGI_FORMAT_UNKNOWN, 0);
-      g_resize_width = g_resize_height = 0;
-      create_render_target();
-    }
-
-    // Start the Dear ImGui frame
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-
-    {
-      ImGui::Begin("Shaders");
-      ImGui::Text(
-          "This window will display a list of shaders that \nare dynamically "
-          "loaded and applied to the scene.");
-
-      ImGui::Spacing();
-
-      ImGui::ColorEdit3(
-          "clear color",
-          reinterpret_cast<float*>(
-              &clear_color));  // Edit 3 floats representing a color
-
-      ImGui::Spacing();
-
-      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-                  1000.0f / io.Framerate, io.Framerate);
-      ImGui::End();
-    }
-
-    // Rendering
+    app.update(done);
     ImGui::Render();
     const float clear_color_with_alpha[4] = {
         clear_color.x * clear_color.w, clear_color.y * clear_color.w,
