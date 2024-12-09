@@ -93,6 +93,12 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 }
 
 app::~app() {
+  OutputDebugStringW(L"Initiating app shutdown sequence...\n");
+
+  ImGui_ImplDX11_Shutdown();
+  ImGui_ImplWin32_Shutdown();
+  ImGui::DestroyContext();
+
   cleanup_device_d3d();
   DestroyWindow(h_wnd_);
   UnregisterClassW(window_class::class_name(), window_class::h_instance());
