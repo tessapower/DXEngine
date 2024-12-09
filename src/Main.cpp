@@ -18,10 +18,5 @@ auto main(int, char**) -> int {
     app.render();
   }
 
-  // Cleanup
-  ImGui_ImplDX11_Shutdown();
-  ImGui_ImplWin32_Shutdown();
-  ImGui::DestroyContext();
-
   return EXIT_SUCCESS;
 }
