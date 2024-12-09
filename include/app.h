@@ -1,11 +1,11 @@
 ﻿#ifndef APP_H
 #define APP_H
 
+#include "stdafx.h"
 #include <d3d11.h>
 #include <imgui.h>
 
 #include "engine_exception.h"
-#include "stdafx.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
