@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "app.h"
 
 #include <imgui_impl_dx11.h>
@@ -8,7 +9,6 @@
 
 #include "message_map.h"
 #include "renderer.h"
-#include "stdafx.h"
 
 namespace {
 message_map messages;
