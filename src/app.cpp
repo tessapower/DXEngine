@@ -214,6 +214,7 @@ auto app::update(bool &done) const noexcept -> void {
   }
 
   // Start the Dear ImGui frame
+  // TODO: put into renderer::new_frame() function
   ImGui_ImplDX11_NewFrame();
   ImGui_ImplWin32_NewFrame();
 
@@ -223,6 +224,7 @@ auto app::update(bool &done) const noexcept -> void {
 auto app::render() const noexcept -> void {
   gui_.render();
 
+  // TODO: put into renderer::present() function
   // Present
   const HRESULT hr = g_p_swap_chain->Present(1, 0);  // Present with vsync
   // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync

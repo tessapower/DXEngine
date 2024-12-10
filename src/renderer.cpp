@@ -69,6 +69,8 @@ auto cleanup_device_d3d() -> void {
 
 auto create_render_target() -> void {
   ID3D11Texture2D* p_back_buffer;
+
+  // TODO: handle unsuccessful render target creation
   g_p_swap_chain->GetBuffer(0, IID_PPV_ARGS(&p_back_buffer));
   g_p_d3d_device->CreateRenderTargetView(p_back_buffer, nullptr,
                                         &g_main_render_target_view);
