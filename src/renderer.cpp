@@ -7,7 +7,7 @@
 
 auto init_backends(const HWND h_wnd) -> void {
   ImGui_ImplWin32_Init(h_wnd);
-  ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
+  ImGui_ImplDX11_Init(g_p_d3d_device, g_p_d3d_device_context);
 }
 
 auto create_device_d3d(const HWND h_wnd) -> bool {
@@ -38,13 +38,13 @@ auto create_device_d3d(const HWND h_wnd) -> bool {
   HRESULT res = D3D11CreateDeviceAndSwapChain(
       nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, create_device_flags,
       feature_level_array, 2, D3D11_SDK_VERSION, &sd, &g_p_swap_chain,
-      &g_pd3d_device, &feature_level, &g_pd3d_device_context);
+      &g_p_d3d_device, &feature_level, &g_p_d3d_device_context);
   if (res == DXGI_ERROR_UNSUPPORTED)  // Try high-performance WARP software
                                       // driver if hardware is not available.
     res = D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
         feature_level_array, 2, D3D11_SDK_VERSION, &sd, &g_p_swap_chain,
-        &g_pd3d_device, &feature_level, &g_pd3d_device_context);
+        &g_p_d3d_device, &feature_level, &g_p_d3d_device_context);
   if (res != S_OK) return false;
 
   create_render_target();
@@ -57,20 +57,20 @@ auto cleanup_device_d3d() -> void {
     g_p_swap_chain->Release();
     g_p_swap_chain = nullptr;
   }
-  if (g_pd3d_device_context) {
-    g_pd3d_device_context->Release();
-    g_pd3d_device_context = nullptr;
+  if (g_p_d3d_device_context) {
+    g_p_d3d_device_context->Release();
+    g_p_d3d_device_context = nullptr;
   }
-  if (g_pd3d_device) {
-    g_pd3d_device->Release();
-    g_pd3d_device = nullptr;
+  if (g_p_d3d_device) {
+    g_p_d3d_device->Release();
+    g_p_d3d_device = nullptr;
   }
 }
 
 auto create_render_target() -> void {
   ID3D11Texture2D* p_back_buffer;
   g_p_swap_chain->GetBuffer(0, IID_PPV_ARGS(&p_back_buffer));
-  g_pd3d_device->CreateRenderTargetView(p_back_buffer, nullptr,
+  g_p_d3d_device->CreateRenderTargetView(p_back_buffer, nullptr,
                                         &g_main_render_target_view);
   p_back_buffer->Release();
 }
