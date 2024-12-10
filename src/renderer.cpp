@@ -1,7 +1,14 @@
 #include "stdafx.h"
 #include "renderer.h"
 
+#include <imgui_impl_dx11.h>
+
 #include "imgui_impl_win32.h"
+
+auto init_backends(const HWND h_wnd) -> void {
+  ImGui_ImplWin32_Init(h_wnd);
+  ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
+}
 
 auto create_device_d3d(const HWND h_wnd) -> bool {
   // Setup swap chain
@@ -73,4 +80,9 @@ auto cleanup_render_target() -> void {
     g_main_render_target_view->Release();
     g_main_render_target_view = nullptr;
   }
+}
+
+auto shut_down() -> void {
+  ImGui_ImplDX11_Shutdown();
+  ImGui_ImplWin32_Shutdown();
 }
