@@ -98,7 +98,6 @@ app::~app() {
 
   shut_down();
 
-  cleanup_device_d3d();
   DestroyWindow(h_wnd_);
   UnregisterClassW(window_class::class_name(), window_class::h_instance());
 }
