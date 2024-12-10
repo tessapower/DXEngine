@@ -6,6 +6,7 @@
 #include <imgui.h>
 
 #include "engine_exception.h"
+#include "gui.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
@@ -19,6 +20,7 @@ class app {
   int width_;
   int height_;
   HWND h_wnd_;
+  gui gui_;
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
  public:
@@ -29,7 +31,7 @@ class app {
   app& operator=(const app&&) = delete;
   ~app();
 
-  auto init_gui() const noexcept -> void;
+  auto init_gui() noexcept -> void;
 
   auto set_title(const LPCWSTR title) const noexcept -> void;
 
