@@ -87,4 +87,6 @@ auto cleanup_render_target() -> void {
 auto shut_down() -> void {
   ImGui_ImplDX11_Shutdown();
   ImGui_ImplWin32_Shutdown();
+
+  cleanup_device_d3d();
 }
