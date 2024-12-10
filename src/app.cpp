@@ -95,8 +95,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 app::~app() {
   OutputDebugStringW(L"Initiating app shutdown sequence...\n");
 
-  ImGui_ImplDX11_Shutdown();
-  ImGui_ImplWin32_Shutdown();
+  shut_down();
   ImGui::DestroyContext();
 
   cleanup_device_d3d();
@@ -187,8 +186,7 @@ auto app::init_gui() const noexcept -> void {
   ImGui::StyleColorsDark();
 
   // Setup Platform/Renderer backends
-  ImGui_ImplWin32_Init(h_wnd_);  // Must be called after ImGui context created!
-  ImGui_ImplDX11_Init(g_pd3d_device, g_pd3d_device_context);
+  init_backends(h_wnd_);
 }
 
 auto app::set_title(const LPCWSTR title) const noexcept -> void {

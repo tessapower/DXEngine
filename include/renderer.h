@@ -14,5 +14,7 @@ auto create_device_d3d(HWND h_wnd) -> bool;
 auto cleanup_device_d3d() -> void;
 auto create_render_target() -> void;
 auto cleanup_render_target() -> void;
+auto init_backends(HWND h_wnd) -> void;
+auto shut_down() -> void;
 
 #endif // RENDERER_H
