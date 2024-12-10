@@ -21,8 +21,6 @@ class app {
   HWND h_wnd_;
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-  friend class renderer;
-
  public:
   explicit app(int width = 800, int height = 600, LPCWSTR window_title = L"");
   app(const app&) = delete;
