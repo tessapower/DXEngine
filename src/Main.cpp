@@ -6,7 +6,7 @@
 
 auto main(int, char**) -> int {
   // Create a window
-  const app app(1280, 800, L"DX Engine");
+  app app(1280, 800, L"DX Engine");
 
   // Initialize the GUI/Window
   app.init_gui();

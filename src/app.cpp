@@ -7,6 +7,7 @@
 #include <cassert>
 #include <sstream>
 
+#include "gui.h"
 #include "message_map.h"
 #include "renderer.h"
 
@@ -96,7 +97,6 @@ app::~app() {
   OutputDebugStringW(L"Initiating app shutdown sequence...\n");
 
   shut_down();
-  ImGui::DestroyContext();
 
   cleanup_device_d3d();
   DestroyWindow(h_wnd_);
@@ -168,22 +168,13 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
   return 0;
 }
 
-auto app::init_gui() const noexcept -> void {
+auto app::init_gui() noexcept -> void {
   ShowWindow(h_wnd_, SW_SHOWDEFAULT);
   UpdateWindow(h_wnd_);
 
-  // Setup Dear ImGui context
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO &io = ImGui::GetIO();
-  (void)io;
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-  // Setup Dear ImGui style
-  ImGui::StyleColorsDark();
+  // TODO: figure out actual viewport size
+  gui_.init();
+  gui_.set_viewport(width_, height_);
 
   // Setup Platform/Renderer backends
   init_backends(h_wnd_);
@@ -225,40 +216,12 @@ auto app::update(bool &done) const noexcept -> void {
   // Start the Dear ImGui frame
   ImGui_ImplDX11_NewFrame();
   ImGui_ImplWin32_NewFrame();
-  ImGui::NewFrame();
 
-  {
-    ImGui::Begin("Shaders");
-    ImGui::Text(
-        "This window will display a list of shaders that \nare dynamically "
-        "loaded and applied to the scene.");
-
-    ImGui::Spacing();
-
-    ImGui::ColorEdit3(
-        "clear color",
-        const_cast<float *>(reinterpret_cast<const float *>(
-            &clear_color_)));  // Edit 3 floats representing a color
-
-    ImGui::Spacing();
-
-    // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-    //            1000.0f / io.Framerate, io.Framerate);
-    ImGui::End();
-  }
+  gui_.update();
 }
 
 auto app::render() const noexcept -> void {
-  // Rendering
-  ImGui::Render();
-  const float clear_color_with_alpha[4] = {
-      clear_color_.x * clear_color_.w, clear_color_.y * clear_color_.w,
-      clear_color_.z * clear_color_.w, clear_color_.w};
-  g_pd3d_device_context->OMSetRenderTargets(1, &g_main_render_target_view,
-                                            nullptr);
-  g_pd3d_device_context->ClearRenderTargetView(g_main_render_target_view,
-                                               clear_color_with_alpha);
-  ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+  gui_.render();
 
   // Present
   const HRESULT hr = g_p_swap_chain->Present(1, 0);  // Present with vsync
