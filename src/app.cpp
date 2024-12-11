@@ -83,6 +83,8 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
             // be able to access it from the created h_wnd
   );
 
+  gui_.set_viewport(width, height);
+
   // Initialize Direct3D
   if (!renderer_.create_device_d3d(h_wnd_)) {
     renderer_.cleanup_device_d3d();
