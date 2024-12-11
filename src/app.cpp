@@ -84,8 +84,8 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   );
 
   // Initialize Direct3D
-  if (!create_device_d3d(h_wnd_)) {
-    cleanup_device_d3d();
+  if (!renderer_.create_device_d3d(h_wnd_)) {
+    renderer_.cleanup_device_d3d();
     UnregisterClassW(reinterpret_cast<LPCWSTR>(window_class::class_name()),
                      window_class::h_instance());
 
@@ -96,7 +96,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 app::~app() {
   OutputDebugStringW(L"Initiating app shutdown sequence...\n");
 
-  shut_down();
+  renderer_.shut_down();
 
   DestroyWindow(h_wnd_);
   UnregisterClassW(window_class::class_name(), window_class::h_instance());
@@ -148,8 +148,9 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
   switch (u_msg) {
     case WM_SIZE:
       if (w_param == SIZE_MINIMIZED) return 0;
-      g_resize_width = static_cast<UINT>(LOWORD(l_param));  // Queue resize
-      g_resize_height = static_cast<UINT>(HIWORD(l_param));
+      renderer_.resize_width =
+          static_cast<UINT>(LOWORD(l_param));  // Queue resize
+      renderer_.resize_height = static_cast<UINT>(HIWORD(l_param));
 
       return 0;
     case WM_DESTROY:
@@ -176,17 +177,15 @@ auto app::init_gui() noexcept -> void {
   gui_.set_viewport(width_, height_);
 
   // Setup Platform/Renderer backends
-  init_backends(h_wnd_);
+  renderer_.init_backends(h_wnd_);
 }
 
 auto app::set_title(const LPCWSTR title) const noexcept -> void {
   SetWindowTextW(h_wnd_, title);
 }
 
-auto app::update(bool &done) const noexcept -> void {
+auto app::update(bool &done) noexcept -> void {
   // Poll and handle messages (inputs, window resize, etc.)
-  // See the WndProc() function below for our to dispatch events to the Win32
-  // backend.
   MSG msg;
   while (PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
     TranslateMessage(&msg);
@@ -196,20 +195,24 @@ auto app::update(bool &done) const noexcept -> void {
   if (done) return;
 
   // Handle window being minimized or screen locked
-  if (g_swap_chain_occluded &&
-      g_p_swap_chain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
+  if (renderer_.swap_chain_occluded &&
+      renderer_.p_swap_chain->Present(0, DXGI_PRESENT_TEST) ==
+          DXGI_STATUS_OCCLUDED) {
     Sleep(10);
+
     return;
   }
-  g_swap_chain_occluded = false;
+  renderer_.swap_chain_occluded = false;
 
+  // TODO: use result of window resize
   // Handle window resize (we don't resize directly in the WM_SIZE handler)
-  if (g_resize_width != 0 && g_resize_height != 0) {
-    cleanup_render_target();
-    g_p_swap_chain->ResizeBuffers(0, g_resize_width, g_resize_height,
+  if (renderer_.resize_width != 0 && renderer_.resize_height != 0) {
+    renderer_.cleanup_render_target();
+    renderer_.p_swap_chain->ResizeBuffers(0, renderer_.resize_width,
+                                            renderer_.resize_height,
                                   DXGI_FORMAT_UNKNOWN, 0);
-    g_resize_width = g_resize_height = 0;
-    create_render_target();
+    renderer_.resize_width = renderer_.resize_height = 0;
+    renderer_.create_render_target();
   }
 
   // Start the Dear ImGui frame
@@ -220,14 +223,15 @@ auto app::update(bool &done) const noexcept -> void {
   gui_.update();
 }
 
-auto app::render() const noexcept -> void {
-  gui_.render();
+auto app::render() noexcept -> void {
+  gui_.render(renderer_);
 
   // TODO: put into renderer::present() function
   // Present
-  const HRESULT hr = g_p_swap_chain->Present(1, 0);  // Present with vsync
+  const HRESULT hr =
+      renderer_.p_swap_chain->Present(1, 0);  // Present with vsync
   // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-  g_swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
+  renderer_.swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
 }
 
 //-------------------------------------------------------------- Exception --//

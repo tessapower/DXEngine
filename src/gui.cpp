@@ -58,17 +58,18 @@ auto gui::update() const noexcept -> void {
   }
 }
 
-auto gui::render() const noexcept -> void {
-  // Rendering
+/**
+ * @brief Render the GUI to the window using the given <code>renderer</code>.
+ */
+auto gui::render(renderer const& r) const noexcept -> void {
+  // End the ImGui frame.
   ImGui::Render();
 
   const float clear_color_with_alpha[4] = {
       clear_color_.x * clear_color_.w, clear_color_.y * clear_color_.w,
       clear_color_.z * clear_color_.w, clear_color_.w};
 
-  g_pd3d_device_context->OMSetRenderTargets(1, &g_main_render_target_view,
-                                            nullptr);
-  g_pd3d_device_context->ClearRenderTargetView(g_main_render_target_view,
-                                               clear_color_with_alpha);
+  r.clear_back_buffer(clear_color_with_alpha);
+
   ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

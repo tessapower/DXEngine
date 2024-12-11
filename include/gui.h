@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <imgui.h>
+#include "renderer.h"
 
 class gui {
   int width_;
@@ -22,7 +23,7 @@ class gui {
 
   auto update() const noexcept -> void;
 
-  auto render() const noexcept -> void;
+  auto render(renderer const& r) const noexcept -> void;
 
 };
 
