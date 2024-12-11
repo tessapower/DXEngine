@@ -33,6 +33,7 @@ auto gui::init() -> void {
 }
 
 auto gui::update() const noexcept -> void {
+  // Start a new ImGui frame, which ends when we call ImGui::Render().
   ImGui::NewFrame();
 
   {
