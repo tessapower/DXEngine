@@ -20,6 +20,8 @@ class app {
   int width_;
   int height_;
   HWND h_wnd_;
+  // TODO: Change gui and renderer to unique pointers so we can defer
+  // initialization until after we create the HWND object
   gui gui_;
   renderer renderer_;
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
