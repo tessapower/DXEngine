@@ -14,7 +14,9 @@ class gui {
  public:
   explicit gui(int viewport_width = 0, int viewport_height = 0);
   gui(const gui&) = delete;
+  gui& operator=(const gui&) = delete;
   gui(const gui&&) = delete;
+  gui& operator=(const gui&&) = delete;
   ~gui();
 
   auto init() -> void;

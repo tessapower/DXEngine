@@ -36,9 +36,9 @@ class app {
 
   auto set_title(const LPCWSTR title) const noexcept -> void;
 
-  auto update(bool& done) const noexcept -> void;
+  auto update(bool& done) noexcept -> void;
 
-  auto render() const noexcept -> void;
+  auto render() noexcept -> void;
 
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
@@ -50,7 +50,7 @@ class app {
                                         LPARAM l_param) noexcept -> LRESULT;
 
  private:
-  static auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
+  auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                 LPARAM l_param) noexcept -> LRESULT;
 
  public:
