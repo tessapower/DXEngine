@@ -9,8 +9,22 @@ auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept -> v
   p_device_context->OMSetRenderTargets(1, &main_render_target_view,
                                          nullptr);
   p_device_context->ClearRenderTargetView(main_render_target_view, clear_color);
+} 
+//----------------------------------------------------------- hr_exception --//
+
+renderer::hr_exception::hr_exception(
+    const LPCWSTR file, const int line, const HRESULT hr) noexcept
+    : exception(file, line), hr_(hr) {
+
+  type_ = L"Renderer Exception";
 }
 
+auto renderer::hr_exception::what() const noexcept -> const char*
+{
+  return "Renderer Exception";
+}
+
+//--------------------------------------------------------------- renderer --//
 
 auto renderer::create_device_d3d(const HWND h_wnd) -> bool {
   // Set up swap chain descriptor
