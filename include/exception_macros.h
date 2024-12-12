@@ -3,7 +3,7 @@
 
 #include "app.h"
 
-#define WIDE(x) L##x
+#define WIDE(x) L#x
 #define W_FILE WIDE(__FILE__)
 
 #define LAST_ERROR app::exception(W_FILE, __LINE__, GetLastError())
