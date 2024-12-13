@@ -2,6 +2,7 @@
 
 #include <imgui_impl_dx11.h>
 
+#include "exception_macros.h"
 #include "imgui_impl_win32.h"
 #include "stdafx.h"
 
@@ -26,7 +27,7 @@ auto renderer::hr_exception::what() const noexcept -> const char*
 
 //--------------------------------------------------------------- renderer --//
 
-auto renderer::create_device_d3d(const HWND h_wnd) -> bool {
+auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   // Set up swap chain descriptor
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));  // Ensure that the memory is zeroed out
@@ -55,33 +56,31 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> bool {
       D3D_FEATURE_LEVEL_10_0,
   };
 
-  HRESULT res = D3D11CreateDeviceAndSwapChain(
+  HRESULT hr;
+
+  RNDR_THROW(D3D11CreateDeviceAndSwapChain(
       nullptr,  // Pointer to the video adapter to use when creating a device.
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
-      nullptr, // Handle to software driver binary
-      create_device_flags, //
-      feature_level_array,       // Feature Levels
-      2, // Feature Levels
-      D3D11_SDK_VERSION, // SDK Version
-      &sd,
-      &p_swap_chain,
-      &p_device,
+      nullptr,                   // Handle to software driver binary
+      create_device_flags,
+      feature_level_array,  // Feature Levels
+      2,                    // Feature Levels
+      D3D11_SDK_VERSION,    // SDK Version
+      &sd, &p_swap_chain, &p_device,
       &feature_level,  // Returns the feature level of the device created
-      &p_device_context);
+      &p_device_context));
 
   // Try high-performance WARP software driver if hardware is not available.
-  if (res == DXGI_ERROR_UNSUPPORTED) {
-    res = D3D11CreateDeviceAndSwapChain(
+  if (hr == DXGI_ERROR_UNSUPPORTED) {
+    RNDR_THROW(D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
         feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain,
-        &p_device, &feature_level, &p_device_context);
+        &p_device, &feature_level, &p_device_context));
   }
-
-  if (res != S_OK) return false;
 
   create_render_target();
 
-  return true;
+  return hr;
 }
 
 auto renderer::init_backends(const HWND h_wnd) const -> void {
@@ -110,12 +109,12 @@ auto renderer::create_render_target() -> void {
   ID3D11Resource* p_back_buffer;
 
   // TODO: handle unsuccessful render target creation
-  p_swap_chain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&p_back_buffer));
-  p_device->CreateRenderTargetView(
-    p_back_buffer,
-    nullptr,
-    &main_render_target_view
-  );
+  HRESULT hr;
+
+  RNDR_THROW(p_swap_chain->GetBuffer(0, __uuidof(ID3D11Resource),
+                                     reinterpret_cast<void**>(&p_back_buffer)));
+  RNDR_THROW(p_device->CreateRenderTargetView(p_back_buffer, nullptr,
+                                              &main_render_target_view));
 
   p_back_buffer->Release();
 }

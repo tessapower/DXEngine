@@ -48,7 +48,7 @@ class device_removed_exception final : public hr_exception {
 
   auto clear_back_buffer(const float clear_color[4]) const noexcept-> void;
 
-  auto create_device_d3d(HWND h_wnd) -> bool;
+  auto create_device_d3d(HWND h_wnd) -> HRESULT;
 
   auto init_backends(HWND h_wnd) -> void;
 
