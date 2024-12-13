@@ -187,9 +187,10 @@ auto app::set_title(const LPCWSTR title) const noexcept -> void {
   SetWindowTextW(h_wnd_, title);
 }
 
-auto app::update(bool &done) noexcept -> void {
+auto app::update(bool &done) -> void {
   // Poll and handle messages (inputs, window resize, etc.)
   MSG msg;
+  
   while (PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);

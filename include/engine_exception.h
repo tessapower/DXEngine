@@ -34,7 +34,7 @@ class engine_exception : public std::exception {
     return what_buffer_.c_str();
   }
 
-  auto type() const noexcept -> LPCWSTR { return type_; }
+  virtual auto type() const noexcept -> LPCWSTR { return type_; }
 
   auto source() const noexcept -> std::wstring {
     std::wostringstream oss;
