@@ -38,7 +38,7 @@ class app {
 
   auto set_title(const LPCWSTR title) const noexcept -> void;
 
-  auto update(bool& done) noexcept -> void;
+  auto update(bool& done) -> void;
 
   auto render() noexcept -> void;
 

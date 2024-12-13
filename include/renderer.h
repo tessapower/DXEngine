@@ -50,7 +50,7 @@ class device_removed_exception final : public hr_exception {
 
   auto create_device_d3d(HWND h_wnd) -> HRESULT;
 
-  auto init_backends(HWND h_wnd) -> void;
+  auto init_backends(HWND h_wnd) const -> void;
 
   auto create_render_target() -> void;
 
