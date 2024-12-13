@@ -6,11 +6,6 @@
 #include "imgui_impl_win32.h"
 #include "stdafx.h"
 
-auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept -> void {
-  p_device_context->OMSetRenderTargets(1, &main_render_target_view,
-                                         nullptr);
-  p_device_context->ClearRenderTargetView(main_render_target_view, clear_color);
-} 
 //----------------------------------------------------------- hr_exception --//
 
 renderer::hr_exception::hr_exception(
@@ -27,6 +22,12 @@ auto renderer::hr_exception::what() const noexcept -> const char*
 
 //--------------------------------------------------------------- renderer --//
 
+auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
+    -> void {
+  p_device_context->OMSetRenderTargets(1, &main_render_target_view, nullptr);
+  p_device_context->ClearRenderTargetView(main_render_target_view, clear_color);
+}
+
 auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   // Set up swap chain descriptor
   DXGI_SWAP_CHAIN_DESC sd;
@@ -34,16 +35,16 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   sd.BufferCount = 2;           // Number of back buffers
   sd.BufferDesc.Width = 0;
   sd.BufferDesc.Height = 0;
-  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // Pixel channel layout
+  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // Pixel channel layout
   sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
   sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-  sd.BufferDesc.RefreshRate.Numerator = 0;         // Use existing refresh rate
-  sd.BufferDesc.RefreshRate.Denominator = 0;       // Use existing refresh rate
+  sd.BufferDesc.RefreshRate.Numerator = 0;    // Use existing refresh rate
+  sd.BufferDesc.RefreshRate.Denominator = 0;  // Use existing refresh rate
   sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   sd.OutputWindow = h_wnd;
-  sd.SampleDesc.Count = 1;      // Antialiasing i.e. nothing for now
-  sd.SampleDesc.Quality = 0;    // Antialiasing i.e. nothing for now
+  sd.SampleDesc.Count = 1;    // Antialiasing i.e. nothing for now
+  sd.SampleDesc.Quality = 0;  // Antialiasing i.e. nothing for now
   sd.Windowed = TRUE;
   sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;  // Effect used for presentation
 
