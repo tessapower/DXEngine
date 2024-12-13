@@ -7,6 +7,7 @@
 #include <cassert>
 #include <sstream>
 
+#include "exception_macros.h"
 #include "gui.h"
 #include "message_map.h"
 #include "renderer.h"
