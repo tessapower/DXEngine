@@ -86,12 +86,13 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   gui_.set_viewport(width, height);
 
   // Initialize Direct3D
-  if (!renderer_.create_device_d3d(h_wnd_)) {
+  if (renderer_.create_device_d3d(h_wnd_) != S_OK) {
     renderer_.cleanup_device_d3d();
     UnregisterClassW(reinterpret_cast<LPCWSTR>(window_class::class_name()),
                      window_class::h_instance());
 
     // TODO: throw some exception
+
   }
 }
 
@@ -210,9 +211,13 @@ auto app::update(bool &done) noexcept -> void {
   // Handle window resize (we don't resize directly in the WM_SIZE handler)
   if (renderer_.resize_width != 0 && renderer_.resize_height != 0) {
     renderer_.cleanup_render_target();
-    renderer_.p_swap_chain->ResizeBuffers(0, renderer_.resize_width,
-                                            renderer_.resize_height,
-                                  DXGI_FORMAT_UNKNOWN, 0);
+    HRESULT hr;
+    RNDR_THROW(renderer_.p_swap_chain->ResizeBuffers(
+      0,
+      renderer_.resize_width,
+      renderer_.resize_height,
+      DXGI_FORMAT_UNKNOWN, 0)
+    );
     renderer_.resize_width = renderer_.resize_height = 0;
     renderer_.create_render_target();
   }
