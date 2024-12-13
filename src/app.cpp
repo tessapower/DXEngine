@@ -251,9 +251,11 @@ auto app::exception::what() const noexcept -> const char * {
 
 auto app::exception::msg() const noexcept -> LPCWSTR {
   std::wostringstream oss;
-  oss << "[Error Code] " << error_code() << "\n"
+  oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
+      << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
       << "[Description] " << error_string() << "\n"
-      << source() << "\n";
+      << source();
+
   what_buffer_ = oss.str();
 
   return what_buffer_.c_str();
