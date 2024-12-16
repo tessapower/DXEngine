@@ -15,13 +15,31 @@ renderer::hr_exception::hr_exception(
   type_ = L"Renderer Exception";
 }
 
-auto renderer::hr_exception::what() const noexcept -> const char*
-{
+auto renderer::hr_exception::what() const noexcept -> const char* {
   return "Renderer Exception";
 }
 
-//--------------------------------------------------------------- renderer --//
+auto renderer::hr_exception::msg() const noexcept -> LPCWSTR {
+  std::wostringstream oss;
+  oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
+      << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
+      << "[Description] " << error_string() << "\n"
+      << source();
 
+  what_buffer_ = oss.str();
+
+  return what_buffer_.c_str();
+}
+
+auto renderer::hr_exception::error_code() const noexcept -> HRESULT {
+  return hr_;
+}
+
+auto renderer::hr_exception::error_string() const noexcept -> std::wstring {
+  return translate_error_code(hr_);
+}
+
+//--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {
   p_device_context->OMSetRenderTargets(1, &main_render_target_view, nullptr);
