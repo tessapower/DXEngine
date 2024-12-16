@@ -71,8 +71,6 @@ class app {
 
     auto error_string() const noexcept -> std::wstring;
 
-    static auto translate_error_code(HRESULT hr) noexcept -> std::wstring;
-
    private:
     HRESULT hr_;
   };

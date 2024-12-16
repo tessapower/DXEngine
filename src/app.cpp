@@ -266,20 +266,3 @@ auto app::exception::error_code() const noexcept -> HRESULT { return hr_; }
 auto app::exception::error_string() const noexcept -> std::wstring {
   return translate_error_code(hr_);
 }
-
-auto app::exception::translate_error_code(const HRESULT hr) noexcept
-    -> std::wstring {
-  wchar_t *msg_buf = nullptr;
-  DWORD msg_len = FormatMessageW(
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-          FORMAT_MESSAGE_IGNORE_INSERTS,
-      nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-      reinterpret_cast<LPWSTR>(&msg_buf), 0, nullptr);
-
-  if (msg_len == 0) return L"Unidentified error code";
-
-  std::wstring error_str = msg_buf;
-  LocalFree(msg_buf);
-
-  return error_str;
-}
