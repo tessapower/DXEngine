@@ -17,6 +17,9 @@ class renderer {
    public:
     hr_exception(LPCWSTR file, int line, HRESULT hr) noexcept;
     auto what() const noexcept -> const char* override;
+    auto msg() const noexcept -> LPCWSTR override;
+    auto error_code() const noexcept -> HRESULT;
+    auto error_string() const noexcept -> std::wstring;
 
     // TODO: add similar functions to app::exception
 
