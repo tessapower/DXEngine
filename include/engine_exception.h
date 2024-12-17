@@ -21,7 +21,7 @@ class engine_exception : public std::exception {
    * try {
    *   // ...
    * } * catch (const& engine_exception e) {
-   *   // "Engine Exception: Lorem ipsum sit dolor amet." 
+   *   // "Engine Exception: Lorem ipsum sit dolor amet."
    *   std::cerr << e.what() << ": " << e.msg() << "\n";
    * }
    * </example>
@@ -38,15 +38,12 @@ class engine_exception : public std::exception {
 
   auto source() const noexcept -> std::wstring {
     std::wostringstream oss;
-    oss << L"[File] " << file_
-        << L"\n"
-        << L"[Line #] " << line_;
+    oss << L"[File] " << file_ << L"\n" << L"[Line #] " << line_;
 
     return oss.str();
   }
 
-  static auto translate_error_code(const HRESULT hr) noexcept
-      -> std::wstring {
+  static auto translate_error_code(const HRESULT hr) noexcept -> std::wstring {
     wchar_t* msg_buf = nullptr;
     DWORD msg_len = FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |

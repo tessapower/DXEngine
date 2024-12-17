@@ -1,10 +1,12 @@
+#include "stdafx.h"
 #include "renderer.h"
 
 #include <imgui_impl_dx11.h>
+#include <d3dcompiler.h>
+#include <wrl.h>
 
 #include "exception_macros.h"
 #include "imgui_impl_win32.h"
-#include "stdafx.h"
 
 //----------------------------------------------------------- hr_exception --//
 
