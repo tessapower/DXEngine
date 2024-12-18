@@ -38,7 +38,7 @@ class renderer {
   bool swap_chain_occluded = false;
   UINT resize_width = 0;
   UINT resize_height = 0;
-  ID3D11RenderTargetView* main_render_target_view = nullptr;
+  ID3D11RenderTargetView* p_render_target_view = nullptr;
 
   renderer() = default;
   ~renderer() = default;
