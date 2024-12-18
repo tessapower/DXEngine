@@ -48,8 +48,8 @@ auto renderer::hr_exception::error_string() const noexcept -> std::wstring {
 //--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {
-  p_device_context->OMSetRenderTargets(1, &main_render_target_view, nullptr);
-  p_device_context->ClearRenderTargetView(main_render_target_view, clear_color);
+  p_device_context->OMSetRenderTargets(1, &p_render_target_view, nullptr);
+  p_device_context->ClearRenderTargetView(p_render_target_view, clear_color);
 }
 
 auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
@@ -139,15 +139,15 @@ auto renderer::create_render_target() -> void {
   RNDR_THROW(p_swap_chain->GetBuffer(0, __uuidof(ID3D11Resource),
                                      reinterpret_cast<void**>(&p_back_buffer)));
   RNDR_THROW(p_device->CreateRenderTargetView(p_back_buffer, nullptr,
-                                              &main_render_target_view));
+                                              &p_render_target_view));
 
   p_back_buffer->Release();
 }
 
 auto renderer::cleanup_render_target() -> void {
-  if (main_render_target_view) {
-    main_render_target_view->Release();
-    main_render_target_view = nullptr;
+  if (p_render_target_view) {
+    p_render_target_view->Release();
+    p_render_target_view = nullptr;
   }
 }
 
