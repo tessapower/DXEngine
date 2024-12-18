@@ -153,3 +153,46 @@ auto renderer::shut_down() -> void {
 
   cleanup_device_d3d();
 }
+
+auto renderer::test_draw() -> void {
+  namespace wrl = Microsoft::WRL;
+
+  struct vertex {
+    float x;
+    float y;
+  };
+
+  constexpr vertex vertices[] = {{0.0f, 0.5f}, {0.5f, -0.5f}, {-0.5f, -0.5f}};
+
+  wrl::ComPtr<ID3D11Buffer> p_vertex_buffer;
+
+  D3D11_BUFFER_DESC bd = {};
+  bd.Usage = D3D11_USAGE_DEFAULT;
+  bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+  bd.CPUAccessFlags = 0u;
+  bd.MiscFlags = 0u;
+  bd.StructureByteStride = sizeof(vertex);
+
+  HRESULT hr;
+  D3D11_SUBRESOURCE_DATA sd = {};
+  sd.pSysMem = vertices;
+  RNDR_THROW(p_device->CreateBuffer(&bd, &sd, &p_vertex_buffer));
+
+  // Bind vertex buffer to pipeline
+  constexpr UINT stride = sizeof(vertex);
+  constexpr UINT offset = 0u;
+  p_device_context->IASetVertexBuffers(0u, 1, &p_vertex_buffer, &stride, &offset);
+
+  // Create vertex shader
+  wrl::ComPtr<ID3D11VertexShader> p_vertex_shader;
+  wrl::ComPtr<ID3DBlob> p_blob;
+  RNDR_THROW(D3DReadFileToBlob(L"${SHADER_DIR}/vertex_shader.cso", &p_blob));
+  RNDR_THROW(p_device->CreateVertexShader(p_blob->GetBufferPointer(),
+                               p_blob->GetBufferSize(), nullptr,
+                               &p_vertex_shader));
+
+  // Bind vertex shader to pipeline
+  p_device_context->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
+
+  p_device_context->Draw(std::size(vertices), 0u);
+}

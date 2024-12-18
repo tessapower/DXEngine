@@ -235,6 +235,8 @@ auto app::update(bool &done) -> void {
 auto app::render() noexcept -> void {
   gui_.render(renderer_);
 
+  renderer_.test_draw();
+
   // TODO: put into renderer::present() function
   // Present
   const HRESULT hr =
