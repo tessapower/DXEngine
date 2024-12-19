@@ -15,11 +15,9 @@ class renderer {
 
   class hr_exception : public exception {
    public:
-    hr_exception(LPCWSTR file, int line, HRESULT hr) noexcept;
+    hr_exception(LPCSTR file, int line, HRESULT hr) noexcept;
     auto what() const noexcept -> const char* override;
-    auto msg() const noexcept -> LPCWSTR override;
     auto error_code() const noexcept -> HRESULT;
-    auto error_string() const noexcept -> std::wstring;
 
    private:
     HRESULT hr_;
@@ -28,7 +26,7 @@ class renderer {
   class device_removed_exception final : public hr_exception {
     using hr_exception::hr_exception;
 
-    std::wstring reason_;
+    std::string reason_;
   };
 
   ID3D11Device* p_device = nullptr;

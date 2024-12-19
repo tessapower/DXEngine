@@ -26,7 +26,7 @@ app::window_class::window_class() noexcept
   // TODO: figure out if this can be done elsewhere?
   ImGui_ImplWin32_EnableDpiAwareness();
 
-  WNDCLASSEXW wc = {};
+  WNDCLASSEX wc = {};
   wc.cbSize = sizeof(wc);
   wc.style = CS_CLASSDC;
   wc.lpfnWndProc = &handle_msg_setup;
@@ -34,23 +34,23 @@ app::window_class::window_class() noexcept
   wc.lpszClassName = class_name();
 
   // Register WindowClass
-  const ATOM atom = RegisterClassExW(&wc);
+  const ATOM atom = RegisterClassEx(&wc);
   assert(atom != 0);
 }
 
 app::window_class::~window_class() {
   // Deregister WindowClass
-  UnregisterClassW(class_name(), h_instance());
+  UnregisterClass(class_name(), h_instance());
 }
 
 auto app::window_class::h_instance() noexcept -> HINSTANCE {
   return wc_.h_instance_;
 }
 
-auto app::window_class::class_name() noexcept -> LPCWSTR { return name; }
+auto app::window_class::class_name() noexcept -> LPCSTR { return name; }
 
 //-------------------------------------------------------------------- App --//
-app::app(const int width, const int height, const LPCWSTR window_title) {
+app::app(const int width, const int height, const LPCSTR window_title) {
   width_ = width;
   height_ = height;
 
@@ -67,7 +67,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   // TODO: handle unsuccessful window creation
 
   // Create an extended window with all the bells and whistles
-  h_wnd_ = CreateWindowExW(
+  h_wnd_ = CreateWindowEx(
       WS_EX_OVERLAPPEDWINDOW,      // Extended window style(s)
       window_class::class_name(),  // Window class name
       window_title,                // Window name in title bar
@@ -89,7 +89,7 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
   // Initialize Direct3D
   if (renderer_.create_device_d3d(h_wnd_) != S_OK) {
     renderer_.cleanup_device_d3d();
-    UnregisterClassW(reinterpret_cast<LPCWSTR>(window_class::class_name()),
+    UnregisterClass(reinterpret_cast<LPCSTR>(window_class::class_name()),
                      window_class::h_instance());
 
     // TODO: throw some exception
@@ -98,18 +98,18 @@ app::app(const int width, const int height, const LPCWSTR window_title) {
 }
 
 app::~app() {
-  OutputDebugStringW(L"Initiating app shutdown sequence...\n");
+  OutputDebugString("Initiating app shutdown sequence...\n");
 
   renderer_.shut_down();
 
   DestroyWindow(h_wnd_);
-  UnregisterClassW(window_class::class_name(), window_class::h_instance());
+  UnregisterClass(window_class::class_name(), window_class::h_instance());
 }
 
 auto CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
                                     const WPARAM w_param,
                                     const LPARAM l_param) noexcept -> LRESULT {
-  OutputDebugStringW(messages(u_msg, w_param, l_param).c_str());
+  OutputDebugString(messages(u_msg, w_param, l_param).c_str());
 
   if (u_msg == WM_NCCREATE) {
     // Retrieve the lpParam we passed in when creating the hWnd
@@ -127,7 +127,7 @@ auto CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
     return p_window->handle_msg(h_wnd, u_msg, w_param, l_param);
   }
 
-  return DefWindowProcW(h_wnd, u_msg, w_param, l_param);
+  return DefWindowProc(h_wnd, u_msg, w_param, l_param);
 }
 
 auto CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
@@ -135,7 +135,7 @@ auto CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
                                     const LPARAM l_param) noexcept -> LRESULT {
   // Get a pointer to the window associated with the given h_wnd
   const auto p_window =
-      reinterpret_cast<app *>(GetWindowLongPtrA(h_wnd, GWLP_USERDATA));
+      reinterpret_cast<app *>(GetWindowLongPtr(h_wnd, GWLP_USERDATA));
 
   // Forward on the message to the Window instance
   return p_window->handle_msg(h_wnd, u_msg, w_param, l_param);
@@ -144,7 +144,7 @@ auto CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
 // Called every time we dispatch a message from the queue
 auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
                      const LPARAM l_param) noexcept -> LRESULT {
-  OutputDebugStringW(messages(u_msg, w_param, l_param).c_str());
+  OutputDebugString(messages(u_msg, w_param, l_param).c_str());
 
   if (ImGui_ImplWin32_WndProcHandler(h_wnd, u_msg, w_param, l_param))
     return true;
@@ -166,7 +166,7 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
     case WM_KILLFOCUS:
       break;
     default:
-      return DefWindowProcW(h_wnd, u_msg, w_param, l_param);
+      return DefWindowProc(h_wnd, u_msg, w_param, l_param);
   }
 
   return 0;
@@ -184,8 +184,8 @@ auto app::init_gui() noexcept -> void {
   renderer_.init_backends(h_wnd_);
 }
 
-auto app::set_title(const LPCWSTR title) const noexcept -> void {
-  SetWindowTextW(h_wnd_, title);
+auto app::set_title(const LPCSTR title) const noexcept -> void {
+  SetWindowText(h_wnd_, title);
 }
 
 auto app::update(bool &done) -> void {
@@ -245,26 +245,18 @@ auto app::render() noexcept -> void {
   renderer_.swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
 }
 
-//-------------------------------------------------------------- Exception --//
+//--------------------------------------------------------- app::exception --//
 
-auto app::exception::what() const noexcept -> const char * {
-  return "App Exception";
-}
+auto app::exception::error_code() const noexcept -> HRESULT { return hr_; }
 
-auto app::exception::msg() const noexcept -> LPCWSTR {
-  std::wostringstream oss;
+auto app::exception::what() const noexcept -> const char* {
+  std::ostringstream oss;
   oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
       << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
-      << "[Description] " << error_string() << "\n"
+      << "[Description] " << translate_error_code(hr_) << "\n"
       << source();
 
   what_buffer_ = oss.str();
 
   return what_buffer_.c_str();
-}
-
-auto app::exception::error_code() const noexcept -> HRESULT { return hr_; }
-
-auto app::exception::error_string() const noexcept -> std::wstring {
-  return translate_error_code(hr_);
 }

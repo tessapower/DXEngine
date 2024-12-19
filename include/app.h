@@ -27,7 +27,7 @@ class app {
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
  public:
-  explicit app(int width = 800, int height = 600, LPCWSTR window_title = L"");
+  explicit app(int width = 800, int height = 600, LPCSTR window_title = "");
   app(const app&) = delete;
   app& operator=(const app&) = delete;
   app(const app&&) = delete;
@@ -36,7 +36,7 @@ class app {
 
   auto init_gui() noexcept -> void;
 
-  auto set_title(const LPCWSTR title) const noexcept -> void;
+  auto set_title(const LPCSTR title) const noexcept -> void;
 
   auto update(bool& done) -> void;
 
@@ -58,18 +58,14 @@ class app {
  public:
   class exception final : public engine_exception {
    public:
-    exception(const LPCWSTR file, const int line, const HRESULT hr)
+    exception(const LPCSTR file, const int line, const HRESULT hr)
         : engine_exception(file, line), hr_(hr) {
-      type_ = L"App Exception";
+      type_ = "App Exception";
     }
-
-    auto what() const noexcept -> const char* override;
-
-    auto msg() const noexcept -> LPCWSTR override;
 
     auto error_code() const noexcept -> HRESULT;
 
-    auto error_string() const noexcept -> std::wstring;
+    auto what() const noexcept -> const char* override;
 
    private:
     HRESULT hr_;
@@ -82,7 +78,7 @@ class app {
   // later by the Win32 API.
   class window_class {
    public:
-    static auto class_name() noexcept -> const wchar_t*;
+    static auto class_name() noexcept -> const char*;
     static auto h_instance() noexcept -> HINSTANCE;
 
     window_class(const window_class&) = delete;
@@ -93,7 +89,7 @@ class app {
    private:
     window_class() noexcept;
     ~window_class();
-    static constexpr auto name = L"DXEngine Window";
+    static constexpr auto name = "DXEngine Window";
     static window_class wc_;
     HINSTANCE h_instance_;
   };
