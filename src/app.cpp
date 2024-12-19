@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "app.h"
 
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
+//#include <imgui_impl_dx11.h>
+//#include <imgui_impl_win32.h>
 
 #include <cassert>
 #include <sstream>
@@ -24,7 +24,8 @@ app::window_class::window_class() noexcept
   // Create application window
 
   // TODO: figure out if this can be done elsewhere?
-  ImGui_ImplWin32_EnableDpiAwareness();
+  // TODO: uncomment to reintroduce IMGUI
+  //ImGui_ImplWin32_EnableDpiAwareness();
 
   WNDCLASSEX wc = {};
   wc.cbSize = sizeof(wc);
@@ -177,11 +178,13 @@ auto app::init_gui() noexcept -> void {
   UpdateWindow(h_wnd_);
 
   // TODO: figure out actual viewport size
-  gui_.init();
-  gui_.set_viewport(width_, height_);
+
+  // TODO: uncomment to reintroduce IMGUI
+  //gui_.init();
+  //gui_.set_viewport(width_, height_);
 
   // Setup Platform/Renderer backends
-  renderer_.init_backends(h_wnd_);
+  //renderer_.init_backends(h_wnd_);
 }
 
 auto app::set_title(const LPCSTR title) const noexcept -> void {
@@ -226,16 +229,21 @@ auto app::update(bool &done) -> void {
 
   // Start the Dear ImGui frame
   // TODO: put into renderer::new_frame() function
-  ImGui_ImplDX11_NewFrame();
-  ImGui_ImplWin32_NewFrame();
 
-  gui_.update();
+  // TODO: uncomment to reintroduce IMGUI
+  //ImGui_ImplDX11_NewFrame();
+  //ImGui_ImplWin32_NewFrame();
+
+  // TODO: uncomment to reintroduce IMGUI
+  //gui_.update();
 }
 
 auto app::render() noexcept -> void {
-  gui_.render(renderer_);
+  // TODO: uncomment to reintroduce IMGUI
+  //gui_.render(renderer_);
 
-  renderer_.test_draw();
+  // TODO: uncomment to reintroduce IMGUI
+  //renderer_.test_draw();
 
   // TODO: put into renderer::present() function
   // Present

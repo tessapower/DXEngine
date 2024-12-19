@@ -144,8 +144,9 @@ auto renderer::cleanup_render_target() -> void {
 }
 
 auto renderer::shut_down() -> void {
-  ImGui_ImplDX11_Shutdown();
-  ImGui_ImplWin32_Shutdown();
+  // TODO: uncomment to reintroduce IMGUI
+  //ImGui_ImplDX11_Shutdown();
+  //ImGui_ImplWin32_Shutdown();
 
   cleanup_device_d3d();
 }
