@@ -10,7 +10,10 @@ gui::gui(const int viewport_width, const int viewport_height) {
   io_ = nullptr;
 }
 
-gui::~gui() { ImGui::DestroyContext(); }
+gui::~gui() {
+  // TODO: uncomment to reintroduce IMGUI
+  //ImGui::DestroyContext();
+}
 
 auto gui::set_viewport(const int width, const int height) noexcept -> void {
   width_ = width;
