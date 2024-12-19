@@ -5,7 +5,7 @@
 auto main(int, char**) -> int {
   try {
     // Create a window
-    app app(1280, 800, L"DX Engine");
+    app app(1280, 800, "DX Engine");
 
     // Initialize the GUI/Window
     app.init_gui();
@@ -18,17 +18,17 @@ auto main(int, char**) -> int {
     }
   } catch (const engine_exception& e) {
 
-    MessageBoxW(nullptr, e.msg(), e.type(), MB_OK | MB_ICONEXCLAMATION);
+    MessageBox(nullptr, e.what(), e.type(), MB_OK | MB_ICONEXCLAMATION);
 
     return EXIT_FAILURE;
   } catch (const std::exception& e) {
-    OutputDebugStringA(e.what());
-    MessageBoxA(nullptr, e.what(), "Standard Exception",
+    OutputDebugString(e.what());
+    MessageBox(nullptr, e.what(), "Standard Exception",
                MB_OK | MB_ICONEXCLAMATION);
 
     return EXIT_FAILURE;
   } catch (...) {
-    MessageBoxW(nullptr, L"No details available", L"Unknown Exception",
+    MessageBox(nullptr, "No details available", "Unknown Exception",
                MB_OK | MB_ICONEXCLAMATION);
 
     return EXIT_FAILURE;

@@ -15,22 +15,18 @@
 //----------------------------------------------------------- hr_exception --//
 
 renderer::hr_exception::hr_exception(
-    const LPCWSTR file, const int line, const HRESULT hr) noexcept
+    const LPCSTR file, const int line, const HRESULT hr) noexcept
     : exception(file, line), hr_(hr) {
 
-  type_ = L"Renderer Exception";
+  type_ = "Renderer Exception";
 }
 
 auto renderer::hr_exception::what() const noexcept -> const char* {
-  return "Renderer Exception";
-}
-
-auto renderer::hr_exception::msg() const noexcept -> LPCWSTR {
-  std::wostringstream oss;
+  std::ostringstream oss;
   oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
       << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
-      << "[Description] " << error_string() << "\n"
-      << source();
+      << source() << "\n"
+      << "[Description] " << translate_error_code(hr_) << "\n";
 
   what_buffer_ = oss.str();
 
@@ -39,10 +35,6 @@ auto renderer::hr_exception::msg() const noexcept -> LPCWSTR {
 
 auto renderer::hr_exception::error_code() const noexcept -> HRESULT {
   return hr_;
-}
-
-auto renderer::hr_exception::error_string() const noexcept -> std::wstring {
-  return translate_error_code(hr_);
 }
 
 //--------------------------------------------------------------- renderer --//
