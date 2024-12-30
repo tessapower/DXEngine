@@ -205,31 +205,6 @@ auto app::update(bool &done) -> void {
   }
   if (done) return;
 
-  // Handle window being minimized or screen locked
-  if (renderer_.swap_chain_occluded &&
-      renderer_.p_swap_chain->Present(0, DXGI_PRESENT_TEST) ==
-          DXGI_STATUS_OCCLUDED) {
-    Sleep(10);
-
-    return;
-  }
-  renderer_.swap_chain_occluded = false;
-
-  // TODO: use result of window resize
-  // Handle window resize (we don't resize directly in the WM_SIZE handler)
-  if (renderer_.resize_width != 0 && renderer_.resize_height != 0) {
-    renderer_.cleanup_render_target();
-    HRESULT hr;
-    RNDR_THROW(renderer_.p_swap_chain->ResizeBuffers(
-      0,
-      renderer_.resize_width,
-      renderer_.resize_height,
-      DXGI_FORMAT_UNKNOWN, 0)
-    );
-    renderer_.resize_width = renderer_.resize_height = 0;
-    renderer_.create_render_target();
-  }
-
   // Start the Dear ImGui frame
   // TODO: put into renderer::new_frame() function
 
@@ -248,12 +223,8 @@ auto app::render() noexcept -> void {
 
   p_renderer_->clear_back_buffer(clear_color_);
 
-  // TODO: put into renderer::present() function
   // Present
-  const HRESULT hr =
-      renderer_.p_swap_chain->Present(1, 0);  // Present with vsync
-  // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-  renderer_.swap_chain_occluded = (hr == DXGI_STATUS_OCCLUDED);
+  p_renderer_->end_frame();
 }
 
 //--------------------------------------------------------- app::exception --//

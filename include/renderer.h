@@ -29,15 +29,17 @@ class renderer {
     std::string reason_;
   };
 
-  ID3D11Device* p_device = nullptr;
-  IDXGISwapChain* p_swap_chain = nullptr;
-  ID3D11DeviceContext* p_device_context = nullptr;
+private:
+  ID3D11Device* p_device_ = nullptr;
+  IDXGISwapChain* p_swap_chain_ = nullptr;
+  ID3D11DeviceContext* p_device_context_ = nullptr;
 
-  bool swap_chain_occluded = false;
-  UINT resize_width = 0;
-  UINT resize_height = 0;
-  ID3D11RenderTargetView* p_render_target_view = nullptr;
+  bool swap_chain_occluded_ = false;
+  UINT resize_width_ = 0;
+  UINT resize_height_ = 0;
+  ID3D11RenderTargetView* p_render_target_view_ = nullptr;
 
+public:
   renderer() = default;
   ~renderer() = default;
   renderer(const renderer&) = delete;
@@ -47,15 +49,19 @@ class renderer {
 
   auto clear_back_buffer(const float clear_color[4]) const noexcept -> void;
 
+  auto end_frame() -> void;
+
+  auto resize(int width, int height) -> void;
+
   auto create_device_d3d(HWND h_wnd) -> HRESULT;
-
-  auto init_backends(HWND h_wnd) const -> void;
-
-  auto create_render_target() -> void;
 
   // TODO: use these in dtor?
 
   auto cleanup_device_d3d() -> void;
+
+  auto init_backends(HWND h_wnd) const -> void;
+
+  auto create_render_target() -> void;
 
   auto cleanup_render_target() -> void;
 

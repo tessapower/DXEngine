@@ -40,8 +40,44 @@ auto renderer::hr_exception::error_code() const noexcept -> HRESULT {
 //--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {
-  p_device_context->OMSetRenderTargets(1, &p_render_target_view, nullptr);
-  p_device_context->ClearRenderTargetView(p_render_target_view, clear_color);
+  p_device_context_->OMSetRenderTargets(1, &p_render_target_view_, nullptr);
+  p_device_context_->ClearRenderTargetView(p_render_target_view_, clear_color);
+}
+
+auto renderer::end_frame() -> void {
+  // Handle window being minimized or screen locked
+  if (swap_chain_occluded_ &&
+      p_swap_chain_->Present(0, DXGI_PRESENT_TEST) ==
+          DXGI_STATUS_OCCLUDED) {
+    Sleep(10);
+
+    return;
+  }
+
+  swap_chain_occluded_ = false;
+
+  // TODO: use result of window resize
+  // Handle window resize (we don't resize directly in the WM_SIZE handler)
+  if (resize_width_ != 0 && resize_height_ != 0) {
+    cleanup_render_target();
+    HRESULT hr;
+    RNDR_THROW(p_swap_chain_->ResizeBuffers(
+        0, resize_width_, resize_height_,
+        DXGI_FORMAT_UNKNOWN, 0));
+    resize_width_ = resize_height_ = 0;
+    create_render_target();
+  }
+
+  // Present the back buffer to the front buffer
+  const HRESULT hr =
+      p_swap_chain_->Present(1, 0);  // Present with vsync
+  // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+  swap_chain_occluded_ = (hr == DXGI_STATUS_OCCLUDED);
+}
+
+auto renderer::resize(const int width, const int height) -> void {
+  resize_width_ = width;
+  resize_height_ = height;
 }
 
 auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
@@ -102,22 +138,22 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
 auto renderer::init_backends(const HWND h_wnd) const -> void {
   ImGui_ImplWin32_Init(h_wnd);
-  ImGui_ImplDX11_Init(p_device, p_device_context);
+  ImGui_ImplDX11_Init(p_device_, p_device_context_);
 }
 
 auto renderer::cleanup_device_d3d() -> void {
   cleanup_render_target();
-  if (p_swap_chain) {
-    p_swap_chain->Release();
-    p_swap_chain = nullptr;
+  if (p_device_context_) {
+    p_device_context_->Release();
+    p_device_context_ = nullptr;
   }
-  if (p_device_context) {
-    p_device_context->Release();
-    p_device_context = nullptr;
+  if (p_swap_chain_) {
+    p_swap_chain_->Release();
+    p_swap_chain_ = nullptr;
   }
-  if (p_device) {
-    p_device->Release();
-    p_device = nullptr;
+  if (p_device_) {
+    p_device_->Release();
+    p_device_ = nullptr;
   }
 }
 
@@ -127,19 +163,24 @@ auto renderer::create_render_target() -> void {
 
   // TODO: handle unsuccessful render target creation
   HRESULT hr;
-
-  RNDR_THROW(p_swap_chain->GetBuffer(0, __uuidof(ID3D11Resource),
-                                     reinterpret_cast<void**>(&p_back_buffer)));
-  RNDR_THROW(p_device->CreateRenderTargetView(p_back_buffer, nullptr,
-                                              &p_render_target_view));
+  RNDR_THROW(p_swap_chain_->GetBuffer(
+    0,
+    __uuidof(ID3D11Resource),
+    reinterpret_cast<void**>(&p_back_buffer)
+  ));
+  RNDR_THROW(p_device_->CreateRenderTargetView(
+    p_back_buffer,
+    nullptr,
+    &p_render_target_view_
+  ));
 
   p_back_buffer->Release();
 }
 
 auto renderer::cleanup_render_target() -> void {
-  if (p_render_target_view) {
-    p_render_target_view->Release();
-    p_render_target_view = nullptr;
+  if (p_render_target_view_) {
+    p_render_target_view_->Release();
+    p_render_target_view_ = nullptr;
   }
 }
 
@@ -175,12 +216,12 @@ auto renderer::test_draw() -> void {
   HRESULT hr;
   D3D11_SUBRESOURCE_DATA sd = {};
   sd.pSysMem = vertices;
-  RNDR_THROW(p_device->CreateBuffer(&bd, &sd, &p_vertex_buffer));
+  RNDR_THROW(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
 
   // Bind vertex buffer to pipeline
   constexpr UINT stride = sizeof(vertex);
   constexpr UINT offset = 0u;
-  p_device_context->IASetVertexBuffers(0u, 1, p_vertex_buffer.GetAddressOf(), &stride, &offset);
+  p_device_context_->IASetVertexBuffers(0u, 1, p_vertex_buffer.GetAddressOf(), &stride, &offset);
 
   //--------------------------------------------------------- Pixel Shader --//
   // Create pixel shader
@@ -225,7 +266,7 @@ auto renderer::test_draw() -> void {
 
   // Create the pixel shader
   RNDR_THROW(
-    p_device->CreatePixelShader(
+    p_device_->CreatePixelShader(
       p_blob->GetBufferPointer(),
       p_blob->GetBufferSize(),
       nullptr,
@@ -234,7 +275,7 @@ auto renderer::test_draw() -> void {
   );
 
   // Bind pixel shader to pipeline
-  p_device_context->PSSetShader(p_pixel_shader.Get(), nullptr, 0u);
+  p_device_context_->PSSetShader(p_pixel_shader.Get(), nullptr, 0u);
 
   //-------------------------------------------------------- Vertex Shader --//
   wrl::ComPtr<ID3D11VertexShader> p_vertex_shader;
@@ -276,7 +317,7 @@ auto renderer::test_draw() -> void {
 
   // Create the vertex shader
   RNDR_THROW(
-    p_device->CreateVertexShader(
+    p_device_->CreateVertexShader(
       p_blob->GetBufferPointer(),
       p_blob->GetBufferSize(),
       nullptr,
@@ -285,7 +326,7 @@ auto renderer::test_draw() -> void {
   );
 
   // Bind vertex shader to pipeline
-  p_device_context->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
+  p_device_context_->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
   
   //--------------------------------------------------------- Input Layout --//
   // Input (vertex) layout (2D position only)
@@ -296,18 +337,18 @@ auto renderer::test_draw() -> void {
   };
 
   // Create input layout
-  RNDR_THROW(p_device->CreateInputLayout(
+  RNDR_THROW(p_device_->CreateInputLayout(
       ied, std::size(ied), p_blob->GetBufferPointer(), p_blob->GetBufferSize(),
       &p_input_layout));
 
   // Bind input layout to pipeline
-  p_device_context->IASetInputLayout(p_input_layout.Get());
+  p_device_context_->IASetInputLayout(p_input_layout.Get());
 
   // Bind the render target
-  p_device_context->OMSetRenderTargets(1u, &p_render_target_view, nullptr);
+  p_device_context_->OMSetRenderTargets(1u, &p_render_target_view_, nullptr);
 
   // Set primitive topology to triangle list
-  p_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Configure view port
   D3D11_VIEWPORT vp;
@@ -317,8 +358,8 @@ auto renderer::test_draw() -> void {
   vp.MaxDepth = 1;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
-  p_device_context->RSSetViewports(1u, &vp);
+  p_device_context_->RSSetViewports(1u, &vp);
 
   // Draw the thing
-  p_device_context->Draw(std::size(vertices), 0u);
+  p_device_context_->Draw(std::size(vertices), 0u);
 }
