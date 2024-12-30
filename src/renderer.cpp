@@ -86,7 +86,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   // Set up swap chain descriptor
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));  // Ensure that the memory is zeroed out
-  sd.BufferCount = 2;           // Number of back buffers
+  sd.BufferCount = 1;           // Number of back buffers
   sd.BufferDesc.Width = 0;
   sd.BufferDesc.Height = 0;
   sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // Pixel channel layout
