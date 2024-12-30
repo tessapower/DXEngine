@@ -21,9 +21,9 @@ class app {
   int width_;
   int height_;
   HWND h_wnd_;
-  ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
   std::unique_ptr<gui> p_gui_ = nullptr;
   std::unique_ptr<renderer> p_renderer_ = nullptr;
+  const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
 
  public:
   explicit app(int width = 800, int height = 600, LPCSTR window_title = "");
