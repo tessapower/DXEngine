@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <d3d11.h>
 #include <imgui.h>
+#include <memory>
 
 #include "engine_exception.h"
 #include "gui.h"
@@ -20,11 +21,9 @@ class app {
   int width_;
   int height_;
   HWND h_wnd_;
-  // TODO: Change gui and renderer to unique pointers so we can defer
-  // initialization until after we create the HWND object
-  gui gui_;
-  renderer renderer_;
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  std::unique_ptr<gui> p_gui_ = nullptr;
+  std::unique_ptr<renderer> p_renderer_ = nullptr;
 
  public:
   explicit app(int width = 800, int height = 600, LPCSTR window_title = "");

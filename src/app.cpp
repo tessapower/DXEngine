@@ -4,6 +4,7 @@
 //#include <imgui_impl_dx11.h>
 //#include <imgui_impl_win32.h>
 
+#include <memory>
 #include <cassert>
 #include <sstream>
 
@@ -85,13 +86,15 @@ app::app(const int width, const int height, const LPCSTR window_title) {
             // be able to access it from the created h_wnd
   );
 
-  gui_.set_viewport(width, height);
+  p_gui_ = std::make_unique<gui>(width, height);
 
   // Initialize Direct3D
-  if (renderer_.create_device_d3d(h_wnd_) != S_OK) {
-    renderer_.cleanup_device_d3d();
-    UnregisterClass(reinterpret_cast<LPCSTR>(window_class::class_name()),
-                     window_class::h_instance());
+  // Create unique pointer to renderer
+  p_renderer_ = std::make_unique<renderer>();
+
+  if (p_renderer_->create_device_d3d(h_wnd_) != S_OK) {
+    p_renderer_->cleanup_device_d3d();
+    UnregisterClass(window_class::class_name(), window_class::h_instance());
 
     // TODO: throw some exception
 
@@ -101,7 +104,7 @@ app::app(const int width, const int height, const LPCSTR window_title) {
 app::~app() {
   OutputDebugString("Initiating app shutdown sequence...\n");
 
-  renderer_.shut_down();
+  p_renderer_->shut_down();
 
   DestroyWindow(h_wnd_);
   UnregisterClass(window_class::class_name(), window_class::h_instance());
@@ -153,9 +156,9 @@ auto app::handle_msg(const HWND h_wnd, const UINT u_msg, const WPARAM w_param,
   switch (u_msg) {
     case WM_SIZE:
       if (w_param == SIZE_MINIMIZED) return 0;
-      renderer_.resize_width =
-          static_cast<UINT>(LOWORD(l_param));  // Queue resize
-      renderer_.resize_height = static_cast<UINT>(HIWORD(l_param));
+      // Queue resize
+      p_renderer_->resize(static_cast<UINT>(LOWORD(l_param)),
+                          static_cast<UINT>(HIWORD(l_param)));
 
       return 0;
     case WM_DESTROY:
@@ -184,7 +187,7 @@ auto app::init_gui() noexcept -> void {
   //gui_.set_viewport(width_, height_);
 
   // Setup Platform/Renderer backends
-  //renderer_.init_backends(h_wnd_);
+  //p_renderer_->init_backends(h_wnd_);
 }
 
 auto app::set_title(const LPCSTR title) const noexcept -> void {
@@ -241,9 +244,9 @@ auto app::update(bool &done) -> void {
 auto app::render() noexcept -> void {
   // TODO: uncomment to reintroduce IMGUI
   //gui_.render(renderer_);
+  //p_renderer_->test_draw();
 
-  // TODO: uncomment to reintroduce IMGUI
-  //renderer_.test_draw();
+  p_renderer_->clear_back_buffer(clear_color_);
 
   // TODO: put into renderer::present() function
   // Present
