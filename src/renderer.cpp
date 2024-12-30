@@ -81,6 +81,8 @@ auto renderer::resize(const int width, const int height) -> void {
 }
 
 auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
+  HRESULT hr;
+
   // Set up swap chain descriptor
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));  // Ensure that the memory is zeroed out
@@ -109,26 +111,27 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
       D3D_FEATURE_LEVEL_10_0,
   };
 
-  HRESULT hr;
-
   RNDR_THROW(D3D11CreateDeviceAndSwapChain(
-      nullptr,  // Pointer to the video adapter to use when creating a device.
+      nullptr,  // Pointer to the video adapter to use when creating a device
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
-      nullptr,                   // Handle to software driver binary
-      create_device_flags,
+      nullptr,      // Handle to software driver binary
+      create_device_flags,  // Flags for device creation
       feature_level_array,  // Feature Levels
-      2,                    // Feature Levels
-      D3D11_SDK_VERSION,    // SDK Version
-      &sd, &p_swap_chain, &p_device,
-      &feature_level,  // Returns the feature level of the device created
-      &p_device_context));
+      2,
+      D3D11_SDK_VERSION,  // SDK Version
+      &sd,                // Pointer to the swap chain description
+      &p_swap_chain_,     // Pointer to the swap chain created
+      &p_device_,         // Pointer to the device created
+      &feature_level,    // Returns the feature level of the device created
+      &p_device_context_  // Pointer to the device context
+  ));
 
   // Try high-performance WARP software driver if hardware is not available.
   if (hr == DXGI_ERROR_UNSUPPORTED) {
     RNDR_THROW(D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
-        feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain,
-        &p_device, &feature_level, &p_device_context));
+        feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain_,
+        &p_device_, &feature_level, &p_device_context_));
   }
 
   create_render_target();

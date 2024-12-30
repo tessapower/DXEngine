@@ -134,6 +134,8 @@ auto CALLBACK app::handle_msg_setup(const HWND h_wnd, const UINT u_msg,
   return DefWindowProc(h_wnd, u_msg, w_param, l_param);
 }
 
+// Invokes our member function by retrieving the pointer to
+// window class and calling handle_msg on it.
 auto CALLBACK app::handle_msg_thunk(const HWND h_wnd, const UINT u_msg,
                                     const WPARAM w_param,
                                     const LPARAM l_param) noexcept -> LRESULT {
@@ -207,12 +209,9 @@ auto app::update(bool &done) -> void {
 
   // Start the Dear ImGui frame
   // TODO: put into renderer::new_frame() function
-
   // TODO: uncomment to reintroduce IMGUI
   //ImGui_ImplDX11_NewFrame();
   //ImGui_ImplWin32_NewFrame();
-
-  // TODO: uncomment to reintroduce IMGUI
   //gui_.update();
 }
 
