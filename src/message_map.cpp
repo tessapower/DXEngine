@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "message_map.h"
 #include <iomanip>
 #include <sstream>
