@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "scene.h"
 
 void scene::tick() {

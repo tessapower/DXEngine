@@ -1,7 +1,7 @@
 #ifndef ENGINE_EXCEPTION_H
 #define ENGINE_EXCEPTION_H
-
 #include "stdafx.h"
+
 #include <exception>
 #include <sstream>
 #include <string>

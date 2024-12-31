@@ -1,8 +1,9 @@
 ﻿#ifndef GUI_H
 #define GUI_H
-
 #include "stdafx.h"
+
 #include <imgui.h>
+
 #include "renderer.h"
 
 class gui {

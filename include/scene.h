@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
-
 #include "stdafx.h"
+
 #include "renderer.h"
 #include "app.h"
 
