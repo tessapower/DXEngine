@@ -20,6 +20,8 @@ set(HEADERS
 
 add_executable(DXEngine ${SOURCES} ${HEADERS})
 
+set_target_properties(DXEngine PROPERTIES WIN32_EXECUTABLE TRUE)
+
 # Ensure shaders are built before the application
 add_dependencies(DXEngine Shaders)
 
