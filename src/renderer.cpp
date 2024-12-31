@@ -12,31 +12,6 @@
 #include <iostream>
 #include <filesystem>
 
-//----------------------------------------------------------- hr_exception --//
-
-renderer::hr_exception::hr_exception(
-    const LPCSTR file, const int line, const HRESULT hr) noexcept
-    : exception(file, line), hr_(hr) {
-
-  type_ = "Renderer Exception";
-}
-
-auto renderer::hr_exception::what() const noexcept -> const char* {
-  std::ostringstream oss;
-  oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
-      << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
-      << source() << "\n"
-      << "[Description] " << translate_error_code(hr_) << "\n";
-
-  what_buffer_ = oss.str();
-
-  return what_buffer_.c_str();
-}
-
-auto renderer::hr_exception::error_code() const noexcept -> HRESULT {
-  return hr_;
-}
-
 //--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {

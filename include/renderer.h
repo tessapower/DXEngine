@@ -9,23 +9,26 @@
 
 class renderer {
  public:
-  class exception : public engine_exception {
-    using engine_exception::engine_exception;
+  class exception : public hr_exception {
+   public:
+    exception(const LPCSTR file, const int line, const HRESULT hr) noexcept
+       : hr_exception(file, line, hr) {
+     type_ = "Renderer Exception";
+   }
   };
 
-  class hr_exception : public exception {
+  class device_removed_exception final : public exception {
    public:
-    hr_exception(LPCSTR file, int line, HRESULT hr) noexcept;
-    auto what() const noexcept -> const char* override;
-    auto error_code() const noexcept -> HRESULT;
+    device_removed_exception(const LPCSTR file, const int line,
+                             const HRESULT hr) noexcept
+        : exception(file, line, hr) {
+      type_ = "Renderer: Device Removed Exception";
+
+      // Get messages from the device removed exception
+      // TODO: ...
+    }
 
    private:
-    HRESULT hr_;
-  };
-
-  class device_removed_exception final : public hr_exception {
-    using hr_exception::hr_exception;
-
     std::string reason_;
   };
 

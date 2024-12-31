@@ -55,19 +55,12 @@ class app {
                                 LPARAM l_param) noexcept -> LRESULT;
 
  public:
-  class exception final : public engine_exception {
+  class exception final : public hr_exception {
    public:
     exception(const LPCSTR file, const int line, const HRESULT hr)
-        : engine_exception(file, line), hr_(hr) {
+        : hr_exception(file, line, hr) {
       type_ = "App Exception";
     }
-
-    auto error_code() const noexcept -> HRESULT;
-
-    auto what() const noexcept -> const char* override;
-
-   private:
-    HRESULT hr_;
   };
 
  private:

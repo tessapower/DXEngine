@@ -225,19 +225,3 @@ auto app::render() noexcept -> void {
   // Present
   p_renderer_->end_frame();
 }
-
-//--------------------------------------------------------- app::exception --//
-
-auto app::exception::error_code() const noexcept -> HRESULT { return hr_; }
-
-auto app::exception::what() const noexcept -> const char* {
-  std::ostringstream oss;
-  oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
-      << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
-      << "[Description] " << translate_error_code(hr_) << "\n"
-      << source();
-
-  what_buffer_ = oss.str();
-
-  return what_buffer_.c_str();
-}
