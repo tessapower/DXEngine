@@ -2,7 +2,7 @@
 #include "app.h"
 #include "imgui.h"
 
-auto main(int, char**) -> int {
+auto CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int) -> int {
   try {
     // Create a window
     app app(1280, 800, "DX Engine");
