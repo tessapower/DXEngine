@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "engine_exception.h"
+#include "renderer.h"
 #include "gui.h"
 
 // Forward declarations of helper functions
