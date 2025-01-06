@@ -8,6 +8,7 @@ list(APPEND
 
 set(HEADERS
     "${PROJECT_SOURCE_DIR}/include/app.h"
+    "${PROJECT_SOURCE_DIR}/include/dxgi_info_manager.h"
     "${PROJECT_SOURCE_DIR}/include/engine_exception.h"
     "${PROJECT_SOURCE_DIR}/include/exception_macros.h"
     "${PROJECT_SOURCE_DIR}/include/gui.h"
