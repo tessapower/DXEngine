@@ -14,7 +14,26 @@ class renderer {
     exception(const LPCSTR file, const int line, const HRESULT hr) noexcept
        : hr_exception(file, line, hr) {
      type_ = "Renderer Exception";
-   }
+    }
+
+    auto what() const noexcept -> const char* override {
+      std::ostringstream oss;
+      oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
+          << std::dec << " (" << static_cast<unsigned long>(error_code())
+          << ")\n"
+          << "[Description] " << translate_error_code(hr_) << "\n"
+          << source();
+
+      what_buffer_ = oss.str();
+
+      return what_buffer_.c_str();
+    }
+
+    auto error_messages() const noexcept -> std::string { return messages_; }
+
+   protected:
+    std::string info;
+    std::string messages_;
   };
 
   class device_removed_exception final : public exception {
@@ -28,8 +47,6 @@ class renderer {
       // TODO: ...
     }
 
-   private:
-    std::string reason_;
   };
 
 private:

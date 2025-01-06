@@ -73,11 +73,9 @@ class hr_exception : public engine_exception {
   }
 
   auto error_code() const noexcept -> HRESULT { return hr_; }
-  auto error_messages() const noexcept -> std::string { return messages_; }
 
- private:
+ protected:
   HRESULT hr_;
-  std::string messages_;
 };
 
 #endif  // ENGINE_EXCEPTION_H
