@@ -21,6 +21,8 @@ auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
 }
 
 auto renderer::end_frame() -> void {
+  HRESULT hr;
+
   // Handle window being minimized or screen locked
   if (swap_chain_occluded_ &&
       p_swap_chain_->Present(0, DXGI_PRESENT_TEST) ==
@@ -36,8 +38,7 @@ auto renderer::end_frame() -> void {
   // Handle window resize (we don't resize directly in the WM_SIZE handler)
   if (resize_width_ != 0 && resize_height_ != 0) {
     cleanup_render_target();
-    HRESULT hr;
-    RNDR_THROW(p_swap_chain_->ResizeBuffers(
+    RENDER_THROW_FAILED(p_swap_chain_->ResizeBuffers(
         0, resize_width_, resize_height_,
         DXGI_FORMAT_UNKNOWN, 0));
     resize_width_ = resize_height_ = 0;
@@ -45,8 +46,14 @@ auto renderer::end_frame() -> void {
   }
 
   // Present the back buffer to the front buffer
-  const HRESULT hr =
-      p_swap_chain_->Present(1, 0);  // Present with vsync
+  // Present with vsync
+  if (FAILED(hr = p_swap_chain_->Present(1u, 0u))) {
+    if (hr == DXGI_ERROR_DEVICE_REMOVED) {
+      throw RENDER_DEVICE_REMOVED_EXCEPT(p_device_->GetDeviceRemovedReason());
+    } else {
+      throw RENDER_EXCEPT(hr);
+    }
+  }
   // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
   swap_chain_occluded_ = (hr == DXGI_STATUS_OCCLUDED);
 }
@@ -78,8 +85,8 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   sd.Windowed = TRUE;
   sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;  // Effect used for presentation
 
-  constexpr UINT create_device_flags = 0;
-  // createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+  UINT create_device_flags = 0;
+  create_device_flags |= D3D11_CREATE_DEVICE_DEBUG;
 
   D3D_FEATURE_LEVEL feature_level;
   constexpr D3D_FEATURE_LEVEL feature_level_array[2] = {
@@ -87,7 +94,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
       D3D_FEATURE_LEVEL_10_0,
   };
 
-  RNDR_THROW(D3D11CreateDeviceAndSwapChain(
+  RENDER_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
       nullptr,  // Pointer to the video adapter to use when creating a device
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
       nullptr,      // Handle to software driver binary
@@ -104,7 +111,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   // Try high-performance WARP software driver if hardware is not available.
   if (hr == DXGI_ERROR_UNSUPPORTED) {
-    RNDR_THROW(D3D11CreateDeviceAndSwapChain(
+    RENDER_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
         feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain_,
         &p_device_, &feature_level, &p_device_context_));
@@ -142,12 +149,12 @@ auto renderer::create_render_target() -> void {
 
   // TODO: handle unsuccessful render target creation
   HRESULT hr;
-  RNDR_THROW(p_swap_chain_->GetBuffer(
+  RENDER_THROW_FAILED(p_swap_chain_->GetBuffer(
     0,
     __uuidof(ID3D11Resource),
     reinterpret_cast<void**>(&p_back_buffer)
   ));
-  RNDR_THROW(p_device_->CreateRenderTargetView(
+  RENDER_THROW_FAILED(p_device_->CreateRenderTargetView(
     p_back_buffer,
     nullptr,
     &p_render_target_view_
@@ -195,7 +202,7 @@ auto renderer::test_draw() -> void {
   HRESULT hr;
   D3D11_SUBRESOURCE_DATA sd = {};
   sd.pSysMem = vertices;
-  RNDR_THROW(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
+  RENDER_THROW_FAILED(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
 
   // Bind vertex buffer to pipeline
   constexpr UINT stride = sizeof(vertex);
@@ -244,7 +251,7 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the pixel shader
-  RNDR_THROW(
+  RENDER_THROW_FAILED(
     p_device_->CreatePixelShader(
       p_blob->GetBufferPointer(),
       p_blob->GetBufferSize(),
@@ -295,7 +302,7 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the vertex shader
-  RNDR_THROW(
+  RENDER_THROW_FAILED(
     p_device_->CreateVertexShader(
       p_blob->GetBufferPointer(),
       p_blob->GetBufferSize(),
@@ -316,7 +323,7 @@ auto renderer::test_draw() -> void {
   };
 
   // Create input layout
-  RNDR_THROW(p_device_->CreateInputLayout(
+  RENDER_THROW_FAILED(p_device_->CreateInputLayout(
       ied, std::size(ied), p_blob->GetBufferPointer(), p_blob->GetBufferSize(),
       &p_input_layout));
 
