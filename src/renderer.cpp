@@ -1,14 +1,12 @@
 #include "stdafx.h"
 
 #include "renderer.h"
+#include "exception_macros.h"
 
+#include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
 #include <d3dcompiler.h>
 #include <wrl.h>
-
-#include "exception_macros.h"
-#include "imgui_impl_win32.h"
-
 #include <d3d11.h>
 #include <iostream>
 #include <filesystem>
@@ -25,8 +23,7 @@ auto renderer::end_frame() -> void {
 
   // Handle window being minimized or screen locked
   if (swap_chain_occluded_ &&
-      p_swap_chain_->Present(0, DXGI_PRESENT_TEST) ==
-          DXGI_STATUS_OCCLUDED) {
+      p_swap_chain_->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
     Sleep(10);
 
     return;
@@ -80,14 +77,14 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   sd.BufferDesc.RefreshRate.Denominator = 0;  // Use existing refresh rate
   sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  sd.OutputWindow = h_wnd;
+  // sd.OutputWindow = h_wnd;
+  sd.OutputWindow = (HWND)696969;
   sd.SampleDesc.Count = 1;    // Antialiasing i.e. nothing for now
   sd.SampleDesc.Quality = 0;  // Antialiasing i.e. nothing for now
   sd.Windowed = TRUE;
   sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;  // Effect used for presentation
 
-  UINT create_device_flags = 0;
-  create_device_flags |= D3D11_CREATE_DEVICE_DEBUG;
+  const UINT create_device_flags = D3D11_CREATE_DEVICE_DEBUG;
 
   D3D_FEATURE_LEVEL feature_level;
   constexpr D3D_FEATURE_LEVEL feature_level_array[2] = {
@@ -98,17 +95,17 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   RENDER_THROW_INFO(D3D11CreateDeviceAndSwapChain(
       nullptr,  // Pointer to the video adapter to use when creating a device
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
-      nullptr,      // Handle to software driver binary
-      create_device_flags,  // Flags for device creation
-      feature_level_array,  // Feature Levels
+      nullptr,                   // Handle to software driver binary
+      create_device_flags,       // Flags for device creation
+      feature_level_array,       // Feature Levels
       2,
       D3D11_SDK_VERSION,  // SDK Version
       &sd,                // Pointer to the swap chain description
       &p_swap_chain_,     // Pointer to the swap chain created
       &p_device_,         // Pointer to the device created
-      &feature_level,    // Returns the feature level of the device created
+      &feature_level,     // Returns the feature level of the device created
       &p_device_context_  // Pointer to the device context
-  ));
+      ));
 
   // Try high-performance WARP software driver if hardware is not available.
   if (hr == DXGI_ERROR_UNSUPPORTED) {
@@ -167,8 +164,8 @@ auto renderer::cleanup_render_target() -> void {
 
 auto renderer::shut_down() -> void {
   // TODO: uncomment to reintroduce IMGUI
-  //ImGui_ImplDX11_Shutdown();
-  //ImGui_ImplWin32_Shutdown();
+  // ImGui_ImplDX11_Shutdown();
+  // ImGui_ImplWin32_Shutdown();
 
   cleanup_device_d3d();
 }
@@ -202,7 +199,8 @@ auto renderer::test_draw() -> void {
   // Bind vertex buffer to pipeline
   constexpr UINT stride = sizeof(vertex);
   constexpr UINT offset = 0u;
-  p_device_context_->IASetVertexBuffers(0u, 1, p_vertex_buffer.GetAddressOf(), &stride, &offset);
+  p_device_context_->IASetVertexBuffers(0u, 1, p_vertex_buffer.GetAddressOf(),
+                                        &stride, &offset);
 
   //--------------------------------------------------------- Pixel Shader --//
   // Create pixel shader
@@ -221,17 +219,16 @@ auto renderer::test_draw() -> void {
 
   // Compile pixel shader
   hr = D3DCompileFromFile(
-    wide_path.c_str(), // HLSL file
-    nullptr,           // Macros
-    nullptr,           // Include handler
-    "main",            // Entry point
-    "ps_5_0",          // Target shader model
-    D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // Compile flags
-    0,                                               // Effect flags
-    p_blob.GetAddressOf(),    // Compiled shader output
-    error_blob.GetAddressOf() // Error messages
+      wide_path.c_str(),                                // HLSL file
+      nullptr,                                          // Macros
+      nullptr,                                          // Include handler
+      "main",                                           // Entry point
+      "ps_5_0",                                         // Target shader model
+      D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,  // Compile flags
+      0,                                                // Effect flags
+      p_blob.GetAddressOf(),     // Compiled shader output
+      error_blob.GetAddressOf()  // Error messages
   );
-
 
   // TODO: Add macro that uses error_blob messages in case of failure
   if (FAILED(hr)) {
@@ -256,8 +253,7 @@ auto renderer::test_draw() -> void {
   //-------------------------------------------------------- Vertex Shader --//
   wrl::ComPtr<ID3D11VertexShader> p_vertex_shader;
 
-  path =
-      std::filesystem::path(SHADER_SRC_DIR) / "vertex_shader.vs.hlsl";
+  path = std::filesystem::path(SHADER_SRC_DIR) / "vertex_shader.vs.hlsl";
   wide_path = path.wstring();
 
   if (!exists(path)) {
@@ -298,14 +294,13 @@ auto renderer::test_draw() -> void {
 
   // Bind vertex shader to pipeline
   p_device_context_->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
-  
+
   //--------------------------------------------------------- Input Layout --//
   // Input (vertex) layout (2D position only)
   wrl::ComPtr<ID3D11InputLayout> p_input_layout;
-  constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {
-      {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
-       D3D11_INPUT_PER_VERTEX_DATA, 0}
-  };
+  constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {{"Position", 0,
+                                               DXGI_FORMAT_R32G32_FLOAT, 0, 0,
+                                               D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
   // Create input layout
   RENDER_THROW_ON_FAIL(p_device_->CreateInputLayout(
@@ -319,7 +314,8 @@ auto renderer::test_draw() -> void {
   p_device_context_->OMSetRenderTargets(1u, &p_render_target_view_, nullptr);
 
   // Set primitive topology to triangle list
-  p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  p_device_context_->IASetPrimitiveTopology(
+      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Configure view port
   D3D11_VIEWPORT vp;

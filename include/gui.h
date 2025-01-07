@@ -4,7 +4,7 @@
 
 #include <imgui.h>
 
-#include "renderer.h"
+class renderer;
 
 class gui {
   int width_;
@@ -27,7 +27,6 @@ class gui {
   auto update() const noexcept -> void;
 
   auto render(renderer const& r) const noexcept -> void;
-
 };
 
 #endif  // GUI_H
