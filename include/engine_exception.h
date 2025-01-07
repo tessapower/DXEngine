@@ -5,6 +5,7 @@
 #include <exception>
 #include <sstream>
 #include <string>
+#include <vector>
 
 class engine_exception : public std::exception {
  public:
@@ -55,17 +56,24 @@ class engine_exception : public std::exception {
 
 class hr_exception : public engine_exception {
  public:
-  hr_exception(const LPCSTR file, const int line, const HRESULT hr) noexcept
-  : engine_exception(file, line), hr_(hr) {
+  hr_exception(const LPCSTR file, const int line, const HRESULT hr,
+               std::vector<std::string> messages = {""}) noexcept
+      : engine_exception(file, line), hr_(hr) {
     type_ = "HR Exception";
+    for (const auto& m : messages) {
+      info_ += (m + "\n");
+    }
   }
 
   auto what() const noexcept -> const char* override {
     std::ostringstream oss;
     oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
         << std::dec << " (" << static_cast<unsigned long>(error_code()) << ")\n"
-        << "[Description] " << translate_error_code(hr_) << "\n" 
-        << source();
+        << "[Description] " << translate_error_code(hr_) << "\n";
+    if (!info_.empty()) {
+      oss << "[Info] " << error_info() << "\n";
+    }
+    oss << source();
 
     what_buffer_ = oss.str();
 
@@ -74,8 +82,11 @@ class hr_exception : public engine_exception {
 
   auto error_code() const noexcept -> HRESULT { return hr_; }
 
+  auto error_info() const noexcept -> std::string { return info_; }
+
  protected:
   HRESULT hr_;
+  std::string info_;
 };
 
 #endif  // ENGINE_EXCEPTION_H

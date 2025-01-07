@@ -4,6 +4,7 @@
 
 #include <d3d11.h>
 #include <string>
+#include <vector>
 
 #include "engine_exception.h"
 
@@ -11,40 +12,20 @@ class renderer {
  public:
   class exception : public hr_exception {
    public:
-    exception(const LPCSTR file, const int line, const HRESULT hr) noexcept
-       : hr_exception(file, line, hr) {
+    exception(const LPCSTR file, const int line, const HRESULT hr,
+              std::vector<std::string> messages = {}) noexcept
+        : hr_exception(file, line, hr, messages) {
      type_ = "Renderer Exception";
     }
-
-    auto what() const noexcept -> const char* override {
-      std::ostringstream oss;
-      oss << "[Error Code] 0x" << std::hex << std::uppercase << error_code()
-          << std::dec << " (" << static_cast<unsigned long>(error_code())
-          << ")\n"
-          << "[Description] " << translate_error_code(hr_) << "\n"
-          << source();
-
-      what_buffer_ = oss.str();
-
-      return what_buffer_.c_str();
-    }
-
-    auto error_messages() const noexcept -> std::string { return messages_; }
-
-   protected:
-    std::string info;
-    std::string messages_;
   };
 
   class device_removed_exception final : public exception {
    public:
     device_removed_exception(const LPCSTR file, const int line,
-                             const HRESULT hr) noexcept
-        : exception(file, line, hr) {
+                             const HRESULT hr,
+                             std::vector<std::string> messages = {}) noexcept
+        : exception(file, line, hr, messages) {
       type_ = "Renderer: Device Removed Exception";
-
-      // Get messages from the device removed exception
-      // TODO: ...
     }
 
   };
