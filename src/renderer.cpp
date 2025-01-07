@@ -38,12 +38,13 @@ auto renderer::end_frame() -> void {
   // Handle window resize (we don't resize directly in the WM_SIZE handler)
   if (resize_width_ != 0 && resize_height_ != 0) {
     cleanup_render_target();
-    RENDER_THROW_FAILED(p_swap_chain_->ResizeBuffers(
-        0, resize_width_, resize_height_,
-        DXGI_FORMAT_UNKNOWN, 0));
+    RENDER_THROW_ON_FAIL(p_swap_chain_->ResizeBuffers(
+        0, resize_width_, resize_height_, DXGI_FORMAT_UNKNOWN, 0));
     resize_width_ = resize_height_ = 0;
     create_render_target();
   }
+
+  dxgi_info_mgr_.set();
 
   // Present the back buffer to the front buffer
   // Present with vsync
@@ -51,7 +52,7 @@ auto renderer::end_frame() -> void {
     if (hr == DXGI_ERROR_DEVICE_REMOVED) {
       throw RENDER_DEVICE_REMOVED_EXCEPT(p_device_->GetDeviceRemovedReason());
     } else {
-      throw RENDER_EXCEPT(hr);
+      throw RENDER_EXCEPT_INFO(hr);
     }
   }
   // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
@@ -94,7 +95,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
       D3D_FEATURE_LEVEL_10_0,
   };
 
-  RENDER_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
+  RENDER_THROW_INFO(D3D11CreateDeviceAndSwapChain(
       nullptr,  // Pointer to the video adapter to use when creating a device
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
       nullptr,      // Handle to software driver binary
@@ -111,7 +112,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   // Try high-performance WARP software driver if hardware is not available.
   if (hr == DXGI_ERROR_UNSUPPORTED) {
-    RENDER_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
+    RENDER_THROW_INFO(D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
         feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain_,
         &p_device_, &feature_level, &p_device_context_));
@@ -149,16 +150,10 @@ auto renderer::create_render_target() -> void {
 
   // TODO: handle unsuccessful render target creation
   HRESULT hr;
-  RENDER_THROW_FAILED(p_swap_chain_->GetBuffer(
-    0,
-    __uuidof(ID3D11Resource),
-    reinterpret_cast<void**>(&p_back_buffer)
-  ));
-  RENDER_THROW_FAILED(p_device_->CreateRenderTargetView(
-    p_back_buffer,
-    nullptr,
-    &p_render_target_view_
-  ));
+  RENDER_THROW_INFO(p_swap_chain_->GetBuffer(
+      0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&p_back_buffer)));
+  RENDER_THROW_INFO(p_device_->CreateRenderTargetView(p_back_buffer, nullptr,
+                                                      &p_render_target_view_));
 
   p_back_buffer->Release();
 }
@@ -202,7 +197,7 @@ auto renderer::test_draw() -> void {
   HRESULT hr;
   D3D11_SUBRESOURCE_DATA sd = {};
   sd.pSysMem = vertices;
-  RENDER_THROW_FAILED(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
+  RENDER_THROW_ON_FAIL(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
 
   // Bind vertex buffer to pipeline
   constexpr UINT stride = sizeof(vertex);
@@ -251,14 +246,9 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the pixel shader
-  RENDER_THROW_FAILED(
-    p_device_->CreatePixelShader(
-      p_blob->GetBufferPointer(),
-      p_blob->GetBufferSize(),
-      nullptr,
-      &p_pixel_shader
-    )
-  );
+  RENDER_THROW_ON_FAIL(p_device_->CreatePixelShader(p_blob->GetBufferPointer(),
+                                                    p_blob->GetBufferSize(),
+                                                    nullptr, &p_pixel_shader));
 
   // Bind pixel shader to pipeline
   p_device_context_->PSSetShader(p_pixel_shader.Get(), nullptr, 0u);
@@ -302,14 +292,9 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the vertex shader
-  RENDER_THROW_FAILED(
-    p_device_->CreateVertexShader(
-      p_blob->GetBufferPointer(),
-      p_blob->GetBufferSize(),
-      nullptr,
-      &p_vertex_shader
-    )
-  );
+  RENDER_THROW_ON_FAIL(p_device_->CreateVertexShader(
+      p_blob->GetBufferPointer(), p_blob->GetBufferSize(), nullptr,
+      &p_vertex_shader));
 
   // Bind vertex shader to pipeline
   p_device_context_->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
@@ -323,7 +308,7 @@ auto renderer::test_draw() -> void {
   };
 
   // Create input layout
-  RENDER_THROW_FAILED(p_device_->CreateInputLayout(
+  RENDER_THROW_ON_FAIL(p_device_->CreateInputLayout(
       ied, std::size(ied), p_blob->GetBufferPointer(), p_blob->GetBufferSize(),
       &p_input_layout));
 

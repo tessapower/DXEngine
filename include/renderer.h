@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "engine_exception.h"
+#include "dxgi_info_manager.h"
 
 class renderer {
  public:
@@ -31,6 +32,8 @@ class renderer {
   };
 
 private:
+  dxgi_info_manager dxgi_info_mgr_;
+
   ID3D11Device* p_device_ = nullptr;
   IDXGISwapChain* p_swap_chain_ = nullptr;
   ID3D11DeviceContext* p_device_context_ = nullptr;
