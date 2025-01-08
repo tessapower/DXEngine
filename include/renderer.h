@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <string>
 #include <vector>
+#include <wrl.h>
 
 #include "engine_exception.h"
 #include "dxgi_info_manager.h"
@@ -34,19 +35,21 @@ class renderer {
 private:
   dxgi_info_manager dxgi_info_mgr_;
 
-  ID3D11Device* p_device_ = nullptr;
-  IDXGISwapChain* p_swap_chain_ = nullptr;
-  ID3D11DeviceContext* p_device_context_ = nullptr;
+  Microsoft::WRL::ComPtr<ID3D11Device> p_device_;
+  Microsoft::WRL::ComPtr <IDXGISwapChain> p_swap_chain_;
+  Microsoft::WRL::ComPtr<ID3D11DeviceContext> p_device_context_;
 
   bool swap_chain_occluded_ = false;
   UINT resize_width_ = 0;
   UINT resize_height_ = 0;
-  ID3D11RenderTargetView* p_render_target_view_ = nullptr;
+  Microsoft::WRL::ComPtr < ID3D11RenderTargetView> p_render_target_view_;
 
 public:
   renderer() = default;
   ~renderer() = default;
-  renderer(const renderer&) = delete;
+
+  // Deleted constructors and operators
+  renderer(const renderer&) = delete; 
   renderer& operator=(const renderer&) = delete;
   renderer(const renderer&&) = delete;
   renderer& operator=(const renderer&&) = delete;

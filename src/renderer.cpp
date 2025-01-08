@@ -14,8 +14,8 @@
 //--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {
-  p_device_context_->OMSetRenderTargets(1, &p_render_target_view_, nullptr);
-  p_device_context_->ClearRenderTargetView(p_render_target_view_, clear_color);
+  p_device_context_->ClearRenderTargetView(p_render_target_view_.Get(),
+                                           clear_color);
 }
 
 auto renderer::end_frame() -> void {
@@ -33,13 +33,13 @@ auto renderer::end_frame() -> void {
 
   // TODO: use result of window resize
   // Handle window resize (we don't resize directly in the WM_SIZE handler)
-  if (resize_width_ != 0 && resize_height_ != 0) {
-    cleanup_render_target();
-    RENDER_THROW_ON_FAIL(p_swap_chain_->ResizeBuffers(
-        0, resize_width_, resize_height_, DXGI_FORMAT_UNKNOWN, 0));
-    resize_width_ = resize_height_ = 0;
-    create_render_target();
-  }
+  //if (resize_width_ != 0 && resize_height_ != 0) {
+  //  cleanup_render_target();
+  //  RENDER_THROW_ON_FAIL(p_swap_chain_->ResizeBuffers(
+  //      0, resize_width_, resize_height_, DXGI_FORMAT_UNKNOWN, 0));
+  //  resize_width_ = resize_height_ = 0;
+  //  create_render_target();
+  //}
 
   dxgi_info_mgr_.set();
 
@@ -77,8 +77,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   sd.BufferDesc.RefreshRate.Denominator = 0;  // Use existing refresh rate
   sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  // sd.OutputWindow = h_wnd;
-  sd.OutputWindow = (HWND)696969;
+  sd.OutputWindow = h_wnd;
   sd.SampleDesc.Count = 1;    // Antialiasing i.e. nothing for now
   sd.SampleDesc.Quality = 0;  // Antialiasing i.e. nothing for now
   sd.Windowed = TRUE;
@@ -120,46 +119,28 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   return hr;
 }
 
-auto renderer::init_backends(const HWND h_wnd) const -> void {
-  ImGui_ImplWin32_Init(h_wnd);
-  ImGui_ImplDX11_Init(p_device_, p_device_context_);
+auto renderer::init_backends(const HWND h_wnd[[maybe_unused]]) const -> void {
+  //ImGui_ImplWin32_Init(h_wnd);
+  //ImGui_ImplDX11_Init(p_device_, p_device_context_);
 }
 
 auto renderer::cleanup_device_d3d() -> void {
   cleanup_render_target();
-  if (p_device_context_) {
-    p_device_context_->Release();
-    p_device_context_ = nullptr;
-  }
-  if (p_swap_chain_) {
-    p_swap_chain_->Release();
-    p_swap_chain_ = nullptr;
-  }
-  if (p_device_) {
-    p_device_->Release();
-    p_device_ = nullptr;
-  }
 }
 
 auto renderer::create_render_target() -> void {
   // Gain access to texture subresource in swap chain (back buffer)
-  ID3D11Resource* p_back_buffer;
+  Microsoft::WRL::ComPtr<ID3D11Resource> p_back_buffer;
 
   // TODO: handle unsuccessful render target creation
   HRESULT hr;
   RENDER_THROW_INFO(p_swap_chain_->GetBuffer(
-      0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&p_back_buffer)));
-  RENDER_THROW_INFO(p_device_->CreateRenderTargetView(p_back_buffer, nullptr,
-                                                      &p_render_target_view_));
-
-  p_back_buffer->Release();
+      0, __uuidof(ID3D11Resource), &p_back_buffer));
+  RENDER_THROW_INFO(p_device_->CreateRenderTargetView(
+      p_back_buffer.Get(), nullptr, &p_render_target_view_));
 }
 
 auto renderer::cleanup_render_target() -> void {
-  if (p_render_target_view_) {
-    p_render_target_view_->Release();
-    p_render_target_view_ = nullptr;
-  }
 }
 
 auto renderer::shut_down() -> void {

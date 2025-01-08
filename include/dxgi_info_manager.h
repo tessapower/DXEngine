@@ -5,9 +5,10 @@
 #pragma comment(lib, "dxguid.lib")
 
 #include <d3d11.h>
-#include <dxgi.h>
 #include <d3d11_1.h>
+#include <dxgi.h>
 #include <dxgidebug.h>
+#include <wrl.h>
 
 #include <string>
 #include <vector>
@@ -20,14 +21,14 @@ class dxgi_info_manager {
  public:
   dxgi_info_manager() {
     // Load the debug library
-    typedef HRESULT(WINAPI * LPDXGIGETDEBUGINTERFACE)(REFIID, void*);
+    typedef HRESULT(WINAPI * DXGIGetDebugInterface)(REFIID, void*);
     HMODULE dxgi_debug =
         LoadLibraryEx("dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!dxgi_debug) {
       throw std::exception("Failed to load dxgidebug.dll");
     }
 
-    auto dxgi_get_debug_interface = reinterpret_cast<LPDXGIGETDEBUGINTERFACE>(
+    auto dxgi_get_debug_interface = reinterpret_cast<DXGIGetDebugInterface>(
         GetProcAddress(dxgi_debug, "DXGIGetDebugInterface"));
 
     if (!dxgi_get_debug_interface) {
@@ -35,8 +36,9 @@ class dxgi_info_manager {
     }
 
     // Create the debug interface
-    IDXGIDebug* p_debug = nullptr;
-    HRESULT hr = dxgi_get_debug_interface(__uuidof(IDXGIDebug), (void**)&p_debug);
+    Microsoft::WRL::ComPtr<IDXGIDebug> p_debug;
+    HRESULT hr =
+        dxgi_get_debug_interface(__uuidof(IDXGIDebug), (void**)&p_debug);
     if (FAILED(hr)) {
       FreeLibrary(dxgi_debug);
       throw std::exception("Failed to create DXGI Debug Interface");
@@ -45,6 +47,7 @@ class dxgi_info_manager {
     // Get the info queue
     hr = dxgi_get_debug_interface(__uuidof(IDXGIInfoQueue),
                                   (void**)&p_info_queue_);
+
     if (FAILED(hr)) {
       p_debug->Release();
       FreeLibrary(dxgi_debug);
@@ -55,11 +58,7 @@ class dxgi_info_manager {
     p_debug->Release();
   }
 
-  ~dxgi_info_manager() {
-    if (p_info_queue_ != nullptr) {
-      p_info_queue_->Release();
-    }
-  }
+  ~dxgi_info_manager() = default;
 
   dxgi_info_manager(dxgi_info_manager const&) = delete;
   auto operator=(const dxgi_info_manager&) -> dxgi_info_manager& = delete;
@@ -80,15 +79,18 @@ class dxgi_info_manager {
       SIZE_T message_len = 0;
 
       // Get length of message at index i
-      HR_THROW_ON_FAIL(p_info_queue_->GetMessage(DXGI_DEBUG_ALL, i, nullptr, &message_len));
+      HR_THROW_ON_FAIL(
+          p_info_queue_->GetMessage(DXGI_DEBUG_ALL, i, nullptr, &message_len));
 
       // Allocate memory buffer for message
       auto bytes = std::make_unique<byte[]>(message_len);
-      const auto p_msg = reinterpret_cast<DXGI_INFO_QUEUE_MESSAGE*>(bytes.get());
+      const auto p_msg =
+          reinterpret_cast<DXGI_INFO_QUEUE_MESSAGE*>(bytes.get());
 
       // Add message description to vector
-      HR_THROW_ON_FAIL(p_info_queue_->GetMessage(DXGI_DEBUG_ALL, i, p_msg, &message_len));
-      
+      HR_THROW_ON_FAIL(
+          p_info_queue_->GetMessage(DXGI_DEBUG_ALL, i, p_msg, &message_len));
+
       messages.emplace_back(p_msg->pDescription);
     }
 
@@ -97,7 +99,7 @@ class dxgi_info_manager {
 
  private:
   unsigned long long next_ = 0u;
-  IDXGIInfoQueue* p_info_queue_ = nullptr;
+  Microsoft::WRL::ComPtr<IDXGIInfoQueue> p_info_queue_;
 };
 
 #endif  // DXGI_INFO_MANAGER_H
