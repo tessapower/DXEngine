@@ -179,6 +179,26 @@ auto renderer::test_draw() -> void {
   p_device_context_->IASetVertexBuffers(0u, 1u, p_vertex_buffer.GetAddressOf(),
                                         &stride, &offset);
 
+  // Index Buffer
+  const unsigned short indices[] = {
+      0, 1, 2
+  };
+  wrl::ComPtr<ID3D11Buffer> p_index_buffer;
+  D3D11_BUFFER_DESC ibd = {};
+  ibd.Usage = D3D11_USAGE_DEFAULT;
+  ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+  ibd.CPUAccessFlags = 0u;
+  ibd.MiscFlags = 0u;
+  ibd.ByteWidth = sizeof(indices);
+  ibd.StructureByteStride = sizeof(unsigned short);
+
+  D3D11_SUBRESOURCE_DATA isd = {};
+  isd.pSysMem = indices;
+  RENDER_THROW_ON_FAIL(p_device_->CreateBuffer(&ibd, &isd, &p_index_buffer));
+
+  // Bind index buffer to pipeline
+  p_device_context_->IASetIndexBuffer(p_index_buffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
   //--------------------------------------------------------- Pixel Shader --//
   // Create pixel shader
   wrl::ComPtr<ID3D11PixelShader> p_pixel_shader;
@@ -332,5 +352,5 @@ auto renderer::test_draw() -> void {
   p_device_context_->RSSetViewports(1u, &vp);
 
   // Draw the thing
-  p_device_context_->Draw(std::size(vertices), 0u);
+  p_device_context_->DrawIndexed(std::size(indices), 0u, 0u);
 }
