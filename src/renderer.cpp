@@ -162,8 +162,8 @@ auto renderer::test_draw() -> void {
   bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
   bd.CPUAccessFlags = 0u;
   bd.MiscFlags = 0u;
-  bd.ByteWidth = sizeof(vertex);
-  bd.StructureByteStride = 0;
+  bd.ByteWidth = sizeof(vertices);
+  bd.StructureByteStride = sizeof(vertex);
 
   HRESULT hr;
   D3D11_SUBRESOURCE_DATA sd = {};
@@ -173,7 +173,7 @@ auto renderer::test_draw() -> void {
   // Bind vertex buffer to pipeline
   constexpr UINT stride = sizeof(vertex);
   constexpr UINT offset = 0u;
-  p_device_context_->IASetVertexBuffers(0u, 1, p_vertex_buffer.GetAddressOf(),
+  p_device_context_->IASetVertexBuffers(0u, 1u, p_vertex_buffer.GetAddressOf(),
                                         &stride, &offset);
 
   //--------------------------------------------------------- Pixel Shader --//
@@ -285,7 +285,11 @@ auto renderer::test_draw() -> void {
   p_device_context_->IASetInputLayout(p_input_layout.Get());
 
   // Bind the render target
-  p_device_context_->OMSetRenderTargets(1u, &p_render_target_view_, nullptr);
+  p_device_context_->OMSetRenderTargets(
+    1u,
+    p_render_target_view_.GetAddressOf(),
+    nullptr
+  );
 
   // Set primitive topology to triangle list
   p_device_context_->IASetPrimitiveTopology(
