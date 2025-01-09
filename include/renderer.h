@@ -62,14 +62,9 @@ public:
 
   auto create_device_d3d(HWND h_wnd) -> HRESULT;
 
-  // TODO: use these in dtor?
-  auto cleanup_device_d3d() -> void;
-
   auto init_backends(HWND h_wnd) const -> void;
 
   auto create_render_target() -> void;
-
-  auto cleanup_render_target() -> void;
 
   auto shut_down() -> void;
 

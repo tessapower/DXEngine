@@ -93,12 +93,10 @@ app::app(const int width, const int height, const LPCSTR window_title) {
   // Create unique pointer to renderer
   p_renderer_ = std::make_unique<renderer>();
 
-  if (p_renderer_->create_device_d3d(h_wnd_) != S_OK) {
-    p_renderer_->cleanup_device_d3d();
+  if (FAILED(hr = p_renderer_->create_device_d3d(h_wnd_))) {
     UnregisterClass(window_class::class_name(), window_class::h_instance());
-
-    // TODO: throw some exception
-
+    
+    throw HR_EXCEPT(hr);
   }
 }
 

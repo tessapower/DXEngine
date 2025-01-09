@@ -124,8 +124,6 @@ auto renderer::init_backends(const HWND h_wnd[[maybe_unused]]) const -> void {
   //ImGui_ImplDX11_Init(p_device_, p_device_context_);
 }
 
-auto renderer::cleanup_device_d3d() -> void {
-  cleanup_render_target();
 }
 
 auto renderer::create_render_target() -> void {
@@ -140,15 +138,10 @@ auto renderer::create_render_target() -> void {
       p_back_buffer.Get(), nullptr, &p_render_target_view_));
 }
 
-auto renderer::cleanup_render_target() -> void {
-}
-
 auto renderer::shut_down() -> void {
   // TODO: uncomment to reintroduce IMGUI
   // ImGui_ImplDX11_Shutdown();
   // ImGui_ImplWin32_Shutdown();
-
-  cleanup_device_d3d();
 }
 
 auto renderer::test_draw() -> void {
