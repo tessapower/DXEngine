@@ -119,11 +119,9 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   return hr;
 }
 
-auto renderer::init_backends(const HWND h_wnd[[maybe_unused]]) const -> void {
-  //ImGui_ImplWin32_Init(h_wnd);
-  //ImGui_ImplDX11_Init(p_device_, p_device_context_);
-}
-
+auto renderer::init_backends(const HWND h_wnd [[maybe_unused]]) const -> void {
+  // ImGui_ImplWin32_Init(h_wnd);
+  // ImGui_ImplDX11_Init(p_device_, p_device_context_);
 }
 
 auto renderer::create_render_target() -> void {
@@ -132,8 +130,8 @@ auto renderer::create_render_target() -> void {
 
   // TODO: handle unsuccessful render target creation
   HRESULT hr;
-  RENDER_THROW_INFO(p_swap_chain_->GetBuffer(
-      0, __uuidof(ID3D11Resource), &p_back_buffer));
+  RENDER_THROW_INFO(
+      p_swap_chain_->GetBuffer(0, __uuidof(ID3D11Resource), &p_back_buffer));
   RENDER_THROW_INFO(p_device_->CreateRenderTargetView(
       p_back_buffer.Get(), nullptr, &p_render_target_view_));
 }
@@ -146,6 +144,7 @@ auto renderer::shut_down() -> void {
 
 auto renderer::test_draw() -> void {
   namespace wrl = Microsoft::WRL;
+  HRESULT hr;
 
   //------------------------------------------------------------- Vertices --//
   struct vertex {
@@ -153,8 +152,13 @@ auto renderer::test_draw() -> void {
     float y;
   };
 
-  constexpr vertex vertices[] = {{0.0f, 0.5f}, {0.5f, -0.5f}, {-0.5f, -0.5f}};
+  constexpr vertex vertices[] = {
+    { 0.0f,  0.5f},
+    { 0.5f, -0.5f},
+    {-0.5f, -0.5f}
+  };
 
+  // Vertex Buffer
   wrl::ComPtr<ID3D11Buffer> p_vertex_buffer;
 
   D3D11_BUFFER_DESC bd = {};
@@ -165,7 +169,6 @@ auto renderer::test_draw() -> void {
   bd.ByteWidth = sizeof(vertices);
   bd.StructureByteStride = sizeof(vertex);
 
-  HRESULT hr;
   D3D11_SUBRESOURCE_DATA sd = {};
   sd.pSysMem = vertices;
   RENDER_THROW_ON_FAIL(p_device_->CreateBuffer(&bd, &sd, &p_vertex_buffer));
@@ -217,9 +220,14 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the pixel shader
-  RENDER_THROW_ON_FAIL(p_device_->CreatePixelShader(p_blob->GetBufferPointer(),
-                                                    p_blob->GetBufferSize(),
-                                                    nullptr, &p_pixel_shader));
+  RENDER_THROW_ON_FAIL(
+    p_device_->CreatePixelShader(
+      p_blob->GetBufferPointer(),
+      p_blob->GetBufferSize(),
+      nullptr,
+      &p_pixel_shader
+    )
+  );
 
   // Bind pixel shader to pipeline
   p_device_context_->PSSetShader(p_pixel_shader.Get(), nullptr, 0u);
@@ -262,9 +270,14 @@ auto renderer::test_draw() -> void {
   }
 
   // Create the vertex shader
-  RENDER_THROW_ON_FAIL(p_device_->CreateVertexShader(
-      p_blob->GetBufferPointer(), p_blob->GetBufferSize(), nullptr,
-      &p_vertex_shader));
+  RENDER_THROW_ON_FAIL(
+    p_device_->CreateVertexShader(
+      p_blob->GetBufferPointer(),
+      p_blob->GetBufferSize(),
+      nullptr,
+      &p_vertex_shader
+    )
+  );
 
   // Bind vertex shader to pipeline
   p_device_context_->VSSetShader(p_vertex_shader.Get(), nullptr, 0u);
@@ -272,14 +285,28 @@ auto renderer::test_draw() -> void {
   //--------------------------------------------------------- Input Layout --//
   // Input (vertex) layout (2D position only)
   wrl::ComPtr<ID3D11InputLayout> p_input_layout;
-  constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {{"Position", 0,
-                                               DXGI_FORMAT_R32G32_FLOAT, 0, 0,
-                                               D3D11_INPUT_PER_VERTEX_DATA, 0}};
+  constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {
+    {
+      "Position",                 // Semantic name
+      0,                          // Semantic index
+      DXGI_FORMAT_R32G32_FLOAT,   // Format
+      0,                          // Input slot
+      0,                          // Aligned byte offset
+      D3D11_INPUT_PER_VERTEX_DATA,  // Input slot class
+      0                             // Instance data step rate
+    }
+  };
 
   // Create input layout
-  RENDER_THROW_ON_FAIL(p_device_->CreateInputLayout(
-      ied, std::size(ied), p_blob->GetBufferPointer(), p_blob->GetBufferSize(),
-      &p_input_layout));
+  RENDER_THROW_ON_FAIL(
+    p_device_->CreateInputLayout(
+      ied,
+      std::size(ied),
+      p_blob->GetBufferPointer(),
+      p_blob->GetBufferSize(),
+      &p_input_layout
+    )
+  );
 
   // Bind input layout to pipeline
   p_device_context_->IASetInputLayout(p_input_layout.Get());
@@ -292,8 +319,7 @@ auto renderer::test_draw() -> void {
   );
 
   // Set primitive topology to triangle list
-  p_device_context_->IASetPrimitiveTopology(
-      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Configure view port
   D3D11_VIEWPORT vp;
