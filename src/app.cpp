@@ -217,9 +217,8 @@ auto app::update(bool &done) -> void {
 auto app::render() noexcept -> void {
   // TODO: uncomment to reintroduce IMGUI
   //gui_.render(renderer_);
-  //p_renderer_->test_draw();
-
   p_renderer_->clear_back_buffer(clear_color_);
+  p_renderer_->test_draw();
 
   // Present
   p_renderer_->end_frame();
