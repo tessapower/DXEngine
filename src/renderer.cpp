@@ -15,8 +15,17 @@
 //--------------------------------------------------------------- renderer --//
 auto renderer::clear_back_buffer(const float clear_color[4]) const noexcept
     -> void {
-  p_device_context_->ClearRenderTargetView(p_render_target_view_.Get(),
-                                           clear_color);
+  p_device_context_->ClearRenderTargetView(
+    p_render_target_view_.Get(),
+    clear_color
+  );
+
+  p_device_context_->ClearDepthStencilView(
+    p_depth_stencil_view_.Get(),
+    D3D11_CLEAR_DEPTH,
+    1.0f,
+    0u
+  );
 }
 
 auto renderer::end_frame() -> void {
@@ -116,6 +125,50 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   }
 
   create_render_target();
+
+  // Create the depth buffer
+  D3D11_DEPTH_STENCIL_DESC dsd = {};
+  dsd.DepthEnable = TRUE;
+  dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+  dsd.DepthFunc = D3D11_COMPARISON_LESS;
+
+  // Create depth stencil state
+  Microsoft::WRL::ComPtr<ID3D11DepthStencilState> p_depth_stencil_state;
+  RENDER_THROW_INFO(
+      p_device_->CreateDepthStencilState(&dsd, &p_depth_stencil_state)
+  );
+
+  // Bind depth buffer to pipeline
+  p_device_context_->OMSetDepthStencilState(p_depth_stencil_state.Get(), 1u);
+
+  // Create depth stencil texture
+  Microsoft::WRL::ComPtr<ID3D11Texture2D> p_depth_stencil_texture;
+  D3D11_TEXTURE2D_DESC dtd = {};
+  dtd.Width = 1280u;  // TODO: Get width and height from swap chain
+  dtd.Height = 800u;  // TODO: Get width and height from swap chain
+  dtd.MipLevels = 1u;
+  dtd.ArraySize = 1u;
+  dtd.Format = DXGI_FORMAT_D32_FLOAT;      // Format of each element in texture
+  dtd.SampleDesc.Count = 1u;   // Anti-aliasing processing:
+                               // number of multisamples per pixel
+  dtd.SampleDesc.Quality = 0u; // Anti-aliasing processing: image quality level
+  dtd.Usage = D3D11_USAGE_DEFAULT;
+  dtd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+  RENDER_THROW_INFO(
+      p_device_->CreateTexture2D(&dtd, nullptr, &p_depth_stencil_texture));
+
+  // Create view of depth stencil texture
+  D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
+  dsvd.Format = DXGI_FORMAT_D32_FLOAT;
+  dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+  dsvd.Texture2D.MipSlice = 0u;
+
+  // Bind the render target and depth stencil buffer to the output-merger stage
+  p_device_context_->OMSetRenderTargets(
+    1u,
+    p_render_target_view_.GetAddressOf(),
+    p_depth_stencil_view_.Get()
+  );
 
   return hr;
 }
@@ -405,13 +458,6 @@ auto renderer::test_draw() -> void {
 
   // Bind input layout to pipeline
   p_device_context_->IASetInputLayout(p_input_layout.Get());
-
-  // Bind the render target
-  p_device_context_->OMSetRenderTargets(
-    1u,
-    p_render_target_view_.GetAddressOf(),
-    nullptr
-  );
 
   // Set primitive topology to triangle list
   p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

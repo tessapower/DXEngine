@@ -38,6 +38,7 @@ private:
   Microsoft::WRL::ComPtr<ID3D11Device> p_device_;
   Microsoft::WRL::ComPtr <IDXGISwapChain> p_swap_chain_;
   Microsoft::WRL::ComPtr<ID3D11DeviceContext> p_device_context_;
+  Microsoft::WRL::ComPtr<ID3D11DepthStencilView> p_depth_stencil_view_;
 
   bool swap_chain_occluded_ = false;
   UINT resize_width_ = 0;
