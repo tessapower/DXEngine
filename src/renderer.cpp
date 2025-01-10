@@ -8,6 +8,7 @@
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <iostream>
 #include <filesystem>
 
@@ -150,12 +151,18 @@ auto renderer::test_draw() -> void {
   struct vertex {
     float x;
     float y;
+    float z;
   };
 
   constexpr vertex vertices[] = {
-    { 0.0f,  0.5f},
-    { 0.5f, -0.5f},
-    {-0.5f, -0.5f}
+    {-1.0f, -1.0f, -1.0f},
+    { 1.0f, -1.0f, -1.0f},
+    {-1.0f,  1.0f, -1.0f},
+    { 1.0f,  1.0f, -1.0f},
+    {-1.0f, -1.0f,  1.0f},
+    { 1.0f, -1.0f,  1.0f},
+    {-1.0f,  1.0f,  1.0f},
+    { 1.0f,  1.0f,  1.0f}
   };
 
   // Vertex Buffer
@@ -179,9 +186,14 @@ auto renderer::test_draw() -> void {
   p_device_context_->IASetVertexBuffers(0u, 1u, p_vertex_buffer.GetAddressOf(),
                                         &stride, &offset);
 
-  // Index Buffer
+  //--------------------------------------------------------- Index Buffer --//
   const unsigned short indices[] = {
-      0, 1, 2
+      0, 2, 1,  2, 3, 1,
+      1, 3, 5,  3, 7, 5,
+      2, 6, 3,  3, 6, 7,
+      4, 5, 7,  4, 7, 6,
+      0, 4, 2,  2, 4, 6,
+      0, 1, 4,  1, 5, 4
   };
   wrl::ComPtr<ID3D11Buffer> p_index_buffer;
   D3D11_BUFFER_DESC ibd = {};
@@ -198,6 +210,69 @@ auto renderer::test_draw() -> void {
 
   // Bind index buffer to pipeline
   p_device_context_->IASetIndexBuffer(p_index_buffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
+  //---------------------------------------- Constant Buffer for Transform --//
+
+  struct ConstantBuffer {
+    DirectX::XMMATRIX transform;
+  };
+
+  const ConstantBuffer cb = {
+      DirectX::XMMatrixTranspose(
+          DirectX::XMMatrixRotationZ(0.5f) * DirectX::XMMatrixRotationX(0.5f) *
+          DirectX::XMMatrixTranslation(0.5f, 0.5f, 4.0f) *
+          DirectX::XMMatrixPerspectiveLH(1.0f, 800.0f / 1280.0f, 0.5f, 10.0f))
+  };
+
+  Microsoft::WRL::ComPtr<ID3D11Buffer> p_constant_buffer;
+  D3D11_BUFFER_DESC cbd = {};
+  cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  cbd.Usage = D3D11_USAGE_DYNAMIC;
+  cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+  cbd.MiscFlags = 0u;
+  cbd.ByteWidth = sizeof(cb);
+  cbd.StructureByteStride = 0u;
+  D3D11_SUBRESOURCE_DATA csd = {};
+  csd.pSysMem = &cb;
+  HR_THROW_INFO(p_device_->CreateBuffer(&cbd, &csd, &p_constant_buffer));
+
+  // Bind the constant buffer to the vertex shader
+  p_device_context_->VSSetConstantBuffers(0u, 1u, p_constant_buffer.GetAddressOf());
+
+  //------------------------------------------- Constant Buffer for Colors --//
+
+  struct ConstantColorBuffer {
+    struct {
+      float r, g, b, a;
+    } face_colors[6];
+  };
+
+  const ConstantColorBuffer ccb = {
+    {
+      {0.929f, 0.925f, 0.643f},
+      {0.741f, 0.929f, 0.643f},
+      {0.643f, 0.929f, 0.827f},
+      {0.643f, 0.780f, 0.929f},
+      {0.843f, 0.643f, 0.929f},
+      {0.929f, 0.643f, 0.706f}
+    }
+  };
+
+  Microsoft::WRL::ComPtr<ID3D11Buffer> p_constant_color_buffer;
+  D3D11_BUFFER_DESC ccbd = {};
+  ccbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  ccbd.Usage = D3D11_USAGE_DEFAULT;
+  ccbd.CPUAccessFlags = 0u;
+  ccbd.MiscFlags = 0u;
+  ccbd.ByteWidth = sizeof(ccb);
+  ccbd.StructureByteStride = 0u;
+  D3D11_SUBRESOURCE_DATA ccsd = {};
+  ccsd.pSysMem = &ccb;
+  HR_THROW_INFO(
+      p_device_->CreateBuffer(&ccbd, &ccsd, &p_constant_color_buffer));
+
+  // Bind the constant buffer to the vertex shader
+  p_device_context_->PSSetConstantBuffers(0u, 1u, p_constant_color_buffer.GetAddressOf());
 
   //--------------------------------------------------------- Pixel Shader --//
   // Create pixel shader
@@ -307,11 +382,11 @@ auto renderer::test_draw() -> void {
   wrl::ComPtr<ID3D11InputLayout> p_input_layout;
   constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {
     {
-      "Position",                 // Semantic name
-      0,                          // Semantic index
-      DXGI_FORMAT_R32G32_FLOAT,   // Format
-      0,                          // Input slot
-      0,                          // Aligned byte offset
+      "Position",                   // Semantic name
+      0,                            // Semantic index
+      DXGI_FORMAT_R32G32B32_FLOAT,  // Format
+      0,                            // Input slot
+      0,                            // Aligned byte offset
       D3D11_INPUT_PER_VERTEX_DATA,  // Input slot class
       0                             // Instance data step rate
     }
@@ -352,5 +427,5 @@ auto renderer::test_draw() -> void {
   p_device_context_->RSSetViewports(1u, &vp);
 
   // Draw the thing
-  p_device_context_->DrawIndexed(std::size(indices), 0u, 0u);
+  p_device_context_->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0u);
 }
