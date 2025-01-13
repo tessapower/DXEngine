@@ -12,6 +12,8 @@
 
 class renderer {
  public:
+  friend class bindable;
+
   class exception : public hr_exception {
    public:
     exception(const LPCSTR file, const int line, const HRESULT hr,
