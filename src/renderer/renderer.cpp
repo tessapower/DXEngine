@@ -326,7 +326,7 @@ auto renderer::test_draw() -> void {
   HR_THROW_INFO(
       p_device_->CreateBuffer(&ccbd, &ccsd, &p_constant_color_buffer));
 
-  // Bind the constant buffer to the vertex shader
+  // Bind the constant buffer to the pixel shader
   p_device_context_->PSSetConstantBuffers(0u, 1u, p_constant_color_buffer.GetAddressOf());
 
   //--------------------------------------------------------- Pixel Shader --//
