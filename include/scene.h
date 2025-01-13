@@ -2,7 +2,7 @@
 #define GAME_H
 #include "stdafx.h"
 
-#include "renderer.h"
+#include "renderer/renderer.h"
 #include "app.h"
 
 class scene {

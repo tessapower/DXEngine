@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #include "app.h"
-#include "renderer.h"
+#include "renderer/renderer.h"
 
 // Retrieves the last HRESULT error code from the OS and throws an exception
 #define APP_LAST_ERROR app::exception(__FILE__, __LINE__, GetLastError())

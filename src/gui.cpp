@@ -2,7 +2,7 @@
 #include "gui.h"
 
 #include <imgui_impl_dx11.h>
-#include "renderer.h"
+#include "renderer/renderer.h"
 
 gui::gui(const int viewport_width, const int viewport_height) {
   width_ = viewport_width;

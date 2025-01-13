@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "renderer.h"
+#include "renderer/renderer.h"
 #include "exception_macros.h"
 
 #include <imgui_impl_win32.h>
@@ -143,25 +143,27 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   // Create depth stencil texture
   Microsoft::WRL::ComPtr<ID3D11Texture2D> p_depth_stencil_texture;
-  D3D11_TEXTURE2D_DESC dtd = {};
-  dtd.Width = 1280u;  // TODO: Get width and height from swap chain
-  dtd.Height = 800u;  // TODO: Get width and height from swap chain
-  dtd.MipLevels = 1u;
-  dtd.ArraySize = 1u;
-  dtd.Format = DXGI_FORMAT_D32_FLOAT;      // Format of each element in texture
-  dtd.SampleDesc.Count = 1u;   // Anti-aliasing processing:
+  D3D11_TEXTURE2D_DESC dstd = {};
+  dstd.Width = 1280u;  // TODO: Get width and height from swap chain
+  dstd.Height = 800u;  // TODO: Get width and height from swap chain
+  dstd.MipLevels = 1u;
+  dstd.ArraySize = 1u;
+  dstd.Format = DXGI_FORMAT_D32_FLOAT;      // Format of each element in texture
+  dstd.SampleDesc.Count = 1u;   // Anti-aliasing processing:
                                // number of multisamples per pixel
-  dtd.SampleDesc.Quality = 0u; // Anti-aliasing processing: image quality level
-  dtd.Usage = D3D11_USAGE_DEFAULT;
-  dtd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+  dstd.SampleDesc.Quality = 0u; // Anti-aliasing processing: image quality level
+  dstd.Usage = D3D11_USAGE_DEFAULT;
+  dstd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
   RENDER_THROW_INFO(
-      p_device_->CreateTexture2D(&dtd, nullptr, &p_depth_stencil_texture));
+      p_device_->CreateTexture2D(&dstd, nullptr, &p_depth_stencil_texture));
 
   // Create view of depth stencil texture
   D3D11_DEPTH_STENCIL_VIEW_DESC dsvd = {};
   dsvd.Format = DXGI_FORMAT_D32_FLOAT;
   dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   dsvd.Texture2D.MipSlice = 0u;
+  RENDER_THROW_INFO(p_device_->CreateDepthStencilView(
+      p_depth_stencil_texture.Get(), &dsvd, &p_depth_stencil_view_));
 
   // Bind the render target and depth stencil buffer to the output-merger stage
   p_device_context_->OMSetRenderTargets(

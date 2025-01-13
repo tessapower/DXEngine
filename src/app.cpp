@@ -12,7 +12,7 @@
 #include "exception_macros.h"
 #include "gui.h"
 #include "message_map.h"
-#include "renderer.h"
+#include "renderer/renderer.h"
 
 namespace {
 message_map messages;
