@@ -2,6 +2,7 @@
 
 #include "renderer/renderer.h"
 #include "exception_macros.h"
+#include "renderer/bindable/index_buffer.h"
 
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
@@ -242,7 +243,8 @@ auto renderer::test_draw() -> void {
                                         &stride, &offset);
 
   //--------------------------------------------------------- Index Buffer --//
-  const unsigned short indices[] = {
+
+  const std::vector<index> indices = {
       0, 2, 1,  2, 3, 1,
       1, 3, 5,  3, 7, 5,
       2, 6, 3,  3, 6, 7,
@@ -250,21 +252,6 @@ auto renderer::test_draw() -> void {
       0, 4, 2,  2, 4, 6,
       0, 1, 4,  1, 5, 4
   };
-  wrl::ComPtr<ID3D11Buffer> p_index_buffer;
-  D3D11_BUFFER_DESC ibd = {};
-  ibd.Usage = D3D11_USAGE_DEFAULT;
-  ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-  ibd.CPUAccessFlags = 0u;
-  ibd.MiscFlags = 0u;
-  ibd.ByteWidth = sizeof(indices);
-  ibd.StructureByteStride = sizeof(unsigned short);
-
-  D3D11_SUBRESOURCE_DATA isd = {};
-  isd.pSysMem = indices;
-  RENDER_THROW_ON_FAIL(p_device_->CreateBuffer(&ibd, &isd, &p_index_buffer));
-
-  // Bind index buffer to pipeline
-  p_device_context_->IASetIndexBuffer(p_index_buffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
   //---------------------------------------- Constant Buffer for Transform --//
 
@@ -278,21 +265,6 @@ auto renderer::test_draw() -> void {
           DirectX::XMMatrixTranslation(0.5f, 0.5f, 4.0f) *
           DirectX::XMMatrixPerspectiveLH(1.0f, 800.0f / 1280.0f, 0.5f, 10.0f))
   };
-
-  Microsoft::WRL::ComPtr<ID3D11Buffer> p_constant_buffer;
-  D3D11_BUFFER_DESC cbd = {};
-  cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-  cbd.Usage = D3D11_USAGE_DYNAMIC;
-  cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-  cbd.MiscFlags = 0u;
-  cbd.ByteWidth = sizeof(cb);
-  cbd.StructureByteStride = 0u;
-  D3D11_SUBRESOURCE_DATA csd = {};
-  csd.pSysMem = &cb;
-  HR_THROW_INFO(p_device_->CreateBuffer(&cbd, &csd, &p_constant_buffer));
-
-  // Bind the constant buffer to the vertex shader
-  p_device_context_->VSSetConstantBuffers(0u, 1u, p_constant_buffer.GetAddressOf());
 
   //------------------------------------------- Constant Buffer for Colors --//
 
