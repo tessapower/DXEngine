@@ -268,22 +268,6 @@ auto renderer::test_draw() -> void {
     }
   };
 
-  Microsoft::WRL::ComPtr<ID3D11Buffer> p_constant_color_buffer;
-  D3D11_BUFFER_DESC ccbd = {};
-  ccbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-  ccbd.Usage = D3D11_USAGE_DEFAULT;
-  ccbd.CPUAccessFlags = 0u;
-  ccbd.MiscFlags = 0u;
-  ccbd.ByteWidth = sizeof(ccb);
-  ccbd.StructureByteStride = 0u;
-  D3D11_SUBRESOURCE_DATA ccsd = {};
-  ccsd.pSysMem = &ccb;
-  HR_THROW_INFO(
-      p_device_->CreateBuffer(&ccbd, &ccsd, &p_constant_color_buffer));
-
-  // Bind the constant buffer to the pixel shader
-  p_device_context_->PSSetConstantBuffers(0u, 1u, p_constant_color_buffer.GetAddressOf());
-
   //--------------------------------------------------------- Pixel Shader --//
   // Create pixel shader
   wrl::ComPtr<ID3D11PixelShader> p_pixel_shader;
