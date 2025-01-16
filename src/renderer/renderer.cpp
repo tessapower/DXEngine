@@ -283,20 +283,6 @@ auto renderer::test_draw() -> void {
     }
   };
 
-  // Create input layout
-  RENDER_THROW_ON_FAIL(
-    p_device_->CreateInputLayout(
-      ied,
-      std::size(ied),
-      p_blob->GetBufferPointer(),
-      p_blob->GetBufferSize(),
-      &p_input_layout
-    )
-  );
-
-  // Bind input layout to pipeline
-  p_device_context_->IASetInputLayout(p_input_layout.Get());
-
   // Set primitive topology to triangle list
   p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
