@@ -33,4 +33,4 @@ target_compile_definitions(DXEngine PRIVATE COMPILED_SHADER_DIR="${CMAKE_BINARY_
 
 target_link_libraries(DXEngine PRIVATE imgui::imgui)
 target_link_libraries(DXEngine PRIVATE d3d11)
-target_link_libraries(DXEngine PRIVATE renderer)
+target_link_libraries(DXEngine PRIVATE Renderer)
