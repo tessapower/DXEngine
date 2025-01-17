@@ -1,20 +1,13 @@
 # Get all renderer source files
 file(GLOB RENDERER_SOURCES *.cpp)
 
-# Get all bindable source files
-file(GLOB_RECURSE BINDABLE_SOURCES bindable/*.cpp)
-
 # Get all drawable source files
 file(GLOB_RECURSE DRAWABLE_SOURCES drawable/*.cpp)
 
 # Combine all sources together in one list
-list(APPEND RENDERER_SOURCES ${BINDABLE_SOURCES} ${DRAWABLE_SOURCES})
-
-# Add CMakeLists.txt to the sources list
-list(APPEND RENDERER_SOURCES "CMakeLists.txt")
+list(APPEND RENDERER_SOURCES ${DRAWABLE_SOURCES} "CMakeLists.txt")
 
 # Create source groups that will appear inside "Source Files"
-source_group("Source Files\\bindable" FILES ${BINDABLE_SOURCES})
 source_group("Source Files\\drawable" FILES ${DRAWABLE_SOURCES})
 
 # Get all headers in renderer
