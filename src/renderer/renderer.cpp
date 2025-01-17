@@ -173,6 +173,16 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
     p_depth_stencil_view_.Get()
   );
 
+  //------------------------------------------------------------- Viewport --//
+  D3D11_VIEWPORT vp = {};
+  vp.Width = 1280;
+  vp.Height = 800;
+  vp.MinDepth = 0;
+  vp.MaxDepth = 1;
+  vp.TopLeftX = 0;
+  vp.TopLeftY = 0;
+  p_device_context_->RSSetViewports(1u, &vp);
+
   return hr;
 }
 
@@ -281,16 +291,6 @@ auto renderer::test_draw() -> void {
 
   // Set primitive topology to triangle list
   p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-  // Configure view port
-  D3D11_VIEWPORT vp;
-  vp.Width = 1280;
-  vp.Height = 800;
-  vp.MinDepth = 0;
-  vp.MaxDepth = 1;
-  vp.TopLeftX = 0;
-  vp.TopLeftY = 0;
-  p_device_context_->RSSetViewports(1u, &vp);
 
   // Draw the thing
   p_device_context_->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0u);
