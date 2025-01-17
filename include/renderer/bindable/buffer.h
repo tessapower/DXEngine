@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "bindable.h"
 #include "exception_macros.h"
+#include "renderer/renderer.h"
 
 #include <wrl.h>
 

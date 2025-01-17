@@ -75,7 +75,7 @@ auto renderer::resize(const int width, const int height) -> void {
 auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   HRESULT hr;
 
-  // Set up swap chain descriptor
+  //----------------------------------------------------------- Swap Chain --//
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));  // Ensure that the memory is zeroed out
   sd.BufferCount = 1;           // Number of back buffers
@@ -127,7 +127,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   create_render_target();
 
-  // Create the depth buffer
+  //--------------------------------------------------------- Depth Buffer --//
   D3D11_DEPTH_STENCIL_DESC dsd = {};
   dsd.DepthEnable = TRUE;
   dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -200,9 +200,6 @@ auto renderer::shut_down() -> void {
 }
 
 auto renderer::test_draw() -> void {
-  namespace wrl = Microsoft::WRL;
-  HRESULT hr;
-
   //------------------------------------------------------------- Vertices --//
   struct vertex {
     float x;
@@ -222,8 +219,7 @@ auto renderer::test_draw() -> void {
   };
 
   // Vertex Buffer
-  wrl::ComPtr<ID3D11Buffer> p_vertex_buffer;
-
+  Microsoft::WRL::ComPtr<ID3D11Buffer> p_vertex_buffer;
 
   //--------------------------------------------------------- Index Buffer --//
 
@@ -270,7 +266,7 @@ auto renderer::test_draw() -> void {
 
   //--------------------------------------------------------- Input Layout --//
   // Input (vertex) layout (2D position only)
-  wrl::ComPtr<ID3D11InputLayout> p_input_layout;
+  Microsoft::WRL::ComPtr<ID3D11InputLayout> p_input_layout;
   constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {
     {
       "Position",                   // Semantic name
