@@ -60,7 +60,7 @@ auto renderer::end_frame() -> void {
     if (hr == DXGI_ERROR_DEVICE_REMOVED) {
       throw RENDER_DEVICE_REMOVED_EXCEPT(p_device_->GetDeviceRemovedReason());
     } else {
-      throw RENDER_EXCEPT_INFO(hr);
+      throw RENDER_EXCEPT_MSG(hr);
     }
   }
   // HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
@@ -102,7 +102,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
       D3D_FEATURE_LEVEL_10_0,
   };
 
-  RENDER_THROW_INFO(D3D11CreateDeviceAndSwapChain(
+  RENDER_THROW_HR_MSG(D3D11CreateDeviceAndSwapChain(
       nullptr,  // Pointer to the video adapter to use when creating a device
       D3D_DRIVER_TYPE_HARDWARE,  // Driver Type
       nullptr,                   // Handle to software driver binary
@@ -119,7 +119,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   // Try high-performance WARP software driver if hardware is not available.
   if (hr == DXGI_ERROR_UNSUPPORTED) {
-    RENDER_THROW_INFO(D3D11CreateDeviceAndSwapChain(
+    RENDER_THROW_HR_MSG(D3D11CreateDeviceAndSwapChain(
         nullptr, D3D_DRIVER_TYPE_WARP, nullptr, create_device_flags,
         feature_level_array, 2, D3D11_SDK_VERSION, &sd, &p_swap_chain_,
         &p_device_, &feature_level, &p_device_context_));
@@ -135,7 +135,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   // Create depth stencil state
   Microsoft::WRL::ComPtr<ID3D11DepthStencilState> p_depth_stencil_state;
-  RENDER_THROW_INFO(
+  RENDER_THROW_HR_MSG(
       p_device_->CreateDepthStencilState(&dsd, &p_depth_stencil_state)
   );
 
@@ -155,7 +155,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   dstd.SampleDesc.Quality = 0u; // Anti-aliasing processing: image quality level
   dstd.Usage = D3D11_USAGE_DEFAULT;
   dstd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-  RENDER_THROW_INFO(
+  RENDER_THROW_HR_MSG(
       p_device_->CreateTexture2D(&dstd, nullptr, &p_depth_stencil_texture));
 
   // Create view of depth stencil texture
@@ -163,14 +163,16 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   dsvd.Format = DXGI_FORMAT_D32_FLOAT;
   dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   dsvd.Texture2D.MipSlice = 0u;
-  RENDER_THROW_INFO(p_device_->CreateDepthStencilView(
+  RENDER_THROW_HR_MSG(p_device_->CreateDepthStencilView(
       p_depth_stencil_texture.Get(), &dsvd, &p_depth_stencil_view_));
 
   // Bind the render target and depth stencil buffer to the output-merger stage
-  p_device_context_->OMSetRenderTargets(
-    1u,
-    p_render_target_view_.GetAddressOf(),
-    p_depth_stencil_view_.Get()
+  THROW_MSG(
+    p_device_context_->OMSetRenderTargets(
+      1u,
+      p_render_target_view_.GetAddressOf(),
+      p_depth_stencil_view_.Get()
+    )
   );
 
   //------------------------------------------------------------- Viewport --//
@@ -181,7 +183,7 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   vp.MaxDepth = 1;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
-  p_device_context_->RSSetViewports(1u, &vp);
+  THROW_MSG(p_device_context_->RSSetViewports(1u, &vp));
 
   return hr;
 }
@@ -195,12 +197,22 @@ auto renderer::create_render_target() -> void {
   // Gain access to texture subresource in swap chain (back buffer)
   Microsoft::WRL::ComPtr<ID3D11Resource> p_back_buffer;
 
-  // TODO: handle unsuccessful render target creation
   HRESULT hr;
-  RENDER_THROW_INFO(
-      p_swap_chain_->GetBuffer(0, __uuidof(ID3D11Resource), &p_back_buffer));
-  RENDER_THROW_INFO(p_device_->CreateRenderTargetView(
-      p_back_buffer.Get(), nullptr, &p_render_target_view_));
+  RENDER_THROW_HR_MSG(
+    p_swap_chain_->GetBuffer(
+      0,
+      __uuidof(ID3D11Resource),
+      &p_back_buffer
+    )
+  );
+
+  RENDER_THROW_HR_MSG(
+    p_device_->CreateRenderTargetView(
+      p_back_buffer.Get(),
+      nullptr,
+      &p_render_target_view_
+    )
+  );
 }
 
 auto renderer::shut_down() -> void {
