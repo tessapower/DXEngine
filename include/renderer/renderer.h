@@ -72,6 +72,8 @@ public:
   auto shut_down() -> void;
 
   auto test_draw() -> void;
+
+  auto draw_indexed(UINT count) -> void;
 };
 
 #endif  // RENDERER_H

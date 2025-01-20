@@ -307,3 +307,7 @@ auto renderer::test_draw() -> void {
   // Draw the thing
   p_device_context_->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0u);
 }
+
+auto renderer::draw_indexed(const UINT count) -> void {
+  THROW_MSG(p_device_context_->DrawIndexed(count, 0u, 0u));
+}
