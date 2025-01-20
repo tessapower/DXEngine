@@ -89,4 +89,32 @@ class hr_exception : public engine_exception {
   std::string info_;
 };
 
+class info_exception : public engine_exception {
+ public:
+  info_exception(const LPCSTR file, const int line,
+    std::vector<std::string> messages = {""}) noexcept
+      : engine_exception(file, line) {
+    for (const auto& m : messages) {
+      info_ += (m + "\n");
+    }
+  }
+
+  auto what() const noexcept -> const char* override {
+    std::ostringstream oss;
+    if (!info_.empty()) {
+      oss << "[Info] " << error_info() << "\n";
+    }
+    oss << source();
+
+    what_buffer_ = oss.str();
+
+    return what_buffer_.c_str();
+  }
+
+  auto error_info() const noexcept -> std::string { return info_; }
+
+ protected:
+  std::string info_;
+};
+
 #endif  // ENGINE_EXCEPTION_H
