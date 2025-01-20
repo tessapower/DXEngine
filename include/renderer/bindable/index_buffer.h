@@ -19,9 +19,7 @@ class index_buffer : public buffer {
 
     subresource_data_.pSysMem = indices.data();
 
-    HRESULT hr;
-    RENDER_THROW_ON_FAIL(device(rndr)->CreateBuffer(
-        &buffer_descriptor_, &subresource_data_, &buffer_));
+    create(rndr);
   }
 
   virtual auto bind(renderer& rndr) noexcept -> void override {

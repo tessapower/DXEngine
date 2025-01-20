@@ -19,13 +19,7 @@ class const_buffer : public buffer {
     buffer_descriptor_.ByteWidth = sizeof(T);
     buffer_descriptor_.StructureByteStride = 0u;
 
-    // TODO: swap to info throw
-    HRESULT hr;
-    RENDER_THROW_ON_FAIL(
-        device(rndr)->CreateBuffer(
-          &buffer_descriptor_, nullptr, &buffer_
-        )
-    );
+    create(rndr);
   }
 
   const_buffer(renderer& rndr, const T& constants) {
@@ -38,13 +32,7 @@ class const_buffer : public buffer {
 
     subresource_data_.pSysMem = &constants;
 
-    // TODO: swap to info throw
-    HRESULT hr;
-    RENDER_THROW_ON_FAIL(
-      device(rndr)->CreateBuffer(
-        &buffer_descriptor_, &subresource_data_, &buffer_
-    )
-    );
+    create(rndr);
   }
 
   auto update(renderer& rndr, const T& constants) {
