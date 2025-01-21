@@ -299,7 +299,7 @@ auto renderer::test_draw() -> void {
   p_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Draw the thing
-  p_device_context_->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0u);
+  // p_device_context_->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0u);
 }
 
 auto renderer::draw_indexed(const UINT count) -> void {
