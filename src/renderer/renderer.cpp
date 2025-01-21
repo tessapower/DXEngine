@@ -125,7 +125,24 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
         &p_device_, &feature_level, &p_device_context_));
   }
 
-  create_render_target();
+  //--------------------------------------------------- Render Target View --//
+
+    // Gain access to texture subresource in swap chain (back buffer)
+  Microsoft::WRL::ComPtr<ID3D11Resource> p_back_buffer;
+
+  RENDER_THROW_HR_MSG(
+      p_swap_chain_->GetBuffer(0, __uuidof(ID3D11Resource), &p_back_buffer));
+
+  RENDER_THROW_HR_MSG(p_device_->CreateRenderTargetView(
+      p_back_buffer.Get(), nullptr, &p_render_target_view_));
+
+  // Keep track of the render target view dimensions
+ 
+  D3D11_TEXTURE2D_DESC bbd;
+  ID3D11Texture2D* bbt = nullptr;
+  p_back_buffer->QueryInterface<ID3D11Texture2D>(&bbt);
+  bbt->GetDesc(&bbd);
+  bbt->Release();
 
   //--------------------------------------------------------- Depth Buffer --//
   D3D11_DEPTH_STENCIL_DESC dsd = {};
@@ -145,14 +162,13 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   // Create depth stencil texture
   Microsoft::WRL::ComPtr<ID3D11Texture2D> p_depth_stencil_texture;
   D3D11_TEXTURE2D_DESC dstd = {};
-  dstd.Width = 1280u;  // TODO: Get width and height from swap chain
-  dstd.Height = 800u;  // TODO: Get width and height from swap chain
+  dstd.Width = bbd.Width;
+  dstd.Height = bbd.Height;
   dstd.MipLevels = 1u;
   dstd.ArraySize = 1u;
   dstd.Format = DXGI_FORMAT_D32_FLOAT;      // Format of each element in texture
-  dstd.SampleDesc.Count = 1u;   // Anti-aliasing processing:
-                               // number of multisamples per pixel
-  dstd.SampleDesc.Quality = 0u; // Anti-aliasing processing: image quality level
+  dstd.SampleDesc.Count = bbd.SampleDesc.Count;
+  dstd.SampleDesc.Quality = bbd.SampleDesc.Quality;
   dstd.Usage = D3D11_USAGE_DEFAULT;
   dstd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
   RENDER_THROW_HR_MSG(
@@ -177,12 +193,12 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 
   //------------------------------------------------------------- Viewport --//
   D3D11_VIEWPORT vp = {};
-  vp.Width = 1280;
-  vp.Height = 800;
-  vp.MinDepth = 0;
-  vp.MaxDepth = 1;
-  vp.TopLeftX = 0;
-  vp.TopLeftY = 0;
+  vp.Width = static_cast<float>(bbd.Width);
+  vp.Height = static_cast<float>(bbd.Height);
+  vp.MinDepth = 0.0f;
+  vp.MaxDepth = 1.0f;
+  vp.TopLeftX = 0.0f;
+  vp.TopLeftY = 0.0f;
   THROW_MSG(p_device_context_->RSSetViewports(1u, &vp));
 
   return hr;
@@ -191,28 +207,6 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
 auto renderer::init_backends(const HWND h_wnd [[maybe_unused]]) const -> void {
   // ImGui_ImplWin32_Init(h_wnd);
   // ImGui_ImplDX11_Init(p_device_, p_device_context_);
-}
-
-auto renderer::create_render_target() -> void {
-  // Gain access to texture subresource in swap chain (back buffer)
-  Microsoft::WRL::ComPtr<ID3D11Resource> p_back_buffer;
-
-  HRESULT hr;
-  RENDER_THROW_HR_MSG(
-    p_swap_chain_->GetBuffer(
-      0,
-      __uuidof(ID3D11Resource),
-      &p_back_buffer
-    )
-  );
-
-  RENDER_THROW_HR_MSG(
-    p_device_->CreateRenderTargetView(
-      p_back_buffer.Get(),
-      nullptr,
-      &p_render_target_view_
-    )
-  );
 }
 
 auto renderer::shut_down() -> void {
