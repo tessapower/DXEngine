@@ -9,7 +9,7 @@
 class vertex_buffer : public buffer {
  public:
   template <typename T>
-  vertex_buffer(renderer& rndr, std::vector<T>& vertices)
+  vertex_buffer(renderer& rndr, std::vector<T> const& vertices)
     : stride_(sizeof(T)) {
     buffer_descriptor_.Usage = D3D11_USAGE_DEFAULT;
     buffer_descriptor_.BindFlags = D3D11_BIND_VERTEX_BUFFER;

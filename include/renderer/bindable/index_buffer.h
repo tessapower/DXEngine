@@ -1,13 +1,15 @@
 #ifndef INDEX_BUFFER_H
 #define INDEX_BUFFER_H
+#include "stdafx.h"
 
 #include "buffer.h"
+#include "renderer/renderer.h"
 
 typedef unsigned short index;
 
 class index_buffer : public buffer {
  public:
-  index_buffer(renderer& rndr, std::vector<index>& indices)
+  index_buffer(renderer& rndr, std::vector<index> const& indices)
       : count_(static_cast<UINT>(indices.size())) {
     buffer_descriptor_.Usage = D3D11_USAGE_DEFAULT;
     buffer_descriptor_.BindFlags = D3D11_BIND_INDEX_BUFFER;

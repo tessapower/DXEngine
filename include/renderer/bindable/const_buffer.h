@@ -1,7 +1,7 @@
 #ifndef CONST_BUFFER_H
 #define CONST_BUFFER_H
-
 #include "stdafx.h"
+
 #include "buffer.h"
 #include "exception_macros.h"
 #include "renderer/renderer.h"
@@ -22,7 +22,7 @@ class const_buffer : public buffer {
     create(rndr);
   }
 
-  const_buffer(renderer& rndr, const T& constants) {
+  const_buffer(renderer& rndr, T const& constants) {
     buffer_descriptor_.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     buffer_descriptor_.Usage = D3D11_USAGE_DYNAMIC;
     buffer_descriptor_.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -35,11 +35,10 @@ class const_buffer : public buffer {
     create(rndr);
   }
 
-  auto update(renderer& rndr, const T& constants) {
-    // TODO: swap to info throw
-
+  auto update(renderer& rndr, T const& constants) -> void {
     D3D11_MAPPED_SUBRESOURCE msr;
-    RENDER_THROW_ON_FAIL(
+    HRESULT hr;
+    RENDER_THROW_HR(
         context(rndr)->Map(get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &msr)
     );
 
@@ -53,25 +52,31 @@ class const_buffer : public buffer {
 
 template <typename T>
 class vs_const_buffer : public const_buffer<T> {
- public:
-  vs_const_buffer(renderer& rndr) : const_buffer(rndr) {}
+  using const_buffer<T>::buffer::buffer_;
 
-  vs_const_buffer(renderer& rndr, T& consts) : const_buffer(rndr, consts) {}
+ public:
+  vs_const_buffer(renderer& rndr) : const_buffer<T>(rndr) {}
+
+  vs_const_buffer(renderer& rndr, T const& consts) : const_buffer<T>(rndr, consts) {}
 
   auto bind(renderer& rndr) noexcept -> void override {
-    context(rndr)->VSSetConstantBuffers(0u, 1u, buffer_.GetAddressOf());
+    bindable::context(rndr)->VSSetConstantBuffers(0u, 1u,
+                                                  buffer_.GetAddressOf());
   }
 };
 
 template <typename T>
 class ps_const_buffer : public const_buffer<T> {
- public:
-  ps_const_buffer(renderer& rndr) : const_buffer(rndr) {}
+  using const_buffer<T>::buffer::buffer_;
 
-  ps_const_buffer(renderer& rndr, T& consts) : const_buffer(rndr, consts) {}
+ public:
+  ps_const_buffer(renderer& rndr) : const_buffer<T>(rndr) {}
+
+  ps_const_buffer(renderer& rndr, T const& consts) : const_buffer<T>(rndr, consts) {}
 
   auto bind(renderer& rndr) noexcept -> void override {
-    context(rndr)->PSSetConstantBuffers(0u, 1u, buffer_.GetAddressOf());
+    bindable::context(rndr)->PSSetConstantBuffers(0u, 1u,
+                                                  buffer_.GetAddressOf());
   }
 };
 

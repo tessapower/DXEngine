@@ -1,10 +1,10 @@
 #ifndef BUFFER_H
 #define BUFFER_H
-
 #include "stdafx.h"
-#include "bindable.h"
-#include "exception_macros.h"
+
 #include "renderer/renderer.h"
+#include "renderer/bindable/bindable.h"
+#include "exception_macros.h"
 
 #include <wrl.h>
 
@@ -20,8 +20,6 @@ class buffer : public bindable {
   ~buffer() = default;
 
   auto get() const noexcept -> ID3D11Buffer* { return buffer_.Get(); }
-
-  virtual auto bind(renderer& rndr) noexcept -> void = 0;
 
  protected:
   Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_;
