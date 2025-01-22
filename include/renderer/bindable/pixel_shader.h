@@ -1,8 +1,9 @@
 #ifndef PIXEL_SHADER_H
 #define PIXEL_SHADER_H
-
 #include "stdafx.h"
+
 #include "shader.h"
+#include "renderer/renderer.h"
 
 #include <d3dcompiler.h>
 #include <filesystem>

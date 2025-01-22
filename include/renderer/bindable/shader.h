@@ -1,7 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
-
 #include "stdafx.h"
+
+#include "renderer/renderer.h"
 #include "bindable.h"
 #include "engine_exception.h"
 #include "renderer/renderer.h"

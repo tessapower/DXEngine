@@ -1,7 +1,7 @@
 #ifndef MESSAGE_MAP_H
 #define MESSAGE_MAP_H
-
 #include "stdafx.h"
+
 #include <unordered_map>
 #include <string>
 

@@ -1,7 +1,9 @@
 #ifndef INPUT_LAYOUT_H
 #define INPUT_LAYOUT_H
+#include "stdafx.h"
 
 #include "bindable.h"
+#include "renderer/renderer.h"
 #include "exception_macros.h"
 
 class input_layout : public bindable {
