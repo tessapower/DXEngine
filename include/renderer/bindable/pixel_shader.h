@@ -12,7 +12,7 @@
 
 class pixel_shader : public shader {
  public:
-  pixel_shader(std::filesystem::path filename, renderer& rndr)
+  pixel_shader(renderer& rndr, std::filesystem::path filename)
     : shader(filename) {
     entry_point_ = "main";
     target_ = "ps_5_0";

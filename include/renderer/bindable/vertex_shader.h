@@ -10,7 +10,7 @@
 
 class vertex_shader : public shader {
  public:
-  vertex_shader(std::filesystem::path filename, renderer& rndr)
+  vertex_shader(renderer& rndr, std::filesystem::path filename)
       : shader(filename) {
     entry_point_ = "main";
     target_ = "vs_5_0";
