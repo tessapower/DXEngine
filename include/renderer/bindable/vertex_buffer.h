@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "buffer.h"
+#include "exception_macros.h"
 
 #include <wrl.h>
 
@@ -21,7 +22,13 @@ class vertex_buffer : public buffer {
     subresource_data_.pSysMem = vertices.data();
 
     HRESULT hr;
-    RENDER_THROW_ON_FAIL(device(rndr)->CreateBuffer(&buffer_descriptor_, &subresource_data_, &buffer_));
+    RENDER_THROW_HR(
+      device(rndr)->CreateBuffer(
+        &buffer_descriptor_,
+        &subresource_data_,
+        &buffer_
+      )
+    );
   }
 
   virtual auto bind(renderer& rndr) noexcept -> void override {

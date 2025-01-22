@@ -11,7 +11,7 @@ class input_layout : public bindable {
     ID3DBlob* vertex_shader_bytecode) {
     HRESULT hr;
     auto& dxgi_info_mgr_ = info_manager(rndr);
-    RENDER_THROW_INFO(
+    RENDER_THROW_HR_MSG(
       device(rndr)->CreateInputLayout(
         layout.data(),
         static_cast<UINT>(layout.size()),
