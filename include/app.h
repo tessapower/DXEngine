@@ -19,15 +19,15 @@ extern auto ImGui_ImplWin32_WndProcHandler(HWND h_wnd, UINT msg, WPARAM w_param,
                                            LPARAM l_param) -> LRESULT;
 
 class app {
-  int width_;
-  int height_;
+  float width_;
+  float height_;
   HWND h_wnd_;
   std::unique_ptr<gui> p_gui_ = nullptr;
   std::unique_ptr<renderer> p_renderer_ = nullptr;
   const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
 
  public:
-  explicit app(int width = 800, int height = 600, LPCSTR window_title = "");
+  explicit app(float width = 800.0f, float height = 600.0f, LPCSTR window_title = "");
   app(const app&) = delete;
   app& operator=(const app&) = delete;
   app(const app&&) = delete;

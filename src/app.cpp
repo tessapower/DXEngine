@@ -53,7 +53,7 @@ auto app::window_class::h_instance() noexcept -> HINSTANCE {
 auto app::window_class::class_name() noexcept -> LPCSTR { return name; }
 
 //-------------------------------------------------------------------- App --//
-app::app(const int width, const int height, const LPCSTR window_title) {
+app::app(const float width, const float height, const LPCSTR window_title) {
   width_ = width;
   height_ = height;
 
