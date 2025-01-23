@@ -204,10 +204,10 @@ auto renderer::create_device_d3d(const HWND h_wnd) -> HRESULT {
   return hr;
 }
 
-auto renderer::init_backends(const HWND h_wnd [[maybe_unused]]) const -> void {
+//auto renderer::init_backends(const HWND h_wnd [[maybe_unused]]) const -> void {
   // ImGui_ImplWin32_Init(h_wnd);
   // ImGui_ImplDX11_Init(p_device_, p_device_context_);
-}
+//}
 
 auto renderer::shut_down() -> void {
   // TODO: uncomment to reintroduce IMGUI
@@ -216,38 +216,6 @@ auto renderer::shut_down() -> void {
 }
 
 auto renderer::test_draw() -> void {
-  //------------------------------------------------------------- Vertices --//
-  struct vertex {
-    float x;
-    float y;
-    float z;
-  };
-
-  constexpr vertex vertices[] = {
-    {-1.0f, -1.0f, -1.0f},
-    { 1.0f, -1.0f, -1.0f},
-    {-1.0f,  1.0f, -1.0f},
-    { 1.0f,  1.0f, -1.0f},
-    {-1.0f, -1.0f,  1.0f},
-    { 1.0f, -1.0f,  1.0f},
-    {-1.0f,  1.0f,  1.0f},
-    { 1.0f,  1.0f,  1.0f}
-  };
-
-  // Vertex Buffer
-  Microsoft::WRL::ComPtr<ID3D11Buffer> p_vertex_buffer;
-
-  //--------------------------------------------------------- Index Buffer --//
-
-  const std::vector<index> indices = {
-      0, 2, 1,  2, 3, 1,
-      1, 3, 5,  3, 7, 5,
-      2, 6, 3,  3, 6, 7,
-      4, 5, 7,  4, 7, 6,
-      0, 4, 2,  2, 4, 6,
-      0, 1, 4,  1, 5, 4
-  };
-
   //---------------------------------------- Constant Buffer for Transform --//
 
   struct ConstantBuffer {
@@ -259,40 +227,6 @@ auto renderer::test_draw() -> void {
           DirectX::XMMatrixRotationZ(0.5f) * DirectX::XMMatrixRotationX(0.5f) *
           DirectX::XMMatrixTranslation(0.5f, 0.5f, 4.0f) *
           DirectX::XMMatrixPerspectiveLH(1.0f, 800.0f / 1280.0f, 0.5f, 10.0f))
-  };
-
-  //------------------------------------------- Constant Buffer for Colors --//
-
-  struct ConstantColorBuffer {
-    struct {
-      float r, g, b, a;
-    } face_colors[6];
-  };
-
-  const ConstantColorBuffer ccb = {
-    {
-      {0.929f, 0.925f, 0.643f},
-      {0.741f, 0.929f, 0.643f},
-      {0.643f, 0.929f, 0.827f},
-      {0.643f, 0.780f, 0.929f},
-      {0.843f, 0.643f, 0.929f},
-      {0.929f, 0.643f, 0.706f}
-    }
-  };
-
-  //--------------------------------------------------------- Input Layout --//
-  // Input (vertex) layout (2D position only)
-  Microsoft::WRL::ComPtr<ID3D11InputLayout> p_input_layout;
-  constexpr D3D11_INPUT_ELEMENT_DESC ied[] = {
-    {
-      "Position",                   // Semantic name
-      0,                            // Semantic index
-      DXGI_FORMAT_R32G32B32_FLOAT,  // Format
-      0,                            // Input slot
-      0,                            // Aligned byte offset
-      D3D11_INPUT_PER_VERTEX_DATA,  // Input slot class
-      0                             // Instance data step rate
-    }
   };
 
   // Set primitive topology to triangle list

@@ -65,10 +65,6 @@ public:
 
   auto create_device_d3d(HWND h_wnd) -> HRESULT;
 
-  auto init_backends(HWND h_wnd) const -> void;
-
-  auto create_render_target() -> void;
-
   auto shut_down() -> void;
 
   auto test_draw() -> void;
