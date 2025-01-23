@@ -3,12 +3,14 @@
 #include "stdafx.h"
 
 #include <d3d11.h>
+
 #include <imgui.h>
 #include <memory>
 
 #include "engine_exception.h"
 #include "renderer/renderer.h"
 #include "gui.h"
+#include "step_timer.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,
@@ -25,6 +27,7 @@ class app {
   std::unique_ptr<gui> p_gui_ = nullptr;
   std::unique_ptr<renderer> p_renderer_ = nullptr;
   const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
+  StepTimer step_timer_;
 
  public:
   explicit app(float width = 800.0f, float height = 600.0f, LPCSTR window_title = "");
@@ -38,9 +41,7 @@ class app {
 
   auto set_title(const LPCSTR title) const noexcept -> void;
 
-  auto update(bool& done) -> void;
-
-  auto render() noexcept -> void;
+  auto tick(bool& done) -> void;
 
   [[nodiscard]] HWND const& h_wnd() const noexcept { return h_wnd_; }
 
@@ -52,6 +53,12 @@ class app {
                                         LPARAM l_param) noexcept -> LRESULT;
 
  private:
+  auto process_messages(bool& done) -> void;
+
+  auto update(const StepTimer& timer) noexcept -> void;
+
+  auto render() noexcept -> void;
+
   auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                 LPARAM l_param) noexcept -> LRESULT;
 

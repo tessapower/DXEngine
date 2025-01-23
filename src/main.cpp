@@ -15,8 +15,7 @@ auto CALLBACK WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR,
     // Main loop
     bool done = false;
     while (!done) {
-      app.update(done);
-      app.render();
+      app.tick(done);
     }
   } catch (const engine_exception& e) {
     MessageBox(nullptr, e.what(), e.type(), MB_OK | MB_ICONEXCLAMATION);

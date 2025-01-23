@@ -195,7 +195,16 @@ auto app::set_title(const LPCSTR title) const noexcept -> void {
   SetWindowText(h_wnd_, title);
 }
 
-auto app::update(bool &done) -> void {
+auto app::tick(bool &done) -> void {
+  process_messages(done);
+  if (done) return;
+
+  step_timer_.Tick([&]() { update(step_timer_); });
+
+  render();
+}
+
+auto app::process_messages(bool &done) -> void {
   // Poll and handle messages (inputs, window resize, etc.)
   MSG msg;
   
@@ -204,22 +213,28 @@ auto app::update(bool &done) -> void {
     DispatchMessage(&msg);
     if (msg.message == WM_QUIT) done = true;
   }
-  if (done) return;
+}
 
-  // Start the Dear ImGui frame
-  // TODO: put into renderer::new_frame() function
-  // TODO: uncomment to reintroduce IMGUI
-  //ImGui_ImplDX11_NewFrame();
-  //ImGui_ImplWin32_NewFrame();
-  //gui_.update();
+auto app::update(const StepTimer &timer) noexcept -> void {
+  // Mark time
+  float delta = static_cast<float>(timer.GetElapsedSeconds());
 }
 
 auto app::render() noexcept -> void {
+  // Start the Dear ImGui frame
+  // TODO: put into renderer::new_frame() function
+  // TODO: uncomment to reintroduce IMGUI
+  // ImGui_ImplDX11_NewFrame();
+  // ImGui_ImplWin32_NewFrame();
+  // gui_.update();
+
   // TODO: uncomment to reintroduce IMGUI
   //gui_.render(renderer_);
-  p_renderer_->clear_back_buffer(clear_color_);
-  p_renderer_->test_draw();
 
+  p_renderer_->clear_back_buffer(clear_color_);
+  
+  // Draw the cube
+   
   // Present
   p_renderer_->end_frame();
 }
