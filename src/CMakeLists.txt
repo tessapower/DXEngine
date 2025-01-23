@@ -1,21 +1,13 @@
-# Completion Source files
+# Find all source files
 file(GLOB SOURCES *.c *.cpp)
 
+# Find all header files
+file(GLOB HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
+
+# Add CMakeLists to list of source files
 list(APPEND
     SOURCES
     "CMakeLists.txt"
-)
-
-set(HEADERS
-    "${PROJECT_SOURCE_DIR}/include/app.h"
-    "${PROJECT_SOURCE_DIR}/include/dxgi_info_manager.h"
-    "${PROJECT_SOURCE_DIR}/include/engine_exception.h"
-    "${PROJECT_SOURCE_DIR}/include/exception_macros.h"
-    "${PROJECT_SOURCE_DIR}/include/gui.h"
-    "${PROJECT_SOURCE_DIR}/include/message_map.h"
-    "${PROJECT_SOURCE_DIR}/include/resource.h"
-    "${PROJECT_SOURCE_DIR}/include/scene.h"
-    "${PROJECT_SOURCE_DIR}/include/stdafx.h"
 )
 
 add_executable(DXEngine ${SOURCES} ${HEADERS})
