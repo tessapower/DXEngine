@@ -58,7 +58,7 @@ app::app(const float width, const float height, const LPCSTR window_title) {
   height_ = height;
 
   // Create a rectangle to specify the client area dimension
-  RECT viewport{0, 0, width_, height_};
+  RECT viewport{0, 0, static_cast<long>(width_), static_cast<long>(height_)};
   [[maybe_unused]] HRESULT hr =
       AdjustWindowRectEx(&viewport,  // Rect to use
                                      // Window style(s)

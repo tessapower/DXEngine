@@ -7,13 +7,13 @@
 class renderer;
 
 class gui {
-  int width_;
-  int height_;
+  float width_;
+  float height_;
   ImGuiIO* io_;
   ImVec4 clear_color_ = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
  public:
-  explicit gui(int viewport_width = 0, int viewport_height = 0);
+  explicit gui(float viewport_width = 0, float viewport_height = 0);
   gui(const gui&) = delete;
   gui& operator=(const gui&) = delete;
   gui(const gui&&) = delete;
@@ -22,7 +22,7 @@ class gui {
 
   auto init() -> void;
 
-  auto set_viewport(int width, int height) noexcept -> void;
+  auto set_viewport(float width, float height) noexcept -> void;
 
   auto update() const noexcept -> void;
 

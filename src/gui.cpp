@@ -5,7 +5,7 @@
 #include <imgui_impl_dx11.h>
 #include "renderer/renderer.h"
 
-gui::gui(const int viewport_width, const int viewport_height) {
+gui::gui(const float viewport_width, const float viewport_height) {
   width_ = viewport_width;
   height_ = viewport_height;
   io_ = nullptr;
@@ -16,7 +16,7 @@ gui::~gui() {
   //ImGui::DestroyContext();
 }
 
-auto gui::set_viewport(const int width, const int height) noexcept -> void {
+auto gui::set_viewport(const float width, const float height) noexcept -> void {
   width_ = width;
   height_ = height;
 }
