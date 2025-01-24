@@ -3,24 +3,28 @@
 
 #include "stdafx.h"
 #include "const_buffer.h"
+#include "drawable.h"
 #include "exception_macros.h"
 
 #include <DirectXMath.h>
 
-class transform_buffer : public vs_const_buffer<DirectX::XMMATRIX> {
+class transform_buffer : public bindable {
  public:
-  transform_buffer(renderer& rndr, DirectX::XMMATRIX transform = DirectX::XMMatrixIdentity()) 
-    : transform_(DirectX::XMMatrixTranspose(transform)), vs_const_buffer(rndr, transform_) {
+  transform_buffer(renderer& rndr, drawable const& parent)
+      : vsc_buffer_(rndr), parent_(parent) {}
 
-    HRESULT hr;
-    auto& dxgi_info_mgr_ = info_manager(rndr);
+  auto bind(renderer& rndr) noexcept -> void override {
+    vsc_buffer_.update(
+      rndr,
+      DirectX::XMMatrixTranspose(parent_.transform() * rndr.projection())
+    );
 
-    HR_THROW_INFO(device(rndr)->CreateBuffer(&buffer_descriptor_,
-                                             &subresource_data_, &buffer_));
+    vsc_buffer_.bind(rndr);
   }
 
  protected:
-  DirectX::XMMATRIX transform_;
+  vs_const_buffer<DirectX::XMMATRIX> vsc_buffer_;
+  const drawable& parent_;
 };
 
-#endif // TRANSFORM_BUFFER_H
+#endif  // TRANSFORM_BUFFER_H
