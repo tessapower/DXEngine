@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -36,6 +37,7 @@ class renderer {
 
 private:
   dxgi_info_manager dxgi_info_mgr_;
+  DirectX::XMMATRIX projection_;
 
   Microsoft::WRL::ComPtr<ID3D11Device> p_device_;
   Microsoft::WRL::ComPtr <IDXGISwapChain> p_swap_chain_;
@@ -70,6 +72,10 @@ public:
   auto test_draw() -> void;
 
   auto draw_indexed(UINT count) -> void;
+
+  auto projection(DirectX::FXMMATRIX projection) noexcept -> void;
+
+  auto projection() const noexcept -> DirectX::XMMATRIX;
 };
 
 #endif  // RENDERER_H

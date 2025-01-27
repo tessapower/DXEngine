@@ -239,3 +239,11 @@ auto renderer::test_draw() -> void {
 auto renderer::draw_indexed(const UINT count) -> void {
   THROW_MSG(p_device_context_->DrawIndexed(count, 0u, 0u));
 }
+
+auto renderer::projection(DirectX::FXMMATRIX projection) noexcept -> void {
+  projection_ = projection;
+}
+
+auto renderer::projection() const noexcept -> DirectX::XMMATRIX {
+  return projection_;
+}
