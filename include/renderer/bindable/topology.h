@@ -2,10 +2,11 @@
 #define TOPOLOGY_H
 
 #include "bindable.h"
+#include "renderer/renderer.h"
 
 class topology : public bindable {
  public:
-  topology(renderer& rndr, D3D11_PRIMITIVE_TOPOLOGY type) : type_(type) {}
+  topology(D3D11_PRIMITIVE_TOPOLOGY type) : type_(type) {}
   
   auto bind(renderer& rndr) noexcept -> void override {
     context(rndr)->IASetPrimitiveTopology(type_);
