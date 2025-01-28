@@ -37,7 +37,8 @@ class renderer {
 
 private:
   dxgi_info_manager dxgi_info_mgr_;
-  DirectX::XMMATRIX projection_;
+  // Assign the identity matrix by default
+  DirectX::XMMATRIX projection_ = DirectX::XMMatrixIdentity();
 
   Microsoft::WRL::ComPtr<ID3D11Device> p_device_;
   Microsoft::WRL::ComPtr <IDXGISwapChain> p_swap_chain_;

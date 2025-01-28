@@ -24,7 +24,7 @@ class index_buffer : public buffer {
     create(rndr);
   }
 
-  virtual auto bind(renderer& rndr) noexcept -> void override {
+  auto bind(renderer& rndr) noexcept -> void override {
     context(rndr)->IASetIndexBuffer(buffer_.Get(), DXGI_FORMAT_R16_UINT, 0u);
   }
 
