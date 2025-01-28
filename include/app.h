@@ -59,15 +59,6 @@ class app {
   auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                 LPARAM l_param) noexcept -> LRESULT;
 
- public:
-  class exception final : public hr_exception {
-   public:
-    exception(const LPCSTR file, const int line, const HRESULT hr)
-        : hr_exception(file, line, hr) {
-      type_ = "App Exception";
-    }
-  };
-
  private:
   //-------------------------------------------------------- Window Class --//
 

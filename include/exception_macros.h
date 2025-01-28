@@ -2,11 +2,10 @@
 #define EXCEPTION_MACROS_H
 #include "stdafx.h"
 
-#include "app.h"
 #include "renderer/renderer.h"
 
 // Retrieves the last HRESULT error code from the OS and throws an exception
-#define APP_LAST_ERROR app::exception(__FILE__, __LINE__, GetLastError())
+#define LAST_ERROR hr_exception(__FILE__, __LINE__, GetLastError())
 
 // `HRESULT hr` should exist in the local scope for these macros to work.
 // If using dxgi_info_manager to retrieve messages,
