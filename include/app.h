@@ -25,10 +25,8 @@ class app {
   float width_;
   float height_;
   HWND h_wnd_;
-  std::unique_ptr<gui> p_gui_ = nullptr;
   std::unique_ptr<renderer> p_renderer_ = nullptr;
   const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
-  std::unique_ptr<class cube> p_cube_ = nullptr;
   StepTimer step_timer_;
 
  public:

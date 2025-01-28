@@ -9,10 +9,9 @@
 #include <cassert>
 #include <sstream>
 
-#include "exception_macros.h"
-#include "gui.h"
-#include "message_map.h"
 #include "renderer/renderer.h"
+#include "exception_macros.h"
+#include "message_map.h"
 
 namespace {
 message_map messages;
@@ -86,8 +85,6 @@ app::app(const float width, const float height, const LPCSTR window_title) {
       this  // Pass a pointer to this instance of Window and
             // be able to access it from the created h_wnd
   );
-
-  p_gui_ = std::make_unique<gui>(width, height);
 
   // Initialize Direct3D
   // Create unique pointer to renderer

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "app.h"
-#include "imgui.h"
 
 auto CALLBACK WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR,
                       _In_ int) -> int {
