@@ -2,14 +2,14 @@
 #define RENDERER_H
 #include "stdafx.h"
 
+#include "engine_exception.h"
+#include "dxgi_info_manager.h"
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <string>
 #include <vector>
 #include <wrl.h>
-
-#include "engine_exception.h"
-#include "dxgi_info_manager.h"
 
 class renderer {
  public:

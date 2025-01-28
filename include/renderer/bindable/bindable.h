@@ -1,7 +1,11 @@
 #ifndef BINDABLE_H
 #define BINDABLE_H
+#include "stdafx.h"
 
 #include "renderer/renderer.h"
+#include "dxgi_info_manager.h"
+
+#include <d3d11.h>
 
 class bindable {
  public:

@@ -2,16 +2,13 @@
 #define APP_H
 #include "stdafx.h"
 
-#include <d3d11.h>
+#include "renderer/renderer.h"
+#include "engine_exception.h"
+#include "step_timer.h"
 
+#include <d3d11.h>
 #include <imgui.h>
 #include <memory>
-
-#include "renderer/drawable/cube.h"
-#include "engine_exception.h"
-#include "renderer/renderer.h"
-#include "gui.h"
-#include "step_timer.h"
 
 // Forward declarations of helper functions
 auto WINAPI wnd_proc(HWND h_wnd, UINT msg, WPARAM w_param,

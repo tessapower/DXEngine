@@ -2,6 +2,7 @@
 #define CUBE_H
 #include "stdafx.h"
 
+#include "renderer/renderer.h"
 #include "renderer/drawable/drawable.h"
 #include "renderer/drawable/drawable_base.h"
 

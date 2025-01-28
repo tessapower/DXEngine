@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "const_buffer.h"
-#include "drawable.h"
+#include "renderer/drawable/drawable.h"
 #include "exception_macros.h"
 
 #include <DirectXMath.h>

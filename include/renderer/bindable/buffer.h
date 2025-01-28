@@ -2,10 +2,10 @@
 #define BUFFER_H
 #include "stdafx.h"
 
-#include "renderer/renderer.h"
 #include "renderer/bindable/bindable.h"
+#include "renderer/renderer.h"
 #include "exception_macros.h"
-
+#include "dxgi_info_manager.h"
 #include <wrl.h>
 
 class buffer : public bindable {

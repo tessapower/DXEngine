@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
 #include "renderer/renderer.h"
-#include "exception_macros.h"
 #include "renderer/bindable/index_buffer.h"
+#include "exception_macros.h"
 
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
