@@ -23,11 +23,11 @@ class cube : public drawable {
   float pitch_ = 0.0f; // y-axis
   float roll_ = 0.0f;  // z-axis
   // Distance from origin of world space
-  float radius_;
+  float radius_ = 0.0f;
   // Rotation around origin of world space
-  float chi_;   // yaw/x-axis
-  float phi_;   // pitch/y-axis
-  float theta_; // roll/z-axis
+  float chi_ = 0.0f;   // yaw/x-axis
+  float phi_ = 0.0f;   // pitch/y-axis
+  float theta_ = 0.0f; // roll/z-axis
 
   struct vertex {
     struct {
