@@ -6,6 +6,8 @@
 #include "renderer/renderer.h"
 #include "exception_macros.h"
 #include "dxgi_info_manager.h"
+
+#include <d3d11.h>
 #include <wrl.h>
 
 class buffer : public bindable {
