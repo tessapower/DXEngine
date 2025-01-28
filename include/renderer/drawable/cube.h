@@ -4,7 +4,6 @@
 
 #include "renderer/renderer.h"
 #include "renderer/drawable/drawable.h"
-#include "renderer/drawable/drawable_base.h"
 
 #include <DirectXMath.h>
 #include <vector>

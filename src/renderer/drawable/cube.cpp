@@ -1,6 +1,9 @@
 #include "stdafx.h"
-#include "renderer/drawable/cube.h"
 
+#include "renderer/drawable/cube.h"
+#include "renderer/drawable/drawable_base.h"
+
+#include <DirectXMath.h>
 #include <vector>
 
 cube::cube(renderer& rndr) {

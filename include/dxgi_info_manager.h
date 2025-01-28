@@ -2,6 +2,9 @@
 #define DXGI_INFO_MANAGER_H
 #include "stdafx.h"
 
+#include "engine_exception.h"
+#include "exception_macros.h"
+
 #pragma comment(lib, "dxguid.lib")
 
 #include <d3d11.h>
@@ -12,9 +15,6 @@
 
 #include <string>
 #include <vector>
-
-#include "engine_exception.h"
-#include "exception_macros.h"
 
 // Helper class for DXGI Debug Layer
 class dxgi_info_manager {
