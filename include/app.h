@@ -56,6 +56,8 @@ class app {
 
   auto render() noexcept -> void;
 
+  auto get_renderer() -> renderer& { return *p_renderer_; }
+
   auto WINAPI handle_msg(HWND h_wnd, UINT u_msg, WPARAM w_param,
                                 LPARAM l_param) noexcept -> LRESULT;
 
