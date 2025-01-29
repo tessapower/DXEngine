@@ -5,7 +5,6 @@
 #include "renderer/renderer.h"
 #include "bindable.h"
 #include "engine_exception.h"
-#include "renderer/renderer.h"
 
 #include <filesystem>
 #include <d3dcompiler.h>

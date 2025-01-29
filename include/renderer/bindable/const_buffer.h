@@ -45,8 +45,6 @@ class const_buffer : public buffer {
     std::memcpy(msr.pData, &constants, sizeof(constants));
     context(rndr)->Unmap(get(), 0u);
   }
-  
-  virtual auto bind(renderer& rndr) noexcept -> void = 0;
 };
 
 
