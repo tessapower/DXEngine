@@ -16,7 +16,7 @@ class drawable {
   virtual auto transform() const noexcept -> DirectX::XMMATRIX = 0;
   virtual auto update(float dt_ms) noexcept-> void = 0;
 
-  auto draw(renderer& rndr) const noexcept -> void {
+  auto draw(renderer& rndr) -> void {
     for (auto& b : binds_) {
       b->bind(rndr);
     }
