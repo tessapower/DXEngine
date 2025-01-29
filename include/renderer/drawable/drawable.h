@@ -26,7 +26,7 @@ class drawable {
 
   auto add_bind(std::unique_ptr<bindable> bind) noexcept -> void {
     // Check if we are adding an index buffer and store it
-    if (typeid(bind) == typeid(index_buffer)) {
+    if (typeid(*bind) == typeid(index_buffer)) {
       // Ensure we haven't already added an index buffer
       if (!index_buffer_) {
         index_buffer_ = dynamic_cast<index_buffer*>(bind.get());
