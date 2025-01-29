@@ -30,10 +30,11 @@ class buffer : public bindable {
 
   auto create(renderer& rndr) -> void {
     HRESULT hr;
-    HR_THROW_ON_FAIL(
+    auto& dxgi_info_mgr_ = info_manager(rndr);
+    HR_THROW_MSG(
       device(rndr)->CreateBuffer(
         &buffer_descriptor_,
-        &subresource_data_,
+        (subresource_data_.pSysMem == nullptr ? nullptr: &subresource_data_),
         &buffer_
       )
     );
