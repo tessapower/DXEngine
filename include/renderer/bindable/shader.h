@@ -27,14 +27,17 @@ public:
    std::string error_text_;
  };
 
- shader(std::filesystem::path const& filename) {
-   auto path = std::filesystem::path(SHADER_SRC_DIR) / filename;
-   path_ = path.wstring();
+  shader(std::filesystem::path const& filename) {
+    auto path = std::filesystem::path(SHADER_SRC_DIR) / filename;
 
-   throw exception(__FILE__, __LINE__, file_not_found_);
- }
+    // Check if file exists before setting path
+    if (!std::filesystem::exists(path)) {
+      throw exception(__FILE__, __LINE__,
+                     "Shader file not found: " + path.string());
+    }
 
- virtual auto bind(renderer& rndr) noexcept -> void = 0;
+    path_ = path.wstring();
+  }
 
 protected:
  std::wstring path_;
