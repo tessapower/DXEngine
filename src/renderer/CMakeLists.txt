@@ -44,6 +44,7 @@ target_compile_definitions(Renderer PRIVATE COMPILED_SHADER_DIR="${CMAKE_BINARY_
 
 target_link_libraries(Renderer PRIVATE imgui::imgui)
 target_link_libraries(Renderer PRIVATE d3d11)
+target_link_libraries(Renderer PRIVATE d3dcompiler)
 
 # Add bindable and drawable interfaces to include directories
 target_include_directories(Renderer PUBLIC renderer/bindable)
