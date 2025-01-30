@@ -74,6 +74,10 @@ cube::cube(renderer& rndr) {
     )
   );
 
+  // Topology
+  add_bind(std::make_unique<topology>(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+
+  add_bind(std::make_unique<transform_buffer>(rndr, *this));
 }
 
 auto cube::update(float dt_ms) noexcept -> void {
