@@ -82,14 +82,14 @@ cube::cube(renderer& rndr) {
 
 auto cube::update(float dt_ms) noexcept -> void {
   // Update rotation angles
-  yaw_ += dt_ms * 0.001f;
-  pitch_ += dt_ms * 0.001f;
-  roll_ += dt_ms * 0.001f;
+  yaw_ += dt_ms * 0.1f;
+  pitch_ += dt_ms * 0.1f;
+  roll_ += dt_ms * 0.1f;
 
   // Update rotation angles for world space
-  chi_ += dt_ms * 0.001f;
-  phi_ += dt_ms * 0.001f;
-  theta_ += dt_ms * 0.001f;
+  chi_ += dt_ms * 0.1f;
+  phi_ += dt_ms * 0.1f;
+  theta_ += dt_ms * 0.1f;
 }
 
 auto cube::transform() const noexcept -> DirectX::XMMATRIX {
@@ -97,5 +97,5 @@ auto cube::transform() const noexcept -> DirectX::XMMATRIX {
          DirectX::XMMatrixTranslation(radius_, 0.0f, 0.0f) *
          DirectX::XMMatrixRotationRollPitchYaw(theta_, phi_, chi_) *
          // Put some distance between the camera and the cube
-         DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+         DirectX::XMMatrixTranslation(0.0f, 0.0f, 10.0f);
 }
