@@ -4,6 +4,7 @@
 
 #include "renderer/renderer.h"
 #include "engine_exception.h"
+#include "renderer/drawable/cube.h"
 #include "step_timer.h"
 
 #include <d3d11.h>
@@ -23,8 +24,10 @@ class app {
   float height_;
   HWND h_wnd_;
   std::unique_ptr<class renderer> p_renderer_ = nullptr;
-  const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
   StepTimer step_timer_;
+
+  const float clear_color_[4] = {0.45f, 0.55f, 0.60f, 1.00f};
+  std::unique_ptr<class cube> cube_;
 
  public:
   explicit app(float width = 800.0f, float height = 600.0f, LPCSTR window_title = "");

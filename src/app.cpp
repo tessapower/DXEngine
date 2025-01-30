@@ -103,6 +103,9 @@ app::app(const float width, const float height, const LPCSTR window_title) {
         0.5f,           // Distance to near plane, must be >0
         40.0f)          // Distance to far plane, must be >0
   );
+
+  // Create cube
+  cube_ = std::make_unique<cube>(get_renderer());
 }
 
 app::~app() {
@@ -223,6 +226,7 @@ auto app::process_messages(bool &done) -> void {
 auto app::update(const StepTimer &timer) noexcept -> void {
   // Mark time
   float delta = static_cast<float>(timer.GetElapsedSeconds());
+  cube_->update(delta);
 }
 
 auto app::render() noexcept -> void {
@@ -239,7 +243,8 @@ auto app::render() noexcept -> void {
   p_renderer_->clear_back_buffer(clear_color_);
   
   // Draw the cube
-   
+  cube_->draw(get_renderer());
+
   // Present
   p_renderer_->end_frame();
 }
