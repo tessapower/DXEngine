@@ -99,7 +99,7 @@ app::app(const float width, const float height, const LPCSTR window_title) {
   p_renderer_->projection(
       DirectX::XMMatrixPerspectiveLH(
         1.0f,           // Width of frustum at near clipping plane
-        width / height, // Height of frustum at near clipping plane
+        3.0f/4.0f,      // Height of frustum at near clipping plane
         0.5f,           // Distance to near plane, must be >0
         40.0f)          // Distance to far plane, must be >0
   );
