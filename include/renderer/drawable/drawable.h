@@ -16,6 +16,8 @@ class drawable {
   drawable() = default;
   virtual ~drawable() = default;
 
+  drawable(const drawable&) = delete;
+
   virtual auto transform() const noexcept -> DirectX::XMMATRIX = 0;
   virtual auto update(float dt_ms) noexcept-> void = 0;
 
