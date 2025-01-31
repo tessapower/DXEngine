@@ -8,6 +8,7 @@
 #include <DirectXMath.h>
 #include <vector>
 
+
 class drawable {
   template <typename T>
   friend class drawable_base;
@@ -19,6 +20,7 @@ class drawable {
   virtual auto update(float dt_ms) noexcept-> void = 0;
 
   auto draw(renderer& rndr) -> void {
+    // Bind all bindable objects
     for (auto& b : binds_) {
       b->bind(rndr);
     }
