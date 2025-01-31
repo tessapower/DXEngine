@@ -9,6 +9,8 @@
 #include <vector>
 
 class drawable {
+  template <typename T>
+  friend class drawable_base;
  public:
   drawable() = default;
   virtual ~drawable() = default;
@@ -21,9 +23,15 @@ class drawable {
       b->bind(rndr);
     }
 
+    // Bind all static bindable objects
+    for (auto& b : static_binds()) {
+      b->bind(rndr);
+    }
+
     rndr.draw_indexed(index_buffer_->count());
   }
 
+ protected:
   auto add_bind(std::unique_ptr<bindable> bind) noexcept -> void {
     // Check if we are adding an index buffer and store it
     if (typeid(*bind) == typeid(index_buffer)) {
@@ -38,10 +46,10 @@ class drawable {
     binds_.push_back(std::move(bind));
   }
 
-  drawable(const drawable&) = delete;
-
  private:
-  const index_buffer* index_buffer_ = nullptr;
+  virtual auto static_binds() const noexcept
+      -> const std::vector<std::unique_ptr<bindable>>& = 0;
+  const class index_buffer* index_buffer_ = nullptr;
   std::vector<std::unique_ptr<bindable>> binds_;
 };
 

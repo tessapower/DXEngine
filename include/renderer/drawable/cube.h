@@ -3,12 +3,12 @@
 #include "stdafx.h"
 
 #include "renderer/renderer.h"
-#include "renderer/drawable/drawable.h"
+#include "renderer/drawable/drawable_base.h"
 
 #include <DirectXMath.h>
 #include <vector>
 
-class cube : public drawable {
+class cube : public drawable_base<cube> {
  public:
   cube(renderer& rndr);
   ~cube() = default;

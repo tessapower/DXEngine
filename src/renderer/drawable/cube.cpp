@@ -1,81 +1,59 @@
 #include "stdafx.h"
 
 #include "renderer/drawable/cube.h"
-#include "renderer/drawable/drawable_base.h"
+#include "renderer/bindable/bindable_includes.h"
 
 #include <DirectXMath.h>
 #include <vector>
+#include <filesystem>
 
 cube::cube(renderer& rndr) {
-  // Vertices
-  const std::vector<vertex> vertices = {
-      {-1.0f, -1.0f, -1.0f}, { 1.0f, -1.0f, -1.0f},
-      {-1.0f,  1.0f, -1.0f}, { 1.0f,  1.0f, -1.0f},
-      {-1.0f, -1.0f,  1.0f}, { 1.0f, -1.0f,  1.0f},
-      {-1.0f,  1.0f,  1.0f}, { 1.0f,  1.0f,  1.0f}};
+  if (!is_static_initialized()) {
+    // Vertices
+    const std::vector<vertex> vertices = {
+        {-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, -1.0f}, {-1.0f, 1.0f, -1.0f},
+        {1.0f, 1.0f, -1.0f},   {-1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, 1.0f},
+        {-1.0f, 1.0f, 1.0f},   {1.0f, 1.0f, 1.0f}};
 
-  add_bind(std::make_unique<vertex_buffer>(rndr, vertices));
+    add_static_bind(std::make_unique<vertex_buffer>(rndr, vertices));
 
-  // Vertex Shader
-  auto vs = std::make_unique<vertex_shader>(
-    rndr,
-    std::filesystem::path(SHADER_SRC_DIR) / "vertex_shader.vs.hlsl"
-  );
-  auto vs_bytecode = vs->bytecode();
-  add_bind(std::move(vs));
+    // Vertex Shader
+    auto vs = std::make_unique<vertex_shader>(
+        rndr, std::filesystem::path(SHADER_SRC_DIR) / "vertex_shader.vs.hlsl");
+    auto vs_bytecode = vs->bytecode();
+    add_static_bind(std::move(vs));
 
-  // Pixel Shader
-  add_bind(
-    std::make_unique<pixel_shader>(
-      rndr,
-      std::filesystem::path(SHADER_SRC_DIR) / "pixel_shader.ps.hlsl"
-    )
-  );
+    // Pixel Shader
+    add_static_bind(std::make_unique<pixel_shader>(
+        rndr, std::filesystem::path(SHADER_SRC_DIR) / "pixel_shader.ps.hlsl"));
 
-  // Indices
-  const std::vector<index> indices = {
-    0, 2, 1,  2, 3, 1,
-    1, 3, 5,  3, 7, 5,
-    2, 6, 3,  3, 6, 7,
-    4, 5, 7,  4, 7, 6,
-    0, 4, 2,  2, 4, 6,
-    0, 1, 4,  1, 5, 4
-  };
+    // Indices
+    const std::vector<index> indices = {0, 2, 1, 2, 3, 1, 1, 3, 5, 3, 7, 5,
+                                        2, 6, 3, 3, 6, 7, 4, 5, 7, 4, 7, 6,
+                                        0, 4, 2, 2, 4, 6, 0, 1, 4, 1, 5, 4};
 
-  add_bind(std::make_unique<index_buffer>(rndr, indices));
+    add_static_bind(std::make_unique<index_buffer>(rndr, indices));
 
-  const color_buffer cb = {
-    {
-      {0.929f, 0.925f, 0.643f},
-      {0.741f, 0.929f, 0.643f},
-      {0.643f, 0.929f, 0.827f},
-      {0.643f, 0.780f, 0.929f},
-      {0.843f, 0.643f, 0.929f},
-      {0.929f, 0.643f, 0.706f}
-    }
-  };
+    const color_buffer cb = {{{0.929f, 0.925f, 0.643f},
+                              {0.741f, 0.929f, 0.643f},
+                              {0.643f, 0.929f, 0.827f},
+                              {0.643f, 0.780f, 0.929f},
+                              {0.843f, 0.643f, 0.929f},
+                              {0.929f, 0.643f, 0.706f}}};
 
-  add_bind(std::make_unique<ps_const_buffer<color_buffer>>(rndr, cb));
+    add_static_bind(std::make_unique<ps_const_buffer<color_buffer>>(rndr, cb));
 
-  // Input Layout
-  add_bind(
-    std::make_unique<input_layout>(
-      rndr,
-      std::vector<D3D11_INPUT_ELEMENT_DESC>{{
-        "Position",
-        0,
-        DXGI_FORMAT_R32G32B32_FLOAT,
-        0,
-        0,
-        D3D11_INPUT_PER_VERTEX_DATA,
-        0
-      }},
-      vs_bytecode
-    )
-  );
+    // Input Layout
+    add_static_bind(std::make_unique<input_layout>(
+        rndr,
+        std::vector<D3D11_INPUT_ELEMENT_DESC>{
+            {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+             D3D11_INPUT_PER_VERTEX_DATA, 0}},
+        vs_bytecode));
 
-  // Topology
-  add_bind(std::make_unique<topology>(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+    // Topology
+    add_static_bind(std::make_unique<topology>(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+  }
 
   add_bind(std::make_unique<transform_buffer>(rndr, *this));
 }
